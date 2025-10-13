@@ -1,5 +1,8 @@
 #!/usr/bin/zsh
 
+# Install nix
+sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install)
+
 # nix profileでインストールするパッケージ一覧
 packages=(
   "nixpkgs#devenv"

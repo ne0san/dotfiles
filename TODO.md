@@ -5,13 +5,13 @@
   - [x] brew で入れるやつら
 - [x] zsh の設定
 - [x] oh-my-zsh の設定
-- [ ] nix
+- [x] nix
   - [x] nix 自体
   - [x] nix の各設定
-  - [ ] nix profile で入れるやつら
-    - [ ] devenv
-    - [ ] direnv
-    - [ ] nix-direnv
+  - [x] nix profile で入れるやつら
+    - [x] devenv
+    - [x] direnv
+    - [x] nix-direnv
 - [x] nvim 設定 これは brew の後にやるようにする
 - [x] vscode 設定
 - [x] vscode 設定を移す
@@ -27,19 +27,24 @@
   - [ ] vscode
   - [ ] ghosty
   - [ ] raycast
+- [ ] パッケージごとに分離
+- [ ] ランチャーデスクトップのエイリアスがある
 
 # スクリプトの順番
 
 - init
-  - brew
-  - xcode
-  - oh-my-zsh
-  - zsh-autosuggestions
-  - nix
+  - xcode インスト
+- link
+  - 各種ファイルのリンクを貼る
 - brew
+  - brew インスト
   - vscode
   - nvim
   - vscode 拡張
+- zsh
+  - oh-my-zsh インスト
+  - zshrc をいじる
+  - zsh-autosuggestions
 - astronvim
   - astronvim クローン
 - nix
