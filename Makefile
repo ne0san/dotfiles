@@ -1,10 +1,16 @@
 # Run all shell files
-all: link brew zsh nix vscode astronvim test
+all: link xcode brew zsh nix vscode astronvim test
 
 # Create symbolic links
 link:
 	@echo "\033[0;34mRun link.sh\033[0m"
 	@.bin/link.sh
+	@echo "\033[0;32mDone.\033[0m"
+
+# Install Xcode
+xcode:
+	@echo "\033[0;34mRun xcode.sh\033[0m"
+	@xcode/xcode.sh
 	@echo "\033[0;32mDone.\033[0m"
 
 # Install Homebrew and brew packages
@@ -25,9 +31,9 @@ nix:
 	@nix/nix.sh
 	@echo "\033[0;32mDone.\033[0m"
 
-# Install VS Code
+# Configure VS Code
 vscode:
-	@echo "\033[0;34mInstall VS Code\033[0m"
+	@echo "\033[0;34mRun vscode.sh\033[0m"
 	@echo "\033[0;32mDone.\033[0m"
 
 # Install AstroNvim

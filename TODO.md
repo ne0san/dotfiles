@@ -17,9 +17,11 @@
 - [x] vscode 設定を移す
 - [x] ghosty 設定
 - [x] raycast 設定
-- [ ] 動作確認方法
+- [x] 動作確認方法
 - [x] 一括実行する奴ら
 - [ ] テスト
+  - [ ] config ディレクトリがない
+  - [ ] link vscode test の順で動いている
 - [ ] 動作確認
   - [ ] brew
   - [ ] zsh
