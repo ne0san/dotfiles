@@ -1,32 +1,43 @@
 # Run all shell files
-all:link init brew github
+all: link brew zsh nix vscode astronvim test
 
-# run init.sh
-init:
-	@echo "\033[0;34mRun init.sh\033[0m"
-	@.bin/init.sh
-	@echo "\033[0;34mDone.\033[0m"
-
-# next create symbolic links
+# Create symbolic links
 link:
 	@echo "\033[0;34mRun link.sh\033[0m"
 	@.bin/link.sh
-	@echo "\033[0;34mDone.\033[0m"
-
-# Set macOS system preferences.
-defaults:
-	@echo "\033[0;34mRun defaults.sh\033[0m"
-	@.bin/defaults.sh
 	@echo "\033[0;32mDone.\033[0m"
 
-# Install macOS applications.
+# Install Homebrew and brew packages
 brew:
 	@echo "\033[0;34mRun brew.sh\033[0m"
-	@.bin/brew.sh
+	@brew/brew.sh
 	@echo "\033[0;32mDone.\033[0m"
 
-# Set GitHub
-github:
-	@echo "\033[0;34mRun github.sh\033[0m"
-	@.bin/setup.sh
+# Install Oh My Zsh and plugins
+zsh:
+	@echo "\033[0;34mRun zsh.sh\033[0m"
+	@zsh/zsh.sh
+	@echo "\033[0;32mDone.\033[0m"
+
+# Install Nix and packages
+nix:
+	@echo "\033[0;34mRun nix.sh\033[0m"
+	@nix/nix.sh
+	@echo "\033[0;32mDone.\033[0m"
+
+# Install VS Code
+vscode:
+	@echo "\033[0;34mInstall VS Code\033[0m"
+	@echo "\033[0;32mDone.\033[0m"
+
+# Install AstroNvim
+astronvim:
+	@echo "\033[0;34mRun astronvim.sh\033[0m"
+	@astronvim/astronvim.sh
+	@echo "\033[0;32mDone.\033[0m"
+
+# Run test.sh to check installations
+test:
+	@echo "\033[0;34mRun test.sh\033[0m"
+	@.bin/test.sh
 	@echo "\033[0;32mDone.\033[0m"
