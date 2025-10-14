@@ -1,0 +1,41 @@
+name: Test dotfiles on macOS
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up environment
+        run: |
+          echo "Setting up test environment..."
+          chmod +x .bin/*.sh
+          chmod +x brew/*.sh
+          chmod +x zsh/*.sh
+          chmod +x nix/*.sh
+          chmod +x astronvim/*.sh
+
+      - name: Run make
+        run: make
+        continue-on-error: false
+
+      - name: Run tests
+        run: make test
+
+      - name: Report results
+        if: success()
+        run: echo "All tests passed successfully!"
+
+      - name: Report failure
+        if: failure()
+        run: echo "Tests failed. Please check the logs above."
