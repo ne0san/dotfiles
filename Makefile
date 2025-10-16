@@ -41,7 +41,7 @@ zsh:
 nix:
 	@echo "\033[0;34mRun nix.sh\033[0m"
 	@nix/nix.sh
-	@source /etc/zshrc
+	@echo $PATH
 	@echo "\033[0;32mDone.\033[0m"
 
 # Configure VS Code
@@ -65,6 +65,7 @@ astronvim:
 # Run test.sh to check installations
 test: phase3
 	@echo "\033[0;34mRun test.sh\033[0m"
+	@echo $PATH
 	@.bin/test.sh
 	@echo "\033[0;32mDone.\033[0m"
 
