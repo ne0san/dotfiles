@@ -6,4 +6,4 @@ SCRIPT_DIR="$(dirname "$(realpath "$0")")"
 mkdir -p ~/.config/ghostty
 
 # config/ghostty/configをリンク
-ln -s "${SCRIPT_DIR}/.config/ghostty/config" ~/.config/ghostty/config"
+ln -s "${SCRIPT_DIR}/.config/ghostty/config" ~/.config/ghostty/config
