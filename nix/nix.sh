@@ -12,5 +12,5 @@ packages=(
 
 # 全部インストール
 for pkg in "${packages[@]}"; do
-  nix profile install "$pkg"
+  nix profile add "$pkg"
 done
