@@ -1,5 +1,7 @@
 #!/bin/zsh
 
+SCRIPT_DIR="$(dirname "$(realpath "$0")")"
+
 # configディレクトリを作成
 mkdir -p ~/.config/ghostty
 
