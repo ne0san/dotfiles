@@ -1,6 +1,4 @@
 tap "aws/tap"
-tap "homebrew/cask-fonts"
-tap "homebrew/services"
 tap "modularml/packages"
 tap "oven-sh/bun"
 brew "cmake"
