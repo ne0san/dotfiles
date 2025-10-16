@@ -64,6 +64,7 @@ astronvim:
 # Run test.sh to check installations
 test: phase3
 	@echo "\033[0;34mRun test.sh\033[0m"
+	@source ~/.zshrc
 	@.bin/test.sh
 	@echo "\033[0;32mDone.\033[0m"
 
