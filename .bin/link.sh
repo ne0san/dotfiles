@@ -1,6 +1,6 @@
 #!/bin/zsh
 
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+SCRIPT_DIR="$(dirname "$(realpath "$0")")"
 echo SCRIPT_DIR
 
 

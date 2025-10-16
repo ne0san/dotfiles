@@ -1,6 +1,6 @@
 #!/usr/bin/zsh
 
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+SCRIPT_DIR="$(dirname "$(realpath "$0")")"
 
 # Install nix
 sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install)

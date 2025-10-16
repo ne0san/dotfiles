@@ -1,6 +1,6 @@
 #!/bin/zsh
 
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+SCRIPT_DIR="$(dirname "$(realpath "$0")")"
 VSCODE_SETTING_PATH="${HOME}/Library/Application\ Support/Code/User/settings.json"
 
 # Link settings.json to vscode
