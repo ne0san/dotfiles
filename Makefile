@@ -66,6 +66,7 @@ test: phase3
 	@echo "\033[0;34mRun test.sh\033[0m"
 	@source ~/.zshrc
 	@cat ~/.zshrc
+	@cat /etc/zshrc
 	@.bin/test.sh
 	@echo "\033[0;32mDone.\033[0m"
 
