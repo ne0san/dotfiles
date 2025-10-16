@@ -1,4 +1,4 @@
-#!/usr/bin/zsh
+#!/bin/zsh
 
 SCRIPT_DIR="$(dirname "$(realpath "$0")")"
 
