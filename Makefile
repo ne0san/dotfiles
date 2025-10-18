@@ -63,9 +63,9 @@ astronvim:
 	@echo "\033[0;32mDone.\033[0m"
 
 # Run test.sh to check installations
-test: phase3
+test: 
 	@echo "\033[0;34mRun test.sh\033[0m"
-	@echo $PATH
+	@echo $$PATH
 	@.bin/test.sh
 	@echo "\033[0;32mDone.\033[0m"
 
