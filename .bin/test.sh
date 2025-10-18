@@ -25,6 +25,7 @@ else
 fi
 
 # Check Nix
+source "/etc/zshrc"
 echo -n "Checking Nix... "
 if command -v nix &> /dev/null; then
     echo " Installed ($(nix --version))"
