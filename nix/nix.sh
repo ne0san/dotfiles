@@ -12,6 +12,8 @@ packages=(
   "nixpkgs#nix-direnv"
 )
 
+. '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
+
 # 全部インストール
 for pkg in "${packages[@]}"; do
   nix profile add "$pkg"
