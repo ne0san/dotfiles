@@ -17,10 +17,8 @@ packages=(
   "nixpkgs#direnv"
   "nixpkgs#nix-direnv"
 )
-if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then \
-  . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh && \
-  nix --version; \
-fi
+
+. /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh 
 
 # 全部インストール
 for pkg in "${packages[@]}"; do

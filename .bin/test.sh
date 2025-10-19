@@ -26,6 +26,7 @@ fi
 
 # Check Nix
 echo -n "Checking Nix... "
+. /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh 
 if command -v nix &> /dev/null; then
     echo " Installed ($(nix --version))"
 else
