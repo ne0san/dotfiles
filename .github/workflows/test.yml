@@ -16,18 +16,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up environment
-        run: |
-          echo "Setting up test environment..."
-          chmod +x .bin/*.sh
-          chmod +x brew/*.sh
-          chmod +x zsh/*.sh
-          chmod +x nix/*.sh
-          chmod +x astronvim/*.sh
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Enable Magic Nix Cache
+        uses: DeterminateSystems/magic-nix-cache-action@main
 
       - name: Run make
         run: make
         continue-on-error: false
+        env:
+          NIX_SKIP_INSTALL: "true"
 
       - name: Run tests
         run: make test

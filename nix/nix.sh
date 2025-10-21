@@ -3,7 +3,14 @@
 SCRIPT_DIR="$(dirname "$(realpath "$0")")"
 
 # Install nix
-sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install)
+# GitHub Actionsで既にNixがインストールされてる場合はスキップ
+if [[ "${NIX_SKIP_INSTALL}" == "true" ]]; then
+  echo "Nix installation skipped (already installed)"
+else
+  echo "Installing Nix..."
+  sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install)
+fi
+
 
 # configディレクトリを作成
 mkdir -p ~/.config/nix

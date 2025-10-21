@@ -127,14 +127,8 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "docker.extension.enableComposeLanguageServer": false,
-  "codeium.enableConfig": {
-    "*": true,
-    "ini": false
-  },
   "diffEditor.ignoreTrimWhitespace": false,
   "remote.autoForwardPortsSource": "hybrid",
-  "codeium.enableCodeLens": false,
-  "codeium.disableSupercomplete": true,
   "[dockercompose]": {
     "editor.insertSpaces": true,
     "editor.tabSize": 2,
