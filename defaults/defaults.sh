@@ -18,7 +18,7 @@ killall SystemUIServer
 
 # トラックパッド感度を7番目に設定 (0-3の範囲で、3が最も感度が高い)
 echo "🖱️ トラックパッド感度を設定中..."
-defaults write -g com.apple.trackpad.scaling 3
+defaults write -g com.apple.trackpad.scaling 1.5
 
 # Dock自動非表示を有効化
 echo "🏠 Dock自動非表示を有効化..."
@@ -43,14 +43,12 @@ defaults write com.apple.finder NewWindowTargetPath -string "file://${HOME}/"
 
 # Caps LockをControlキーに変更
 echo "⌨️ Caps LockをControlキーに変更..."
-# 内蔵キーボード用
-defaults -currentHost write -g com.apple.keyboard.modifiermapping.1452-610-0 -array-add '<dict><key>HIDKeyboardModifierMappingDst</key><integer>2</integer><key>HIDKeyboardModifierMappingSrc</key><integer>0</integer></dict>'
 # 外部キーボード用（製品IDは環境によって異なる場合があります）
 defaults -currentHost write -g com.apple.keyboard.modifiermapping.0-0-0 -array-add '<dict><key>HIDKeyboardModifierMappingDst</key><integer>2</integer><key>HIDKeyboardModifierMappingSrc</key><integer>0</integer></dict>'
 
 # キーボードリピート開始までの時間を短く設定 (15が最短)
 echo "⚡ キーボードリピート設定を最高速に..."
-defaults write NSGlobalDomain InitialKeyRepeat -int 15
+defaults write NSGlobalDomain InitialKeyRepeat -int 30
 # キーボードリピート速度を最高速に設定 (2が最高速)
 defaults write NSGlobalDomain KeyRepeat -int 2
 
@@ -73,6 +71,10 @@ defaults write com.apple.HIToolbox AppleFnUsageType -int 0
 # 起動音を無効化
 echo "🔇 起動音を無効化..."
 sudo nvram StartupMute=%01
+
+# 最小化時ウィンドウをアプリアイコンに収納
+echo "ウィンドウをDockのアプリアイコンに収納"
+defaults write com.apple.dock minimize-to-application -bool true
 
 # 変更を適用するためにアプリケーションを再起動
 echo "🔄 設定を適用するためにアプリケーションを再起動中..."

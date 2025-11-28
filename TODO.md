@@ -1,74 +1,9 @@
 # TODO
 
-- [x] brew
-  - [x] brew 自体
-  - [x] brew で入れるやつら
-- [x] zsh の設定
-- [x] oh-my-zsh の設定
-- [x] nix
-  - [x] nix 自体
-  - [x] nix の各設定
-  - [x] nix profile で入れるやつら
-    - [x] devenv
-    - [x] direnv
-    - [x] nix-direnv
-- [x] nvim 設定 これは brew の後にやるようにする
-- [x] vscode 設定
-- [x] vscode 設定を移す
-- [x] ghosty 設定
-- [x] raycast 設定
-- [x] 動作確認方法
-- [x] 一括実行する奴ら
-- [ ] テスト
-  - [x] config ディレクトリがないので設定ファイルを移せない
-  - [x] link vscode test の順で動いている make の実行順を制御 nix と direnv がテストでうまく動かない
-  - [ ] nix インストール後、nix のパスがまだ通ってなくて nix 関連のブツがインストールできてない&nix の動作確認ができてない
-  - [ ] nix のレートリミットに引っ掻かる
-- [ ] 追加要件
-  - [ ] mac の設定
-    - [ ] スクショ保存先をピクチャ
-    - [ ] トラックパッド感度 したから 7 番目
-    - [ ] dock 自動で非表示
-    - [ ] dock から最近のやつらを消す
-    - [ ] finder 拡張子表示
-    - [ ] finder 隠しファイル表示
-    - [ ] finder ホームディレクトリ表示
-    - [ ] caps を ctrl に上書き
-    - [ ] キーボード連続入力までの時間
-    - [ ] ダークモード
-    - [ ] function キーを標準の F~キーとして
-    - [ ] finder の表示をカラムに
-    - [ ] fn キーでなにもしない
-    - [ ] 起動音を無効化
-- [ ] 動作確認
-  - [ ] brew
-  - [ ] zsh
-  - [ ] ohmyzsh
-  - [ ] nix
-  - [ ] direnv(devenv)
-  - [ ] vscode
-  - [ ] ghosty
-  <!-- - [ ] raycast -->
-- [ ] パッケージごとに分離
-
-# スクリプトの順番
-
-- init
-  - xcode インスト
-- link
-  - 各種ファイルのリンクを貼る
-- brew
-  - brew インスト
-  - vscode
-  - nvim
-  - vscode 拡張
-- zsh
-  - oh-my-zsh インスト
-  - zshrc をいじる
-  - zsh-autosuggestions
-- astronvim
-  - astronvim クローン
-- nix
-  - nix profile
-- vscode
-  - vscode 設定
+- [ ] configのリンクスクリプト修正
+- [ ] nixとhome-managerのインストールを治す
+- [ ] ↑ここまでをmakefileに反映
+- [ ] home-managerをインストールする手順を追加
+- [ ] home-managerを設定する手順を追加
+- [ ] home-managerに設定内容を記述
+- [ ] git関連の設定も追加

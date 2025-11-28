@@ -6,17 +6,23 @@ phase1: link xcode defaults
 	@echo "\033[0;32mPhase 1 completed.\033[0m"
 
 # Phase 2: Development tools (after phase1, parallel OK)
-phase2: phase1 brew zsh nix
+phase2: phase1 brew zsh config
 	@echo "\033[0;32mPhase 2 completed.\033[0m"
 
 # Phase 3: Editors and terminal (after phase2, parallel OK)
-phase3: phase2 vscode astronvim ghostty
+phase3: phase2 nix astronvim ghostty
 	@echo "\033[0;32mPhase 3 completed.\033[0m"
 
 # Create symbolic links
 link:
 	@echo "\033[0;34mRun link.sh\033[0m"
 	@.bin/link.sh
+	@echo "\033[0;32mDone.\033[0m"
+
+# Create symbolic link of ConfigFile
+config:
+	@echo "\033[0;34mRun config.sh\033[0m"
+	@.config/config.sh
 	@echo "\033[0;32mDone.\033[0m"
 
 # Install Xcode
@@ -44,18 +50,6 @@ nix:
 	@echo $$PATH
 	@echo "\033[0;32mDone.\033[0m"
 
-# Configure VS Code
-vscode:
-	@echo "\033[0;34mRun vscode.sh\033[0m"
-	@.vscode/vscode.sh
-	@echo "\033[0;32mDone.\033[0m"
-
-# Configure Ghostty
-ghostty:
-	@echo "\033[0;34mRun ghostty.sh\033[0m"
-	@ghostty/ghostty.sh
-	@echo "\033[0;32mDone.\033[0m"
-
 # Install AstroNvim
 astronvim:
 	@echo "\033[0;34mRun astronvim.sh\033[0m"
@@ -75,4 +69,4 @@ test:
 	@.bin/test.sh
 	@echo "\033[0;32mDone.\033[0m"
 
-.PHONY: all phase1 phase2 phase3 link xcode brew zsh nix vscode astronvim ghostty defaults test
+.PHONY: all phase1 phase2 phase3 link xcode brew zsh nix config vscode astronvim defaults test

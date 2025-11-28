@@ -43,15 +43,6 @@ else
     all_passed=false
 fi
 
-# Check VS Code
-echo -n "Checking VS Code... "
-if command -v code &> /dev/null; then
-    echo " Installed ($(code --version | head -n1))"
-else
-    echo " Not installed"
-    all_passed=false
-fi
-
 # Summary
 echo ""
 if [ "$all_passed" = true ]; then
