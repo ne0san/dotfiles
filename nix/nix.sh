@@ -11,4 +11,4 @@ fi
 
 . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh 
 
-# Install home-manager
+# TODO flakeの適用
