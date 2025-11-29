@@ -12,4 +12,6 @@ fi
 . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh 
 
 # nix-darwin build
+sudo mv /etc/nix/nix.conf /etc/nix/nix.conf.before-nix-darwin
+sudo mv /etc/zshrc /etc/zshrc.before-nix-darwin
 sudo USER=$USER nix --extra-experimental-features "nix-command flakes" run nix-darwin -- switch --flake ~/dotfiles/nix#ne0san --impure
