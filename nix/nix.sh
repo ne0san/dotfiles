@@ -11,4 +11,5 @@ fi
 
 . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh 
 
-# Install home-manager
+# nix-darwin build
+sudo USER=$USER nix --extra-experimental-features "nix-command flakes" run nix-darwin -- switch --flake ~/dotfiles/nix#ne0san --impure

@@ -1,9 +1,9 @@
-{ config, pkgs, ... }:
+{ config, pkgs, username, ... }:
 
 {
-  home.enableNixpkgsReleaseCheck = false;
-  home.username = "asamitomo";
-  home.homeDirectory = "/Users/asamitomo";
+  home.enableNixpkgsReleaseCheck = false; # home-managerとnixpkgsのバージョン不一致warnを無視
+  home.username = username;
+  home.homeDirectory = "/Users/${username}";
   home.stateVersion = "25.05"; # Please read the comment before changing.
   home.packages = with pkgs; [
     devenv
@@ -36,9 +36,9 @@
   programs.home-manager.enable = true;
   programs.zsh = {
     enable = true;
-    initExtra = ''
+    initContent = ''
       ### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
-      export PATH="/Users/asamitomo/.rd/bin:$PATH"
+      export PATH="/Users/${username}/.rd/bin:$PATH"
       ### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
       export ZSH="$HOME/.oh-my-zsh"
       ZSH_THEME="rkj-repos"
@@ -56,6 +56,9 @@
       alias vi="nvim"
       alias view="nvim -R"
       alias ll="ls -l"
+      alias flupd="nix flake update --flake ~/dotfiles/nix"
+      alias drsw="sudo USER=$USER darwin-rebuild switch --flake ~/dotfiles/nix#ne0san --impure"
+      alias zreload="source ~/.zshrc"
 
       setopt auto_cd
       setopt correct
@@ -67,10 +70,10 @@
       export HISTSIZE=10000
       export SAVEHIST=10000
 
-      export PATH=/Users/asamitomo/.tiup/bin:$PATH
+      export PATH=/Users/${username}/.tiup/bin:$PATH
       export RUBY_TCP_NO_FAST_FALLBACK=1
-      eval "$(direnv hook zsh)"
-      . "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
+      eval "$(/etc/profiles/per-user/${username}/bin/direnv hook zsh)"
+      . "/etc/profiles/per-user/${username}/etc/profile.d/hm-session-vars.sh"
     '';
   };
 }

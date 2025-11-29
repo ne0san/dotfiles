@@ -2,7 +2,7 @@
 all: phase1 phase2 phase3 test
 
 # Phase 1: Basic setup (parallel OK)
-phase1: link xcode defaults
+phase1: link xcode
 	@echo "\033[0;32mPhase 1 completed.\033[0m"
 
 # Phase 2: Development tools (after phase1, parallel OK)
@@ -28,7 +28,7 @@ config:
 # Install Xcode
 xcode:
 	@echo "\033[0;34mRun xcode.sh\033[0m"
-	@xcode/xcode.sh
+	@.bin/xcode.sh
 	@echo "\033[0;32mDone.\033[0m"
 
 # Install Homebrew and brew packages
@@ -56,12 +56,6 @@ astronvim:
 	@astronvim/astronvim.sh
 	@echo "\033[0;32mDone.\033[0m"
 
-# Run defaults.sh to set defaults
-defaults:
-	@echo "\033[0;34mRun defaults.sh\033[0m"
-	@defaults/defaults.sh
-	@echo "\033[0;32mDone.\033[0m"
-
 # Run test.sh to check installations
 test: 
 	@echo "\033[0;34mRun test.sh\033[0m"
@@ -69,4 +63,4 @@ test:
 	@.bin/test.sh
 	@echo "\033[0;32mDone.\033[0m"
 
-.PHONY: all phase1 phase2 phase3 link xcode brew zsh nix config vscode astronvim defaults test
+.PHONY: all phase1 phase2 phase3 link xcode brew zsh nix config astronvim test
