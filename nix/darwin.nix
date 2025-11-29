@@ -15,7 +15,35 @@
   environment.systemPackages = with pkgs; [
     vim
   ];
-
+  homebrew = {
+    enable = true;
+    
+    # darwin-rebuild時に、nixで管理してないbrewパッケージを消すかどうか
+    # "none" = 消さない（一時的なやつ残る）
+    # "uninstall" = 消す
+    onActivation.cleanup = "none";
+    
+    taps = [
+      "aws/tap"
+      "modularml/packages"
+      "oven-sh/bun"
+    ];
+    
+    brews = [
+      "node"
+    ];
+  
+    casks = [
+      "font-0xproto-nerd-font"
+      "font-daddy-time-mono-nerd-font"
+      "font-hack-nerd-font"
+      "font-myrica"
+      "ghostty"
+      "raycast"
+      "arc"
+      "google-japanese-ime"
+    ];
+  };
   # macOS システムデフォルト設定
   system.defaults = {
     # Dock

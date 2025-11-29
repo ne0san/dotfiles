@@ -34,7 +34,7 @@ xcode:
 # Install Homebrew and brew packages
 brew:
 	@echo "\033[0;34mRun brew.sh\033[0m"
-	@brew/brew.sh
+	@.bin/brew.sh
 	@echo "\033[0;32mDone.\033[0m"
 
 # Install Oh My Zsh and plugins
