@@ -16,7 +16,7 @@
     };
   };
 
-  outputs = { nixpkgs, nix-darwin, home-manager, ... }: 
+  outputs = { nixpkgs, nix-darwin, home-manager, nixvim, ... }@inputs: 
     # nix-darwin configuration
     let
       username = builtins.getEnv "USER";
@@ -30,7 +30,13 @@
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
             home-manager.backupFileExtension = "backup";
-            home-manager.users.${username} = import ./home.nix;
+            home-manager.users.${username} = { ... }:{
+              imports = [
+                inputs.nixvim.homeModules.nixvim
+                ./home.nix
+                ./nixvim.nix  
+              ];
+            };
             home-manager.extraSpecialArgs = { inherit username; };
           }
         ];

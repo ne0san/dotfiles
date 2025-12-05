@@ -10,10 +10,12 @@
     cmake
     git-secrets
     gnupg
-    neovim
     tree
     lua
     elixir
+    nil  # Nix LSP
+    lua-language-server
+    lazygit
   ];
   home.file = {
   };
