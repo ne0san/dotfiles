@@ -38,11 +38,4 @@ nix:
 	@echo $$PATH
 	@echo "\033[0;32mDone.\033[0m"
 
-# Run test.sh to check installations
-test: 
-	@echo "\033[0;34mRun test.sh\033[0m"
-	@echo $$PATH
-	@.bin/test.sh
-	@echo "\033[0;32mDone.\033[0m"
-
-.PHONY: all phase1 phase2 phase3 xcode brew nix config test
+.PHONY: all phase1 phase2 phase3 xcode brew nix config
