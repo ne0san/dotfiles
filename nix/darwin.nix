@@ -1,4 +1,3 @@
-
 { config, pkgs, username, ... }:
 
 {
@@ -77,6 +76,14 @@
       KeyRepeat = 2;
       "com.apple.keyboard.fnState" = true;
       "com.apple.trackpad.scaling" = 1.5;
+      "com.apple.swipescrolldirection" = true;
+    };
+    # nix-darwinに定義されてないやつはここに書く
+    CustomUserPreferences = {
+      NSGlobalDomain = {
+        "com.apple.mouse.scaling" = 1.0;
+        "com.apple.scrollwheel.scaling" = 0.4412;
+      };
     };
   };
   # Google日本語入力の入力ソースを設定

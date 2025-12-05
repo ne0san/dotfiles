@@ -413,6 +413,19 @@
         action = "<cmd>nohlsearch<CR>";
         options.desc = "Clear search highlight";
       }
+      # jjでノーマルモードに戻る
+      {
+        mode = "i";
+        key = "jj";
+        action = "<Esc>";
+        options.desc = "Exit insert mode";
+      }
+      {
+        mode = "i";
+        key = "jk";
+        action = "<Esc>";
+        options.desc = "Exit insert mode";
+      }
 
       # ===== バッファ操作 =====
       {
@@ -661,7 +674,7 @@
       {
         mode = "n";
         key = "<leader>gg";
-        action = "<cmd>lua require('toggleterm.terminal').Terminal:new({cmd='lazygit', direction='float'}):toggle()<CR>";
+        action = "<cmd>lua _lazygit_toggle()<CR>";
         options.desc = "Lazygit";
       }
 
@@ -745,6 +758,25 @@
           border = "curved",
         },
       })
+
+      -- Lazygit専用ターミナル (別インスタンスとして管理)
+      local Terminal = require("toggleterm.terminal").Terminal
+      local lazygit = Terminal:new({
+        cmd = "lazygit",
+        dir = "git_dir",
+        direction = "float",
+        hidden = true,
+        float_opts = {
+          border = "curved",
+        },
+        on_open = function(term)
+          vim.cmd("startinsert!")
+        end,
+      })
+
+      function _lazygit_toggle()
+        lazygit:toggle()
+      end
     '';
   };
 }
