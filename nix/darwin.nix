@@ -28,7 +28,6 @@
       "modularml/packages"
       "oven-sh/bun"
     ];
-    
     brews = [
       "node"
     ];
@@ -80,7 +79,17 @@
       "com.apple.trackpad.scaling" = 1.5;
     };
   };
-
+  # Google日本語入力の入力ソースを設定
+  system.activationScripts.postActivation.text = ''
+    echo "Setting up Google Japanese IME input sources..."
+    sudo -u ${username} /usr/bin/defaults write com.apple.HIToolbox AppleEnabledInputSources -array \
+      '{ "Bundle ID" = "com.google.inputmethod.Japanese"; InputSourceKind = "Keyboard Input Method"; }' \
+      '{ "Bundle ID" = "com.google.inputmethod.Japanese"; "Input Mode" = "com.google.inputmethod.Japanese.base"; InputSourceKind = "Input Mode"; }' \
+      '{ "Bundle ID" = "com.google.inputmethod.Japanese"; "Input Mode" = "com.google.inputmethod.Japanese.Roman"; InputSourceKind = "Input Mode"; }'
+    
+    # 設定を即座に反映
+    sudo -u ${username} /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u
+  '';
   # システムバージョン
   system.stateVersion = 5;
 }
