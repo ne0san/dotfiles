@@ -6,8 +6,6 @@
   home.stateVersion = "25.05";
   home.packages = with pkgs; [
     devenv
-    direnv
-    nix-direnv
     ripgrep
     cmake
     git-secrets
@@ -56,7 +54,7 @@
     };
     
     # setopt系
-    autocd = true;# tet
+    autocd = true;
     
     # その他のinitExtra（宣言的にできない部分だけ）
     initContent = ''
@@ -64,7 +62,6 @@
       setopt correct_all
       export PATH=/Users/${username}/.tiup/bin:$PATH
       export RUBY_TCP_NO_FAST_FALLBACK=1
-      eval "$(/etc/profiles/per-user/${username}/bin/direnv hook zsh)"
       . "/etc/profiles/per-user/${username}/etc/profile.d/hm-session-vars.sh"
     '';
   };
@@ -90,5 +87,9 @@
         template = "/Users/${username}/.stCommitMsg";
       };
     };
+  };
+  programs.direnv = {
+    enable = true;
+    nix-direnv.enable = true;
   };
 }
