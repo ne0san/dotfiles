@@ -56,7 +56,7 @@
     };
     
     # setopt系
-    autocd = true;
+    autocd = true;# tet
     
     # その他のinitExtra（宣言的にできない部分だけ）
     initContent = ''
