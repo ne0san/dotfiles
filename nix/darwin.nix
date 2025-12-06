@@ -102,18 +102,6 @@
 
     # 設定を即座に反映
     sudo -u ${username} /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u
-
-    # TODO: Google日本語入力のライブ変換をオフにする設定
-    # 現状、自動化する方法が不明のため、手動で以下の設定を行ってください：
-    # 1. Google日本語入力の設定を開く
-    # 2. 「入力補助」タブで「ライブ変換」のチェックを外す
-    # これによりWindowsのIMEのようにスペースキーを押して初めて変換されるようになります
-
-    # TODO: デフォルトブラウザをArcに設定
-    # 以下のコマンドで設定できますが、確認ダイアログが表示されます：
-    # brew install defaultbrowser (未インストールの場合)
-    # defaultbrowser arc
-    # または、Arc.app > Set as Default Browser を手動で選択してください
   '';
   # システムバージョン
   system.stateVersion = 5;
