@@ -92,6 +92,9 @@
     enableKeyMapping = true;
     remapCapsLockToControl = true;  # CapsLockをControlに変更
   };
+
+  # 起動音をオフ
+  system.startup.chime = false;
   # Google日本語入力の入力ソースを設定
   system.activationScripts.postActivation.text = ''
     echo "Setting up Google Japanese IME input sources..."
