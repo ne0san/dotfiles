@@ -57,7 +57,17 @@
     
     # setopt系
     autocd = true;
-    
+
+    # zprofileに書く内容（ログインシェル時に実行）
+    profileExtra = ''
+      # Homebrewのパスを追加
+      if [ -d "/opt/homebrew" ]; then
+        eval "$(/opt/homebrew/bin/brew shellenv)"
+      elif [ -d "/usr/local/Homebrew" ]; then
+        eval "$(/usr/local/bin/brew shellenv)"
+      fi
+    '';
+
     # その他のinitExtra（宣言的にできない部分だけ）
     initContent = ''
       setopt correct

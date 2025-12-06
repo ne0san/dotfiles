@@ -86,6 +86,12 @@
       };
     };
   };
+
+  # キーボード設定
+  system.keyboard = {
+    enableKeyMapping = true;
+    remapCapsLockToControl = true;  # CapsLockをControlに変更
+  };
   # Google日本語入力の入力ソースを設定
   system.activationScripts.postActivation.text = ''
     echo "Setting up Google Japanese IME input sources..."
@@ -93,7 +99,7 @@
       '{ "Bundle ID" = "com.google.inputmethod.Japanese"; InputSourceKind = "Keyboard Input Method"; }' \
       '{ "Bundle ID" = "com.google.inputmethod.Japanese"; "Input Mode" = "com.google.inputmethod.Japanese.base"; InputSourceKind = "Input Mode"; }' \
       '{ "Bundle ID" = "com.google.inputmethod.Japanese"; "Input Mode" = "com.google.inputmethod.Japanese.Roman"; InputSourceKind = "Input Mode"; }'
-    
+
     # 設定を即座に反映
     sudo -u ${username} /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u
   '';
