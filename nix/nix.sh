@@ -1,7 +1,5 @@
 #!/bin/zsh
 
-mv /etc/bashrc /etc/bashrc.backup-before-nix
-
 # Install nix
 # GitHub Actionsで既にNixがインストールされてる場合はスキップ
 if [[ "${NIX_SKIP_INSTALL}" == "true" ]]; then
