@@ -9,3 +9,5 @@ if ! xcode-select --print-path &> /dev/null; then
 else
   echo "Command line tools are already installed."
 fi
+
+sudo softwareupdate --install-rosetta
