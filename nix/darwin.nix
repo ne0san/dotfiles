@@ -84,6 +84,9 @@
         "com.apple.mouse.scaling" = 1.0;
         "com.apple.scrollwheel.scaling" = 0.4412;
       };
+      "com.apple.PowerChime" = {
+        ChimeOnAllHardware = false;
+      };
     };
   };
 
