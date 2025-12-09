@@ -15,7 +15,6 @@
     elixir
     nil  # Nix LSP
     lua-language-server
-    lazygit
   ];
   home.file = {
   };
@@ -103,5 +102,13 @@
   programs.direnv = {
     enable = true;
     nix-direnv.enable = true;
+  };
+  programs.lazygit = {
+    enable = true;
+    settings = {
+      gui = {
+        language = "ja";
+      };
+    };
   };
 }
