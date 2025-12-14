@@ -14,7 +14,27 @@
       mapleader = " ";
       maplocalleader = ",";
     };
-
+    autoCmd = [
+      {
+        event = "FileType";
+        pattern = [
+          "neo-tree"
+          "NvimTree"
+          "TelescopePrompt"
+          "qf"
+          "help"
+          "aerial"
+          "alpha"
+        ];
+        callback = {
+          __raw = ''
+            function()
+              vim.opt_local.buflisted = false
+            end
+          '';
+        };
+      }
+    ];
     opts = {
       # 行番号
       number = true;
@@ -113,6 +133,10 @@
           };
           # Nix
           nil_ls = {
+            enable = true;
+          };
+          # go
+          gopls = {
             enable = true;
           };
         };

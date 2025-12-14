@@ -15,6 +15,7 @@
     elixir
     nil  # Nix LSP
     lua-language-server
+    go
   ];
   home.file = {
   };
