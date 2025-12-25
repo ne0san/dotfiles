@@ -16,6 +16,7 @@
     nil  # Nix LSP
     lua-language-server
     go
+    winetricks
   ];
   home.file = {
   };
