@@ -29,7 +29,6 @@
       "oven-sh/bun"
     ];
     brews = [
-      "node"
     ];
   
     casks = [
