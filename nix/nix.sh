@@ -5,11 +5,11 @@
 if [[ "${NIX_SKIP_INSTALL}" == "true" ]]; then
   echo "Nix installation skipped (already installed)"
 else
-  echo "Installing Nix..."
-  sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install)
+  echo "Installing Determinate Nix..."
+  curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install --no-confirm
 fi
 
-. /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh 
+. /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
 
 # nix-darwin build
 sudo mv /etc/nix/nix.conf /etc/nix/nix.conf.before-nix-darwin
