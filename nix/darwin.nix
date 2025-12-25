@@ -3,7 +3,8 @@
 {
   # Nix設定
   nix.settings.experimental-features = "nix-command flakes";
-  
+  nix.settings.trusted-users = [ "root" "@admin" ];
+
   system.primaryUser = username;
 
   users.users.${username} = {
