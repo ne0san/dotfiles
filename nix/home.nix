@@ -21,6 +21,8 @@
     nerd-fonts.symbols-only
     gopls
     nodejs
+    yazi
+    zellij
   ];
   home.file = {
   };
@@ -123,6 +125,13 @@
       theme = "onedark";
       editor = {
         lsp.display-messages = true;
+        cursor-shape = {
+          insert = "bar";
+          select = "underline";
+        };
+        file-picker = {
+          hidden = false;
+        };
       };
     };
     languages = {
