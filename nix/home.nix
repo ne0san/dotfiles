@@ -132,6 +132,10 @@
         file-picker = {
           hidden = false;
         };
+        inline-diagnostics = {
+          cursor-line = "hint";
+          other-lines = "warning";
+        };
       };
     };
     languages = {
