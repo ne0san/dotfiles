@@ -357,7 +357,7 @@
           current_line_blame_opts = {
             virt_text = true;
             virt_text_pos = "right_align";  # 行末に表示
-            delay = 300;  # 表示までの遅延(ms)
+            delay = 0;  # 表示までの遅延(ms)
           };
           current_line_blame_formatter = "<author>, <author_time:%Y-%m-%d> - <summary>";
         };
@@ -466,12 +466,6 @@
       {
         mode = "i";
         key = "jj";
-        action = "<Esc>";
-        options.desc = "Exit insert mode";
-      }
-      {
-        mode = "i";
-        key = "jk";
         action = "<Esc>";
         options.desc = "Exit insert mode";
       }
@@ -722,7 +716,7 @@
       # ===== Git =====
       {
         mode = "n";
-        key = "<leader>gg";
+        key = "<leader>g";
         action = "<cmd>lua _lazygit_toggle()<CR>";
         options.desc = "Lazygit";
       }
@@ -768,7 +762,6 @@
         { "<leader>f", group = "Find" },
         { "<leader>l", group = "LSP" },
         { "<leader>t", group = "Terminal" },
-        { "<leader>g", group = "Git" },
       })
     '';
 
