@@ -248,6 +248,7 @@
                   val = "  Find File";
                   on_press.__raw = "function() require('telescope.builtin').find_files() end";
                   opts = {
+                    keymap = ["n" "f" ":Telescope find_files<CR>" { silent = true; noremap = true; }];
                     shortcut = "f";
                     position = "center";
                     cursor = 3;
@@ -261,6 +262,7 @@
                   val = "  New File";
                   on_press.__raw = "function() vim.cmd('ene') end";
                   opts = {
+                    keymap = ["n" "n" ":ene<CR>" { silent = true; noremap = true; }];
                     shortcut = "n";
                     position = "center";
                     cursor = 3;
@@ -274,6 +276,7 @@
                   val = "  Recent Files";
                   on_press.__raw = "function() require('telescope.builtin').oldfiles() end";
                   opts = {
+                    keymap = ["n" "r" ":Telescope oldfiles<CR>" { silent = true; noremap = true; }];
                     shortcut = "r";
                     position = "center";
                     cursor = 3;
@@ -287,6 +290,7 @@
                   val = "  Quit";
                   on_press.__raw = "function() vim.cmd('qa') end";
                   opts = {
+                    keymap = ["n" "q" ":qa<CR>" { silent = true; noremap = true; }];
                     shortcut = "q";
                     position = "center";
                     cursor = 3;
@@ -348,6 +352,15 @@
       # Git signs
       gitsigns = {
         enable = true;
+        settings = {
+          current_line_blame = true;  # 現在行のblame表示
+          current_line_blame_opts = {
+            virt_text = true;
+            virt_text_pos = "right_align";  # 行末に表示
+            delay = 300;  # 表示までの遅延(ms)
+          };
+          current_line_blame_formatter = "<author>, <author_time:%Y-%m-%d> - <summary>";
+        };
       };
 
       # Autopairs
@@ -421,6 +434,18 @@
         settings = {
           ignored_filetypes = ["nofile" "quickfix" "prompt"];
           ignored_buftypes = ["NvimTree"];
+        };
+      };
+
+      # ttiny-inline-diagnostic(インラインで診断メッセージ)
+      tiny-inline-diagnostic = {
+        enable = true;
+        settings = {
+          preset = "modern";  # "ghost", "classic", "modern"から選べる
+          options = {
+            show_source = true;
+            multilines = true;
+          };
         };
       };
     };
@@ -513,25 +538,25 @@
       # ウィンドウリサイズ
       {
         mode = "n";
-        key = "<C-Up>";
+        key = "<S-Up>";
         action.__raw = "function() require('smart-splits').resize_up() end";
         options.desc = "Resize window up";
       }
       {
         mode = "n";
-        key = "<C-Down>";
+        key = "<S-Down>";
         action.__raw = "function() require('smart-splits').resize_down() end";
         options.desc = "Resize window down";
       }
       {
         mode = "n";
-        key = "<C-Left>";
+        key = "<S-Left>";
         action.__raw = "function() require('smart-splits').resize_left() end";
         options.desc = "Resize window left";
       }
       {
         mode = "n";
-        key = "<C-Right>";
+        key = "<S-Right>";
         action.__raw = "function() require('smart-splits').resize_right() end";
         options.desc = "Resize window right";
       }
@@ -689,7 +714,7 @@
       }
       {
         mode = "t";
-        key = "<Esc><Esc>";
+        key = "<Esc>";
         action = "<C-\\><C-n>";
         options.desc = "Exit terminal mode";
       }
