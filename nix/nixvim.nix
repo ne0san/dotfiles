@@ -67,6 +67,10 @@
       undofile = true;
       updatetime = 250;
       timeoutlen = 300;
+
+      # 折りたたみ
+      foldlevel = 99;        # 最初は全部開いた状態
+      foldlevelstart = 99;   # ファイル開いた時も全部開く
     };
 
     # ========================================
@@ -104,6 +108,15 @@
           yaml
           toml
         ];
+      };
+
+      treesitter-context = {
+        enable = true;
+        settings = {
+          max_lines = 3;  # 表示する最大行数
+          min_window_height = 0;
+          mode = "cursor";  # or "topline"
+        };
       };
 
       # LSP
@@ -447,6 +460,11 @@
             multilines = true;
           };
         };
+      };
+
+      # nvim-ufo lspベースの折りたたみ
+      nvim-ufo = {
+        enable = true;
       };
     };
 
