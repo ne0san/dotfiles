@@ -107,6 +107,7 @@
           bash
           yaml
           toml
+          go
         ];
       };
 
@@ -487,6 +488,19 @@
         action = "<Esc>";
         options.desc = "Exit insert mode";
       }
+      # ===== comment ======
+      {
+        mode = "n";
+        key = "<leader>/";
+        action = "<cmd>lua require('Comment.api').toggle.linewise.current()<CR>";
+        options.desc = "Toggle comment";
+      }
+      {
+        mode = "v";
+        key = "<leader>/";
+        action = "<esc><cmd>lua require('Comment.api').toggle.linewise(vim.fn.visualmode())<CR>";
+        options.desc = "Toggle comment (visual)";
+      }
 
       # ===== バッファ操作 =====
       {
@@ -547,7 +561,6 @@
         action.__raw = "function() require('smart-splits').move_cursor_right() end";
         options.desc = "Move to right window";
       }
-      # ウィンドウリサイズ
       {
         mode = "n";
         key = "<S-Up>";
