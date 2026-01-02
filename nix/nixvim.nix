@@ -471,7 +471,7 @@
       # フォーマッタ
       conform-nvim = {
         enable = true;
-      
+
         # ファイルタイプごとにフォーマッタを設定
         settings = {
           formatters_by_ft = {
@@ -487,7 +487,7 @@
             # 全てのファイルに適用したいやつ
             "*" = [ "trim_whitespace" ];
           };
-          
+
           # 保存時に自動フォーマット (オプション)
           format_on_save = {
             timeout_ms = 500;
