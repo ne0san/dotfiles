@@ -467,6 +467,34 @@
       nvim-ufo = {
         enable = true;
       };
+
+      # フォーマッタ
+      conform-nvim = {
+        enable = true;
+      
+        # ファイルタイプごとにフォーマッタを設定
+        settings = {
+          formatters_by_ft = {
+            lua = [ "stylua" ];
+            python = [ "isort" "black" ];
+            javascript = {
+              __unkeyed-1 = "prettierd";
+              __unkeyed-2 = "prettier";
+              stop_after_first = true;
+            };
+            nix = [ "alejandra" ];
+            go = [ "gofmt" ];
+            # 全てのファイルに適用したいやつ
+            "*" = [ "trim_whitespace" ];
+          };
+          
+          # 保存時に自動フォーマット (オプション)
+          format_on_save = {
+            timeout_ms = 500;
+            lsp_format = "fallback";
+          };
+        };
+      };
     };
 
     # ========================================
@@ -488,6 +516,7 @@
         action = "<Esc>";
         options.desc = "Exit insert mode";
       }
+
       # ===== comment ======
       {
         mode = "n";
@@ -500,6 +529,32 @@
         key = "<leader>/";
         action = "<esc><cmd>lua require('Comment.api').toggle.linewise(vim.fn.visualmode())<CR>";
         options.desc = "Toggle comment (visual)";
+      }
+
+      # ===== fold =====
+      {
+        mode = "n";
+        key = "<leader>z";
+        action = "za";
+        options = {
+          desc = "Toggle fold";
+          silent = true;
+        };
+      }
+
+      # ===== conform =====
+      {
+        mode = "n";
+        key = "<leader>F";
+        action.__raw = ''
+          function()
+            require('conform').format({ async = true })
+          end
+        '';
+        options = {
+          desc = "Format buffer";
+          silent = true;
+        };
       }
 
       # ===== バッファ操作 =====
