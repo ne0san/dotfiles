@@ -556,7 +556,16 @@
           silent = true;
         };
       }
-
+      {
+        mode = "v";
+        key = "<leader>f";
+        action.__raw = ''
+          function()
+            require('conform').format({ async = true })
+          end
+        '';
+        options.desc = "Format selection";
+      }
       # ===== バッファ操作 =====
       {
         mode = "n";
