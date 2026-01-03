@@ -327,6 +327,13 @@
       # Which-key (キーバインドヘルプ)
       which-key = {
         enable = true;
+
+        settings = {
+          delay = 0;
+          win = {
+            border = "rounded";
+          };
+        };
       };
 
       # Lualine (ステータスライン)
