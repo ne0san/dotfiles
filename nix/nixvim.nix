@@ -574,7 +574,7 @@
         settings = {
           # 自動保存・復元の設定
           auto-save = false; # 終了時に自動保存
-          auto-restore = false; # 起動時に自動復元
+          auto-restore = true; # 起動時に自動復元
           auto-create = false; # セッションファイルを自動作成
 
           # セッション保存しないディレクトリ
