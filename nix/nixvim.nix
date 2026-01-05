@@ -94,14 +94,14 @@
       timeoutlen = 300;
 
       # 折りたたみ
-      foldlevel = 99;        # 最初は全部開いた状態
-      foldlevelstart = 99;   # ファイル開いた時も全部開く
+      foldlevel = 99; # 最初は全部開いた状態
+      foldlevelstart = 99; # ファイル開いた時も全部開く
     };
 
     # ========================================
     # Colorscheme (extraPluginsで設定 - モジュールにバグがあるため)
     # ========================================
-    colorscheme = "onedark_vivid";  # onedarkpro.nvimのvividテーマ
+    colorscheme = "onedark_vivid"; # onedarkpro.nvimのvividテーマ
 
     # ========================================
     # Plugins
@@ -139,9 +139,9 @@
       treesitter-context = {
         enable = true;
         settings = {
-          max_lines = 3;  # 表示する最大行数
+          max_lines = 3; # 表示する最大行数
           min_window_height = 0;
-          mode = "cursor";  # or "topline"
+          mode = "topline"; # or "cursor"
         };
       };
 
@@ -287,7 +287,15 @@
                   val = "  Find File";
                   on_press.__raw = "function() require('telescope.builtin').find_files() end";
                   opts = {
-                    keymap = ["n" "f" ":Telescope find_files<CR>" { silent = true; noremap = true; }];
+                    keymap = [
+                      "n"
+                      "f"
+                      ":Telescope find_files<CR>"
+                      {
+                        silent = true;
+                        noremap = true;
+                      }
+                    ];
                     shortcut = "f";
                     position = "center";
                     cursor = 3;
@@ -301,7 +309,15 @@
                   val = "  New File";
                   on_press.__raw = "function() vim.cmd('ene') end";
                   opts = {
-                    keymap = ["n" "n" ":ene<CR>" { silent = true; noremap = true; }];
+                    keymap = [
+                      "n"
+                      "n"
+                      ":ene<CR>"
+                      {
+                        silent = true;
+                        noremap = true;
+                      }
+                    ];
                     shortcut = "n";
                     position = "center";
                     cursor = 3;
@@ -315,7 +331,15 @@
                   val = "  Recent Files";
                   on_press.__raw = "function() require('telescope.builtin').oldfiles() end";
                   opts = {
-                    keymap = ["n" "r" ":Telescope oldfiles<CR>" { silent = true; noremap = true; }];
+                    keymap = [
+                      "n"
+                      "r"
+                      ":Telescope oldfiles<CR>"
+                      {
+                        silent = true;
+                        noremap = true;
+                      }
+                    ];
                     shortcut = "r";
                     position = "center";
                     cursor = 3;
@@ -329,7 +353,15 @@
                   val = "  Quit";
                   on_press.__raw = "function() vim.cmd('qa') end";
                   opts = {
-                    keymap = ["n" "q" ":qa<CR>" { silent = true; noremap = true; }];
+                    keymap = [
+                      "n"
+                      "q"
+                      ":qa<CR>"
+                      {
+                        silent = true;
+                        noremap = true;
+                      }
+                    ];
                     shortcut = "q";
                     position = "center";
                     cursor = 3;
@@ -366,7 +398,7 @@
         enable = true;
         settings = {
           options = {
-            theme = "onedark";  # onedarkproと互換性あり
+            theme = "onedark"; # onedarkproと互換性あり
             globalstatus = true;
           };
         };
@@ -399,11 +431,11 @@
       gitsigns = {
         enable = true;
         settings = {
-          current_line_blame = true;  # 現在行のblame表示
+          current_line_blame = true; # 現在行のblame表示
           current_line_blame_opts = {
             virt_text = true;
-            virt_text_pos = "right_align";  # 行末に表示
-            delay = 0;  # 表示までの遅延(ms)
+            virt_text_pos = "right_align"; # 行末に表示
+            delay = 0; # 表示までの遅延(ms)
           };
           current_line_blame_formatter = "<author>, <author_time:%Y-%m-%d> - <summary>";
         };
@@ -428,7 +460,10 @@
       aerial = {
         enable = true;
         settings = {
-          backends = ["treesitter" "lsp"];
+          backends = [
+            "treesitter"
+            "lsp"
+          ];
           layout = {
             min_width = 30;
             default_direction = "right";
@@ -478,8 +513,12 @@
       smart-splits = {
         enable = true;
         settings = {
-          ignored_filetypes = ["nofile" "quickfix" "prompt"];
-          ignored_buftypes = ["NvimTree"];
+          ignored_filetypes = [
+            "nofile"
+            "quickfix"
+            "prompt"
+          ];
+          ignored_buftypes = [ "NvimTree" ];
         };
       };
 
@@ -487,7 +526,7 @@
       tiny-inline-diagnostic = {
         enable = true;
         settings = {
-          preset = "modern";  # "ghost", "classic", "modern"から選べる
+          preset = "modern"; # "ghost", "classic", "modern"から選べる
           options = {
             show_source = true;
             multilines = true;
@@ -508,7 +547,10 @@
         settings = {
           formatters_by_ft = {
             lua = [ "stylua" ];
-            python = [ "isort" "black" ];
+            python = [
+              "isort"
+              "black"
+            ];
             javascript = {
               __unkeyed-1 = "prettierd";
               __unkeyed-2 = "prettier";
@@ -525,6 +567,43 @@
             timeout_ms = 500;
             lsp_format = "fallback";
           };
+        };
+      };
+      auto-session = {
+        enable = true;
+        settings = {
+          # 自動保存・復元の設定
+          auto-save = false; # 終了時に自動保存
+          auto-restore = false; # 起動時に自動復元
+          auto-create = false; # セッションファイルを自動作成
+
+          # セッション保存しないディレクトリ
+          suppress-dirs = [
+            "~/" # ホームディレクトリ
+            "~/Downloads" # ダウンロードフォルダ
+            "~/Documents" # ドキュメントフォルダ
+            "/tmp" # 一時ファイル
+          ];
+          # セッション保存前に閉じるファイルタイプ
+          close_unsupported_windows = true; # サポートされてないウィンドウを閉じる
+
+          # neo-treeとかのバッファをセッションから除外
+          bypass_save_filetypes = [
+            "neo-tree" # neo-tree
+            "alpha" # alpha（スタート画面）
+          ];
+
+          # 空のセッションは削除
+          auto-delete-empty-sessions = true;
+
+          # Telescope統合（Telescopeを使ってる場合）
+          session-lens = {
+            load-on-setup = true; # Telescope起動時に読み込み
+            previewer = true;
+          };
+
+          # Gitブランチごとにセッションを分ける（オプション）
+          use-git-branch = true;
         };
       };
     };
@@ -867,6 +946,62 @@
         action = "<cmd>qa!<CR>";
         options.desc = "Force quit all";
       }
+
+      # ===== AutoSession ======
+      # セッション検索・選択（Telescope使用）
+      {
+        mode = "n";
+        key = "<leader>ss";
+        action = "<cmd>AutoSession search<CR>";
+        options = {
+          desc = "Search sessions";
+          silent = true;
+        };
+      }
+
+      # セッション保存
+      {
+        mode = "n";
+        key = "<leader>sw";
+        action = "<cmd>AutoSession save<CR>";
+        options = {
+          desc = "Save session";
+          silent = true;
+        };
+      }
+
+      # セッション削除
+      {
+        mode = "n";
+        key = "<leader>sd";
+        action = "<cmd>AutoSession delete<CR>";
+        options = {
+          desc = "Delete session";
+          silent = true;
+        };
+      }
+
+      # 最後のセッションを復元
+      {
+        mode = "n";
+        key = "<leader>sl";
+        action = "<cmd>AutoSession restore_last<CR>";
+        options = {
+          desc = "Restore last session";
+          silent = true;
+        };
+      }
+
+      # 自動保存トグル
+      {
+        mode = "n";
+        key = "<leader>st";
+        action = "<cmd>AutoSession toggle<CR>";
+        options = {
+          desc = "Toggle autosave";
+          silent = true;
+        };
+      }
     ];
 
     # ========================================
@@ -908,7 +1043,7 @@
     # ========================================
     extraPlugins = with pkgs.vimPlugins; [
       toggleterm-nvim
-      onedarkpro-nvim  # カラースキーム
+      onedarkpro-nvim # カラースキーム
     ];
 
     # ToggleTerm setup
