@@ -1018,10 +1018,6 @@
           "alpha",
         },
 
-        pre_save_cmds = {
-          "Neotree close",
-        },
-
         auto_delete_empty_sessions = true,
 
         git_use_branch_name = true,
