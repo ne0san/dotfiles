@@ -571,40 +571,7 @@
       };
       auto-session = {
         enable = true;
-        settings = {
-          # 自動保存・復元の設定
-          auto-save = false; # 終了時に自動保存
-          auto-restore = true; # 起動時に自動復元
-          auto-create = false; # セッションファイルを自動作成
-
-          # セッション保存しないディレクトリ
-          suppress-dirs = [
-            "~/" # ホームディレクトリ
-            "~/Downloads" # ダウンロードフォルダ
-            "~/Documents" # ドキュメントフォルダ
-            "/tmp" # 一時ファイル
-          ];
-          # セッション保存前に閉じるファイルタイプ
-          close_unsupported_windows = true; # サポートされてないウィンドウを閉じる
-
-          # neo-treeとかのバッファをセッションから除外
-          bypass_save_filetypes = [
-            "neo-tree" # neo-tree
-            "alpha" # alpha（スタート画面）
-          ];
-
-          # 空のセッションは削除
-          auto-delete-empty-sessions = true;
-
-          # Telescope統合（Telescopeを使ってる場合）
-          session-lens = {
-            load-on-setup = true; # Telescope起動時に読み込み
-            previewer = true;
-          };
-
-          # Gitブランチごとにセッションを分ける（オプション）
-          use-git-branch = true;
-        };
+        # settingsが一部機能しないためextraConfigLuaで対応
       };
     };
 
@@ -914,7 +881,13 @@
       }
       {
         mode = "t";
-        key = "<Esc>";
+        key = "<Esc><Esc>";
+        action = "<C-\\><C-n>";
+        options.desc = "Exit terminal mode";
+      }
+      {
+        mode = "t";
+        key = "jj";
         action = "<C-\\><C-n>";
         options.desc = "Exit terminal mode";
       }
@@ -1024,6 +997,39 @@
         { "<leader>f", group = "Find" },
         { "<leader>l", group = "LSP" },
         { "<leader>t", group = "Terminal" },
+      })
+
+      require('auto-session').setup({
+        auto_save = true,        -- 自動保存
+        auto_restore = true,     -- 自動復元
+        auto_create = true,      -- 自動作成
+
+        suppressed_dirs = {
+          "~/",
+          "~/Downloads",
+          "~/Documents",
+          "/tmp",
+        },
+
+        close_unsupported_windows = true,
+
+        bypass_save_filetypes = {
+          "neo-tree",
+          "alpha",
+        },
+
+        pre_save_cmds = {
+          "Neotree close",
+        },
+
+        auto_delete_empty_sessions = true,
+
+        git_use_branch_name = true,
+
+        session_lens = {
+          load_on_setup = true,
+          previewer = true,
+        },
       })
     '';
 
