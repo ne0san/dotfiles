@@ -609,17 +609,6 @@
         options.desc = "Toggle comment (visual)";
       }
 
-      # ===== fold =====
-      {
-        mode = "n";
-        key = "<leader>z";
-        action = "za";
-        options = {
-          desc = "Toggle fold";
-          silent = true;
-        };
-      }
-
       # ===== conform =====
       {
         mode = "n";
@@ -644,6 +633,18 @@
         '';
         options.desc = "Format selection";
       }
+
+      # ===== fold =====
+      {
+        mode = "n";
+        key = "<leader>z";
+        action = "za";
+        options = {
+          desc = "Toggle fold";
+          silent = true;
+        };
+      }
+
       # ===== バッファ操作 =====
       {
         mode = "n";
@@ -705,25 +706,25 @@
       }
       {
         mode = "n";
-        key = "<S-Up>";
+        key = "<M-k>";
         action.__raw = "function() require('smart-splits').resize_up() end";
         options.desc = "Resize window up";
       }
       {
         mode = "n";
-        key = "<S-Down>";
+        key = "<M-j>";
         action.__raw = "function() require('smart-splits').resize_down() end";
         options.desc = "Resize window down";
       }
       {
         mode = "n";
-        key = "<S-Left>";
+        key = "<M-h>";
         action.__raw = "function() require('smart-splits').resize_left() end";
         options.desc = "Resize window left";
       }
       {
         mode = "n";
-        key = "<S-Right>";
+        key = "<M-l>";
         action.__raw = "function() require('smart-splits').resize_right() end";
         options.desc = "Resize window right";
       }
@@ -997,6 +998,7 @@
         { "<leader>f", group = "Find" },
         { "<leader>l", group = "LSP" },
         { "<leader>t", group = "Terminal" },
+        { "<leader>s", group = "session" },
       })
 
       require('auto-session').setup({
