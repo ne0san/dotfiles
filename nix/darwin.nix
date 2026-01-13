@@ -1,4 +1,4 @@
-{ config, pkgs, username, ... }:
+{ pkgs, username, ... }:
 
 {
   # Nix設定
@@ -17,12 +17,12 @@
   ];
   homebrew = {
     enable = true;
-    
+
     # darwin-rebuild時に、nixで管理してないbrewパッケージを消すかどうか
     # "none" = 消さない（一時的なやつ残る）
     # "uninstall" = 消す
     onActivation.cleanup = "none";
-    
+
     taps = [
       "aws/tap"
       "modularml/packages"
@@ -30,7 +30,7 @@
     ];
     brews = [
     ];
-  
+
     casks = [
       "font-0xproto-nerd-font"
       "font-daddy-time-mono-nerd-font"

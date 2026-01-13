@@ -106,8 +106,6 @@
     initContent = ''
       setopt correct
       setopt correct_all
-      export PATH=/Users/${username}/.tiup/bin:$PATH
-      export RUBY_TCP_NO_FAST_FALLBACK=1
       . "/etc/profiles/per-user/${username}/etc/profile.d/hm-session-vars.sh"
     '';
   };
