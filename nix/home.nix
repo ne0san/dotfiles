@@ -1,4 +1,4 @@
-{ config, pkgs, username, ... }:
+{ pkgs, username, ... }:
 {
   home.enableNixpkgsReleaseCheck = false;
   home.username = username;
@@ -31,7 +31,7 @@
   programs.home-manager.enable = true;
   programs.zsh = {
     enable = true;
-    autosuggestion.enable = true;     
+    autosuggestion.enable = true;
 
     # oh-my-zshの宣言的設定
     oh-my-zsh = {
@@ -41,7 +41,7 @@
         "git"
       ];
     };
-    
+
     # ヒストリ設定
     history = {
       size = 10000;
@@ -51,7 +51,7 @@
       share = true;
       extended = true;  # HIST_STAMPSの代わり（タイムスタンプ記録）
     };
-    
+
     # エイリアス
     shellAliases = {
       vi = "nvim";
@@ -61,7 +61,7 @@
       drsw = "sudo USER=$USER darwin-rebuild switch --flake ~/dotfiles/nix#ne0san --impure";
       zreload = "source ~/.zshrc";
     };
-    
+
     # setopt系
     autocd = true;
 
@@ -73,6 +73,25 @@
       elif [ -d "/usr/local/Homebrew" ]; then
         eval "$(/usr/local/bin/brew shellenv)"
       fi
+      pgrep() {
+        echo "🚫 pgrep使用禁止！"
+        return 1
+      }
+
+      pkill() {
+        echo "🚫 pkill使用禁止！"
+        return 1
+      }
+
+      killall() {
+        echo "🚫 killall使用禁止！"
+        return 1
+      }
+
+      kill() {
+        echo "🚫 kill使用禁止！"
+        return 1
+      }
     '';
 
     # その他のinitExtra（宣言的にできない部分だけ）
@@ -87,12 +106,12 @@
 
   programs.git = {
     enable = true;
-    
+
     ignores = [
       "*~"
       ".DS_Store"
     ];
-    
+
     settings = {
       user = {
         name = "neosan";
@@ -160,7 +179,7 @@
           ];
         };
       };
-  
+
       language = [
         {
           name = "vue";
