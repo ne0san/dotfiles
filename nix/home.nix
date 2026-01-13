@@ -73,6 +73,14 @@
       elif [ -d "/usr/local/Homebrew" ]; then
         eval "$(/usr/local/bin/brew shellenv)"
       fi
+      bash() {
+        echo "🚫 bash使用禁止！"
+        return 1
+      }
+      sh() {
+        echo "🚫 sh使用禁止！"
+        return 1
+      }
       pgrep() {
         echo "🚫 pgrep使用禁止！"
         return 1
