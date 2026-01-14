@@ -29,6 +29,118 @@
   home.sessionVariables = {
   };
   programs.home-manager.enable = true;
+  programs.starship = {
+    enable = true;
+    # fishで自動的に有効化される
+
+    settings = {
+      # カスタム設定（オプション）
+      add_newline = true;
+
+      character = {
+        success_symbol = "[➜](bold green)";
+        error_symbol = "[➜](bold red)";
+      };
+
+      directory = {
+        truncation_length = 3;
+        truncate_to_repo = true;
+      };
+
+      git_branch = {
+        symbol = "🌱 ";
+      };
+    };
+  };
+  programs.ghostty = {
+    enable = true;
+    package = null;  # macOS用
+    enableFishIntegration = true;
+
+    settings = {
+      command = "${pkgs.fish}/bin/fish";
+      font-family = [
+        "0xProto Nerd Font"
+        "MyricaM M"
+      ];
+      font-size = 10;
+      macos-option-as-alt = true;
+    };
+  };
+  programs.fish = {
+    enable = true;
+
+    # プラグイン設定
+    plugins = [
+      # bassプラグイン - bashスクリプトをfishで実行
+      {
+        name = "bass";
+        src = pkgs.fishPlugins.bass.src;
+      }
+    ];
+    shellInit = ''
+      # Nix daemonのパスを読み込み
+      if test -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.fish
+        source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.fish
+      end
+      # Home Managerのプロファイルパスを明示的に追加
+      fish_add_path --prepend --move --path $HOME/.nix-profile/bin
+      fish_add_path --prepend --move --path /etc/profiles/per-user/$USER/bin
+      fish_add_path --prepend --move --path /run/current-system/sw/bin
+    '';
+    # インタラクティブシェル用の設定
+    interactiveShellInit = ''
+      set fish_greeting
+      # 既存の関数を削除してから再定義
+      functions --erase kill
+      function kill
+        echo "🚫 kill使用禁止！"
+        return 1
+      end
+
+      functions --erase bash
+      function bash
+        echo "🚫 bash使用禁止！"
+        return 1
+      end
+
+      functions --erase sh
+      function sh
+        echo "🚫 sh使用禁止！"
+        return 1
+      end
+
+      functions --erase pgrep
+      function pgrep
+        echo "🚫 pgrep使用禁止！"
+        return 1
+      end
+
+      functions --erase pkill
+      function pkill
+        echo "🚫 pkill使用禁止！"
+        return 1
+      end
+
+      functions --erase killall
+      function killall
+        echo "🚫 killall使用禁止！"
+        return 1
+      end
+    '';
+
+    # 略語設定
+    shellAbbrs = {
+      vi = "nvim";
+      view = "nvim -R";
+      ll = "ls -l";
+      flupd = "nix flake update --flake ~/dotfiles/nix";
+      drsw = "sudo USER=$USER darwin-rebuild switch --flake ~/dotfiles/nix#ne0san --impure";
+      freload = "source ~/.config/fish/config.fish";
+    };
+
+  };
+
   programs.zsh = {
     enable = true;
     autosuggestion.enable = true;

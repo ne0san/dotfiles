@@ -6,18 +6,12 @@ phase1: xcode
 	@echo "\033[0;32mPhase 1 completed.\033[0m"
 
 # Phase 2: Development tools (after phase1, parallel OK)
-phase2: phase1 brew config
+phase2: phase1 brew
 	@echo "\033[0;32mPhase 2 completed.\033[0m"
 
 # Phase 3: Editors and terminal (after phase2, parallel OK)
 phase3: phase2 nix
 	@echo "\033[0;32mPhase 3 completed.\033[0m"
-
-# Create symbolic link of ConfigFile
-config:
-	@echo "\033[0;34mRun config.sh\033[0m"
-	@.config/config.sh
-	@echo "\033[0;32mDone.\033[0m"
 
 # Install Xcode
 xcode:
@@ -38,4 +32,4 @@ nix:
 	@echo $$PATH
 	@echo "\033[0;32mDone.\033[0m"
 
-.PHONY: all phase1 phase2 phase3 xcode brew nix config
+.PHONY: all phase1 phase2 phase3 xcode brew nix

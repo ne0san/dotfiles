@@ -101,12 +101,33 @@
     # ========================================
     # Colorscheme (extraPluginsで設定 - モジュールにバグがあるため)
     # ========================================
-    colorscheme = "onedark_vivid"; # onedarkpro.nvimのvividテーマ
-
+    colorschemes.onedark = {
+      enable = true;
+    };
     # ========================================
     # Plugins
     # ========================================
     plugins = {
+      toggleterm = {
+        enable = true;
+        settings = {
+          size = ''
+            function(term)
+              if term.direction == "horizontal" then
+                return 15
+              elseif term.direction == "vertical" then
+                return vim.o.columns * 0.4
+              end
+            end
+          '';
+          open_mapping = "[[<c-\\>]]";
+          direction = "float";
+          shell = "${pkgs.fish}/bin/fish";
+          float_opts = {
+            border = "curved";
+          };
+        };
+      };
       # Treesitter
       treesitter = {
         enable = true;
@@ -273,6 +294,7 @@
               opts = {
                 position = "center";
                 hl = "Type";
+                shell = "${pkgs.fish}/bin/fish";
               };
             }
             {
@@ -657,6 +679,24 @@
         key = "[b";
         action = "<cmd>bprevious<CR>";
         options.desc = "Previous buffer";
+      }
+      {
+        mode = "n";
+        key = "<leader>bn";
+        action = "<cmd>bnext<CR>";
+        options.desc = "Next buffer";
+      }
+      {
+        mode = "n";
+        key = "<leader>bn";
+        action = "<cmd>bprevious<CR>";
+        options.desc = "Previous buffer";
+      }
+      {
+        mode = "n";
+        key = "<leader>bf";
+        action = "<cmd>Telescope buffers<CR>";
+        options.desc = "Find buffers";
       }
       {
         mode = "n";
@@ -1046,27 +1086,11 @@
     # Extra Plugins
     # ========================================
     extraPlugins = with pkgs.vimPlugins; [
-      toggleterm-nvim
       onedarkpro-nvim # カラースキーム
     ];
 
     # ToggleTerm setup
     extraConfigLuaPost = ''
-      require("toggleterm").setup({
-        size = function(term)
-          if term.direction == "horizontal" then
-            return 15
-          elseif term.direction == "vertical" then
-            return vim.o.columns * 0.4
-          end
-        end,
-        open_mapping = [[<c-\>]],
-        direction = "float",
-        float_opts = {
-          border = "curved",
-        },
-      })
-
       -- Lazygit専用ターミナル (別インスタンスとして管理)
       local Terminal = require("toggleterm.terminal").Terminal
       local lazygit = Terminal:new({
