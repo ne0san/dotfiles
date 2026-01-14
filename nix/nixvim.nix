@@ -708,7 +708,7 @@
         mode = "n";
         key = "<leader>bD";
         action = "<cmd>!bdelete<CR>";
-        options.desc = "Delete buffer";
+        options.desc = "Force delete buffer";
       }
 
       # ===== ウィンドウ分割 (AstroNvim風) =====
