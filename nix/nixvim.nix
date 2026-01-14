@@ -688,7 +688,7 @@
       }
       {
         mode = "n";
-        key = "<leader>bn";
+        key = "<leader>bp";
         action = "<cmd>bprevious<CR>";
         options.desc = "Previous buffer";
       }
@@ -702,6 +702,12 @@
         mode = "n";
         key = "<leader>bd";
         action = "<cmd>bdelete<CR>";
+        options.desc = "Delete buffer";
+      }
+      {
+        mode = "n";
+        key = "<leader>bD";
+        action = "<cmd>!bdelete<CR>";
         options.desc = "Delete buffer";
       }
 
