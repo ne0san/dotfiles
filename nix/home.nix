@@ -67,12 +67,10 @@
 
     # zprofileに書く内容（ログインシェル時に実行）
     profileExtra = ''
-      # Homebrewのパスを追加
-      if [ -d "/opt/homebrew" ]; then
-        eval "$(/opt/homebrew/bin/brew shellenv)"
-      elif [ -d "/usr/local/Homebrew" ]; then
-        eval "$(/usr/local/bin/brew shellenv)"
-      fi
+      brew() {
+        echo "🚫 brew使用禁止！"
+        return 1
+      }
       bash() {
         echo "🚫 bash使用禁止！"
         return 1
@@ -106,7 +104,6 @@
     initContent = ''
       setopt correct
       setopt correct_all
-      . "/etc/profiles/per-user/${username}/etc/profile.d/hm-session-vars.sh"
     '';
   };
 
