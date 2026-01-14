@@ -34,7 +34,19 @@
     # fishで自動的に有効化される
 
     settings = {
-      # カスタム設定（オプション）
+
+      format = "$all$time$status$character";
+
+      time = {
+        disabled = false;
+        format = "🕐 [$time]($style) ";
+        time_format = "%T";
+      };
+
+      status = {
+        disabled = false;
+        format = "[$symbol$status]($style) ";
+      };
       add_newline = true;
 
       character = {
@@ -48,7 +60,7 @@
       };
 
       git_branch = {
-        symbol = "🌱 ";
+        symbol = "🔧 ";
       };
     };
   };
