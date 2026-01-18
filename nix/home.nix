@@ -31,8 +31,6 @@
   programs.home-manager.enable = true;
   programs.starship = {
     enable = true;
-    # fishで自動的に有効化される
-
     settings = {
 
       format = "$all$time$status$character";
@@ -82,9 +80,7 @@
   programs.fish = {
     enable = true;
 
-    # プラグイン設定
     plugins = [
-      # bassプラグイン - bashスクリプトをfishで実行
       {
         name = "bass";
         src = pkgs.fishPlugins.bass.src;
@@ -137,6 +133,11 @@
       functions --erase killall
       function killall
         echo "🚫 killall使用禁止！"
+        return 1
+      end
+
+      function brew
+        echo "🚫 brew使用禁止！"
         return 1
       end
     '';
