@@ -64,6 +64,7 @@
       # 行番号
       number = true;
       relativenumber = true;
+      cursorline = true;
 
       # サインカラム
       signcolumn = "yes";
@@ -594,6 +595,15 @@
       auto-session = {
         enable = true;
         # settingsが一部機能しないためextraConfigLuaで対応
+      };
+
+      vim-highlightedyank = {
+        enable = true;
+        # ハイライトの表示時間（ミリ秒）
+        highlightDuration = 300;  # デフォルトは1000msだけど、300msくらいがちょうどいい感じ
+      };
+      plugins.modicator = {
+        enable = true;
       };
     };
 
