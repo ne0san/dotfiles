@@ -53,7 +53,7 @@
       };
 
       directory = {
-        truncation_length = 3;
+        truncation_length = 99;
         truncate_to_repo = true;
       };
 
@@ -99,47 +99,6 @@
     # インタラクティブシェル用の設定
     interactiveShellInit = ''
       set fish_greeting
-      # 既存の関数を削除してから再定義
-      functions --erase kill
-      function kill
-        echo "🚫 kill使用禁止！"
-        return 1
-      end
-
-      functions --erase bash
-      function bash
-        echo "🚫 bash使用禁止！"
-        return 1
-      end
-
-      functions --erase sh
-      function sh
-        echo "🚫 sh使用禁止！"
-        return 1
-      end
-
-      functions --erase pgrep
-      function pgrep
-        echo "🚫 pgrep使用禁止！"
-        return 1
-      end
-
-      functions --erase pkill
-      function pkill
-        echo "🚫 pkill使用禁止！"
-        return 1
-      end
-
-      functions --erase killall
-      function killall
-        echo "🚫 killall使用禁止！"
-        return 1
-      end
-
-      function brew
-        echo "🚫 brew使用禁止！"
-        return 1
-      end
     '';
 
     # 略語設定
@@ -189,41 +148,6 @@
 
     # setopt系
     autocd = true;
-
-    # zprofileに書く内容（ログインシェル時に実行）
-    profileExtra = ''
-      brew() {
-        echo "🚫 brew使用禁止！"
-        return 1
-      }
-      bash() {
-        echo "🚫 bash使用禁止！"
-        return 1
-      }
-      sh() {
-        echo "🚫 sh使用禁止！"
-        return 1
-      }
-      pgrep() {
-        echo "🚫 pgrep使用禁止！"
-        return 1
-      }
-
-      pkill() {
-        echo "🚫 pkill使用禁止！"
-        return 1
-      }
-
-      killall() {
-        echo "🚫 killall使用禁止！"
-        return 1
-      }
-
-      kill() {
-        echo "🚫 kill使用禁止！"
-        return 1
-      }
-    '';
 
     # その他のinitExtra（宣言的にできない部分だけ）
     initContent = ''

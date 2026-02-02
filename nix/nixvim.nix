@@ -200,6 +200,9 @@
           gopls = {
             enable = true;
           };
+          jsonls = {
+            enable = true;
+          };
         };
       };
 
@@ -421,7 +424,7 @@
         enable = true;
         settings = {
           options = {
-            theme = "onedark"; # onedarkproと互換性あり
+            theme = "onedark";
             globalstatus = true;
           };
         };
@@ -549,7 +552,7 @@
       tiny-inline-diagnostic = {
         enable = true;
         settings = {
-          preset = "modern"; # "ghost", "classic", "modern"から選べる
+          preset = "modern"; # "ghost", "classic", "modern"
           options = {
             show_source = true;
             multilines = true;
@@ -594,15 +597,13 @@
       };
       auto-session = {
         enable = true;
-        # settingsが一部機能しないためextraConfigLuaで対応
       };
 
-      vim-highlightedyank = {
+      modicator = {
         enable = true;
-        # ハイライトの表示時間（ミリ秒）
-        highlightDuration = 300;  # デフォルトは1000msだけど、300msくらいがちょうどいい感じ
       };
-      plugins.modicator = {
+
+      vim-bbye = {
         enable = true;
       };
     };
@@ -710,17 +711,57 @@
       }
       {
         mode = "n";
-        key = "<leader>bd";
-        action = "<cmd>bdelete<CR>";
-        options.desc = "Delete buffer";
+        key = "<leader>bD";
+        action = "<cmd>Bdelete!<CR>";
+        options = {
+          silent = true;
+          desc = "Force delete buffer keep window";
+        };
       }
       {
         mode = "n";
-        key = "<leader>bD";
-        action = "<cmd>!bdelete<CR>";
-        options.desc = "Force delete buffer";
+        key = "<leader>bd";
+        action = "<cmd>Bdelete<CR>";
+        options = {
+          silent = true;
+          desc = "Delete buffer keep window";
+        };
       }
-
+      {
+        mode = "n";
+        key = "<leader>bc";
+        action = "<cmd>DiffBuffers<CR>";
+        options = {
+          silent = true;
+          desc = "Compare with another buffer";
+        };
+      }
+      {
+        mode = "n";
+        key = "<leader>bo";
+        action = "<cmd>DiffOff<CR>";
+        options = {
+          silent = true;
+          desc = "Turn off diff mode";
+        };
+      }
+      # 差分間の移動
+      {
+        mode = "n";
+        key = "]c";
+        action = "]c";
+        options = {
+          desc = "Next diff";
+        };
+      }
+      {
+        mode = "n";
+        key = "[c";
+        action = "[c";
+        options = {
+          desc = "Previous diff";
+        };
+      }
       # ===== ウィンドウ分割 (AstroNvim風) =====
       {
         mode = "n";
@@ -1032,6 +1073,61 @@
           silent = true;
         };
       }
+
+      {
+        mode = "n";
+        key = "<leader>yr";
+        action = "<cmd>CopyRelPath<CR>";
+        options = {
+          silent = true;
+          desc = "Yank relative path";
+        };
+      }
+      {
+        mode = "n";
+        key = "<leader>ya";
+        action = "<cmd>CopyAbsPath<CR>";
+        options = {
+          silent = true;
+          desc = "Yank absolute path";
+        };
+      }
+      {
+        mode = "n";
+        key = "<leader>yf";
+        action = "<cmd>CopyFileName<CR>";
+        options = {
+          silent = true;
+          desc = "Yank file name";
+        };
+      }
+      {
+        mode = "n";
+        key = "<leader>yy";
+        action = "<cmd>%y+<CR>";
+        options = {
+          silent = true;
+          desc = "Yank entire file to clipboard";
+        };
+      }
+      {
+        mode = "n";
+        key = "<leader>D";
+        action = "<cmd>%d_<CR>";
+        options = {
+          silent = true;
+          desc = "Delete all buffer content (no yank)";
+        };
+      }
+      {
+        mode = "n";
+        key = "<leader>np";
+        action = "<cmd>PasteNewBuffer<CR>";
+        options = {
+          silent = true;
+          desc = "New buffer from clipboard";
+        };
+      }
     ];
 
     # ========================================
@@ -1054,7 +1150,8 @@
         { "<leader>f", group = "Find" },
         { "<leader>l", group = "LSP" },
         { "<leader>t", group = "Terminal" },
-        { "<leader>s", group = "session" },
+        { "<leader>s", group = "Session" },
+        { "<leader>y", group = "Yank" },
       })
 
       require('auto-session').setup({
@@ -1085,10 +1182,89 @@
           previewer = true,
         },
       })
+      -- ヤンク時に自動でハイライト
+      vim.api.nvim_create_autocmd('TextYankPost', {
+        group = vim.api.nvim_create_augroup('highlight_yank', {}),
+        pattern = '*',
+        callback = function()
+          vim.highlight.on_yank({
+            higroup = 'IncSearch',  -- ハイライトグループ
+            timeout = 100,          -- 表示時間（ミリ秒）
+          })
+        end,
+      })
+
+      -- :bdを:Bdeleteに上書き
+      vim.api.nvim_create_user_command('Bd', 'Bdelete', { force = true })
+      vim.cmd('cnoreabbrev bd Bdelete')
+      vim.cmd('cnoreabbrev bdelete Bdelete')
+
+      -- 相対パスをクリップボードにコピー
+      vim.api.nvim_create_user_command('CopyRelPath', function()
+        local path = vim.fn.expand('%')
+        vim.fn.setreg('+', path)
+        vim.notify('Copied: ' .. path, vim.log.levels.INFO)
+      end, {})
+
+      -- 絶対パスもついでに！
+      vim.api.nvim_create_user_command('CopyAbsPath', function()
+        local path = vim.fn.expand('%:p')
+        vim.fn.setreg('+', path)
+        vim.notify('Copied: ' .. path, vim.log.levels.INFO)
+      end, {})
+
+      -- ファイル名だけコピーしたいときもあるよね
+      vim.api.nvim_create_user_command('CopyFileName', function()
+        local path = vim.fn.expand('%:t')
+        vim.fn.setreg('+', path)
+        vim.notify('Copied: ' .. path, vim.log.levels.INFO)
+      end, {})
+
+      vim.api.nvim_create_user_command('PasteNewBuffer', function()
+        -- クリップボードの内容を取得
+        local content = vim.fn.getreg('+')
+        -- 新規バッファ作成
+        vim.cmd('enew')
+
+        -- クリップボードの内容を貼り付け
+        vim.api.nvim_put(vim.split(content, '\n'), 'l', true, true)
+
+        vim.notify('Created new buffer from clipboard', vim.log.levels.INFO)
+      end, {})
+      -- バッファ比較
+      vim.api.nvim_create_user_command('DiffBuffers', function()
+        local current_buf = vim.api.nvim_get_current_buf()
+        local buffers = vim.fn.getbufinfo({buflisted = 1})
+        local buf_names = {}
+
+        for _, buf in ipairs(buffers) do
+          if buf.bufnr ~= current_buf then
+            table.insert(buf_names, buf.name ~= "" and buf.name or '[No Name]')
+          end
+        end
+
+        if #buf_names == 0 then
+          vim.notify('No other buffers to compare!', vim.log.levels.WARN)
+          return
+        end
+
+        vim.ui.select(buf_names, {
+          prompt = 'Select buffer to compare:',
+        }, function(choice)
+          if choice then
+            vim.cmd('vertical diffsplit ' .. vim.fn.fnameescape(choice))
+          end
+        end)
+      end, {})
+
+      vim.api.nvim_create_user_command('DiffOff', function()
+        vim.cmd('diffoff!')
+      end, {})
     '';
 
     # Rainbow highlight colors - ibl.setupより前に定義する必要あり
     extraConfigLuaPre = ''
+      vim.opt.shortmess:append("I")
       vim.api.nvim_set_hl(0, "RainbowRed", { fg = "#E06C75" })
       vim.api.nvim_set_hl(0, "RainbowYellow", { fg = "#E5C07B" })
       vim.api.nvim_set_hl(0, "RainbowBlue", { fg = "#61AFEF" })
