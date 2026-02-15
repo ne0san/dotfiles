@@ -1,6 +1,9 @@
-{ pkgs, username, ... }:
+{ pkgs, lib, username, ... }:
 
 {
+  nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
+    "1password-cli"
+  ];
   # Nix設定
   nix.settings.experimental-features = "nix-command flakes";
   nix.settings.trusted-users = [ "root" "@admin" ];
@@ -32,6 +35,7 @@
     ];
 
     casks = [
+      "1password"
       "font-0xproto-nerd-font"
       "font-daddy-time-mono-nerd-font"
       "font-hack-nerd-font"

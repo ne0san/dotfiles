@@ -23,10 +23,18 @@
     nodejs
     yazi
     zellij
+    _1password-cli
   ];
   home.file = {
   };
   home.sessionVariables = {
+  };
+  services.ollama = {
+    enable = true;
+    # オプション: ホストアドレス設定（デフォルトは127.0.0.1）
+    host = "127.0.0.1";
+    # オプション: ポート設定（デフォルトは11434）
+    port = 11434;
   };
   programs.home-manager.enable = true;
   programs.starship = {

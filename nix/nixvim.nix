@@ -1128,6 +1128,132 @@
           desc = "New buffer from clipboard";
         };
       }
+      # ===== CodeCompanion =====
+      {
+        mode = [
+          "n"
+          "v"
+        ];
+        key = "<C-a>";
+        action = "<cmd>CodeCompanionActions<cr>";
+        options = {
+          desc = "CodeCompanion Actions";
+          silent = true;
+          noremap = true;
+        };
+      }
+      {
+        mode = [
+          "n"
+          "v"
+        ];
+        key = "<leader>ac";
+        action = "<cmd>CodeCompanionChat Toggle<cr>";
+        options = {
+          desc = "Toggle CodeCompanion Chat";
+          silent = true;
+          noremap = true;
+        };
+      }
+      {
+        mode = "v";
+        key = "<leader>aa";
+        action = "<cmd>CodeCompanionChat Add<cr>";
+        options = {
+          desc = "Add to CodeCompanion Chat";
+          silent = true;
+          noremap = true;
+        };
+      }
+      {
+        mode = "n";
+        key = "<leader>ai";
+        action = "<cmd>CodeCompanion<cr>";
+        options = {
+          desc = "Inline CodeCompanion";
+          silent = true;
+          noremap = true;
+        };
+      }
+      {
+        mode = "n";
+        key = "<M-Tab>";
+        action.__raw = ''
+          function()
+            local current = vim.api.nvim_get_current_buf()
+            local buffers = vim.api.nvim_list_bufs()
+
+            -- 通常バッファだけをフィルタリング
+            local normal_bufs = {}
+            for _, buf in ipairs(buffers) do
+              if vim.api.nvim_buf_is_valid(buf)
+                 and vim.bo[buf].buflisted
+                 and vim.bo[buf].buftype == "" -- 特殊バッファを除外
+                 and vim.api.nvim_buf_get_name(buf) ~= "" then
+                table.insert(normal_bufs, buf)
+              end
+            end
+
+            -- 現在のバッファの次を探す
+            for i, buf in ipairs(normal_bufs) do
+              if buf == current then
+                local next_buf = normal_bufs[i + 1] or normal_bufs[1]
+                vim.api.nvim_set_current_buf(next_buf)
+                return
+              end
+            end
+
+            -- 見つからなかったら最初のバッファへ
+            if #normal_bufs > 0 then
+              vim.api.nvim_set_current_buf(normal_bufs[1])
+            end
+          end
+        '';
+        options = {
+          desc = "次の通常バッファに移動";
+          silent = true;
+        };
+      }
+
+      {
+        mode = "n";
+        key = "<M-S-Tab>";
+        action.__raw = ''
+          function()
+            local current = vim.api.nvim_get_current_buf()
+            local buffers = vim.api.nvim_list_bufs()
+
+            -- 通常バッファだけをフィルタリング
+            local normal_bufs = {}
+            for _, buf in ipairs(buffers) do
+              if vim.api.nvim_buf_is_valid(buf)
+                 and vim.bo[buf].buflisted
+                 and vim.bo[buf].buftype == "" -- 特殊バッファを除外
+                 and vim.api.nvim_buf_get_name(buf) ~= "" then
+                table.insert(normal_bufs, buf)
+              end
+            end
+
+            -- 現在のバッファの前を探す
+            for i, buf in ipairs(normal_bufs) do
+              if buf == current then
+                local prev_buf = normal_bufs[i - 1] or normal_bufs[#normal_bufs]
+                vim.api.nvim_set_current_buf(prev_buf)
+                return
+              end
+            end
+
+            -- 見つからなかったら最後のバッファへ
+            if #normal_bufs > 0 then
+              vim.api.nvim_set_current_buf(normal_bufs[#normal_bufs])
+            end
+          end
+        '';
+        options = {
+          desc = "前の通常バッファに移動";
+          silent = true;
+        };
+      }
     ];
 
     # ========================================
@@ -1260,6 +1386,41 @@
       vim.api.nvim_create_user_command('DiffOff', function()
         vim.cmd('diffoff!')
       end, {})
+
+      require('codecompanion').setup({
+        strategies = {
+          chat = {
+            adapter = "ollama",
+          },
+          inline = {
+            adapter = "ollama",
+          },
+        },
+
+        adapters = {
+          ollama = function()
+            return require("codecompanion.adapters").extend("ollama", {
+              schema = {
+                model = {
+                  default = "qwen2.5-coder:7b",  -- ここで好きなモデル指定!
+                },
+              },
+            })
+          end,
+        },
+
+        display = {
+          chat = {
+            window = {
+              layout = "vertical",
+            },
+            show_settings = true,
+            show_token_count = true,
+          },
+        },
+      })
+
+      vim.cmd([[cab cc CodeCompanion]])
     '';
 
     # Rainbow highlight colors - ibl.setupより前に定義する必要あり
@@ -1279,6 +1440,19 @@
     # ========================================
     extraPlugins = with pkgs.vimPlugins; [
       onedarkpro-nvim # カラースキーム
+      # CodeCompanion.nvim
+      (pkgs.vimUtils.buildVimPlugin {
+        name = "codecompanion.nvim";
+        src = pkgs.fetchFromGitHub {
+          owner = "olimorris";
+          repo = "codecompanion.nvim";
+          rev = "main";
+          sha256 = "sha256-PA5zZeFjQbR0zvi1gHac/aZLuHsgkZGtEvMmxAQmttU=";
+        };
+        doCheck = false;
+      })
+
+      plenary-nvim
     ];
 
     # ToggleTerm setup
