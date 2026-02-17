@@ -825,7 +825,57 @@
         action.__raw = "function() require('smart-splits').resize_right() end";
         options.desc = "Resize window right";
       }
+      # ウィンドウ移動 (Shift + 矢印キー)
+      {
+        mode = "n";
+        key = "<S-Left>";
+        action.__raw = "function() require('smart-splits').move_cursor_left() end";
+        options.desc = "Move to left window";
+      }
+      {
+        mode = "n";
+        key = "<S-Down>";
+        action.__raw = "function() require('smart-splits').move_cursor_down() end";
+        options.desc = "Move to bottom window";
+      }
+      {
+        mode = "n";
+        key = "<S-Up>";
+        action.__raw = "function() require('smart-splits').move_cursor_up() end";
+        options.desc = "Move to top window";
+      }
+      {
+        mode = "n";
+        key = "<S-Right>";
+        action.__raw = "function() require('smart-splits').move_cursor_right() end";
+        options.desc = "Move to right window";
+      }
 
+      # ウィンドウサイズ変更 (Alt + Shift + 矢印キー)
+      {
+        mode = "n";
+        key = "<M-S-Up>";
+        action.__raw = "function() require('smart-splits').resize_up() end";
+        options.desc = "Resize window up";
+      }
+      {
+        mode = "n";
+        key = "<M-S-Down>";
+        action.__raw = "function() require('smart-splits').resize_down() end";
+        options.desc = "Resize window down";
+      }
+      {
+        mode = "n";
+        key = "<M-S-Left>";
+        action.__raw = "function() require('smart-splits').resize_left() end";
+        options.desc = "Resize window left";
+      }
+      {
+        mode = "n";
+        key = "<M-S-Right>";
+        action.__raw = "function() require('smart-splits').resize_right() end";
+        options.desc = "Resize window right";
+      }
       # ===== Neo-tree =====
       {
         mode = "n";
