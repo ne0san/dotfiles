@@ -1,4 +1,19 @@
 { pkgs, username, ... }:
+let
+  # ローカルのgit識別情報を読み込む（make git-identity で生成）
+  # ~/.config/git-identity-{name,email} からユーザー情報を取得
+  configDir = "/Users/${username}/.config";
+  gitUserName =
+    let f = "${configDir}/git-identity-name";
+    in if builtins.pathExists f
+      then builtins.replaceStrings ["\n"] [""] (builtins.readFile f)
+      else "unknown";
+  gitUserEmail =
+    let f = "${configDir}/git-identity-email";
+    in if builtins.pathExists f
+      then builtins.replaceStrings ["\n"] [""] (builtins.readFile f)
+      else "unknown@example.com";
+in
 {
   home.enableNixpkgsReleaseCheck = false;
   home.username = username;
@@ -24,6 +39,8 @@
     yazi
     zellij
     _1password-cli
+    gh           # GitHub CLI
+    claude-code  # Anthropic Claude CLI
   ];
   home.file = {
   };
@@ -103,6 +120,11 @@
       fish_add_path --prepend --move --path $HOME/.nix-profile/bin
       fish_add_path --prepend --move --path /etc/profiles/per-user/$USER/bin
       fish_add_path --prepend --move --path /run/current-system/sw/bin
+      # Homebrew (Apple Silicon) のパスを追加
+      # toggletermなどのサブシェルでもbrewコマンドが使えるようにする
+      if test -d /opt/homebrew
+        fish_add_path --append /opt/homebrew/bin /opt/homebrew/sbin
+      end
     '';
     # インタラクティブシェル用の設定
     interactiveShellInit = ''
@@ -174,8 +196,8 @@
 
     settings = {
       user = {
-        name = "neosan";
-        email = "ne0l1gh7@vivaldi.net";
+        name = gitUserName;
+        email = gitUserEmail;
       };
       init = {
         defaultBranch = "main";

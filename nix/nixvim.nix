@@ -127,6 +127,15 @@
           float_opts = {
             border = "curved";
           };
+          # ターミナル開いた時にnvimのcwdに移動してdevenv/direnvを適用する
+          on_open.__raw = ''
+            function(term)
+              -- lazygitなどの専用ターミナルはスキップ
+              if term.cmd ~= nil and term.cmd ~= "${pkgs.fish}/bin/fish" then return end
+              -- nvimのカレントディレクトリに移動（direnvフックを発火させる）
+              term:send("cd " .. vim.fn.shellescape(vim.fn.getcwd()), true)
+            end
+          '';
         };
       };
       # Treesitter
@@ -1006,6 +1015,15 @@
         action = "<cmd>lua vim.diagnostic.goto_next()<CR>";
         options.desc = "Next diagnostic";
       }
+      {
+        mode = "n";
+        key = "<leader>lC";
+        action = "<cmd>CopyDiagnostic<CR>";
+        options = {
+          silent = true;
+          desc = "Copy diagnostic message";
+        };
+      }
 
       # ===== Terminal =====
       {
@@ -1056,7 +1074,22 @@
         mode = "n";
         key = "<leader>gp";
         action = "<cmd>GitBlameCopyPRURL<cr>";
-        options.desc = "Copy PR in browser";
+        options.desc = "Copy PR URL";
+      }
+      {
+        mode = "n";
+        key = "<leader>gP";
+        action = "<cmd>GitBlameOpenPRURL<cr>";
+        options.desc = "Open PR in browser";
+      }
+      {
+        mode = "n";
+        key = "<leader>gL";
+        action = "<cmd>CopyGitHubLineURL<CR>";
+        options = {
+          silent = true;
+          desc = "Copy GitHub line URL";
+        };
       }
       # ===== Save/Quit =====
       {
@@ -1237,6 +1270,16 @@
       }
       {
         mode = "n";
+        key = "<leader>at";
+        action.__raw = "function() _claude_toggle() end";
+        options = {
+          desc = "Toggle Claude CLI terminal";
+          silent = true;
+          noremap = true;
+        };
+      }
+      {
+        mode = "n";
         key = "<M-Tab>";
         action.__raw = ''
           function()
@@ -1339,6 +1382,7 @@
         { "<leader>s", group = "Session" },
         { "<leader>y", group = "Yank" },
         { "<leader>g", group = "Git" },
+        { "<leader>a", group = "AI/Claude" },
       })
 
       require('auto-session').setup({
@@ -1450,20 +1494,32 @@
 
       require('codecompanion').setup({
         strategies = {
+          -- デフォルトはClaude (ANTHROPIC_API_KEY 環境変数が必要)
           chat = {
-            adapter = "ollama",
+            adapter = "anthropic",
           },
           inline = {
-            adapter = "ollama",
+            adapter = "anthropic",
           },
         },
 
         adapters = {
+          -- Claude (Anthropic API)
+          anthropic = function()
+            return require("codecompanion.adapters").extend("anthropic", {
+              schema = {
+                model = {
+                  default = "claude-opus-4-6",
+                },
+              },
+            })
+          end,
+          -- ローカルLLM (Ollama) もオプションとして残す
           ollama = function()
             return require("codecompanion.adapters").extend("ollama", {
               schema = {
                 model = {
-                  default = "qwen2.5-coder:7b",  -- ここで好きなモデル指定!
+                  default = "qwen2.5-coder:7b",
                 },
               },
             })
@@ -1482,6 +1538,45 @@
       })
 
       vim.cmd([[cab cc CodeCompanion]])
+
+      -- 現在行のGitHub URLをクリップボードにコピー
+      vim.api.nvim_create_user_command('CopyGitHubLineURL', function()
+        local file = vim.fn.expand('%:p')
+        local line = vim.fn.line('.')
+        local remote = vim.fn.system('git remote get-url origin 2>/dev/null'):gsub('%s+$', '')
+        if remote == '' then
+          vim.notify('No git remote found', vim.log.levels.WARN)
+          return
+        end
+        local branch = vim.fn.system('git rev-parse --abbrev-ref HEAD 2>/dev/null'):gsub('%s+$', '')
+        local root = vim.fn.system('git rev-parse --show-toplevel 2>/dev/null'):gsub('%s+$', '')
+        local rel_path = file:sub(#root + 2)
+        -- SSH URL を HTTPS に変換
+        remote = remote:gsub('^git@github%.com:', 'https://github.com/')
+        remote = remote:gsub('%.git$', '')
+        local url = remote .. '/blob/' .. branch .. '/' .. rel_path .. '#L' .. line
+        vim.fn.setreg('+', url)
+        vim.notify('Copied: ' .. url, vim.log.levels.INFO)
+      end, {})
+
+      -- フォーカス行の診断メッセージをクリップボードにコピー
+      vim.api.nvim_create_user_command('CopyDiagnostic', function()
+        local lnum = vim.fn.line('.') - 1
+        local diagnostics = vim.diagnostic.get(0, { lnum = lnum })
+        if #diagnostics == 0 then
+          vim.notify('No diagnostics on this line', vim.log.levels.INFO)
+          return
+        end
+        local severity_names = { 'ERROR', 'WARN', 'INFO', 'HINT' }
+        local messages = {}
+        for _, d in ipairs(diagnostics) do
+          local sev = severity_names[d.severity] or 'INFO'
+          table.insert(messages, string.format('[%s] %s', sev, d.message))
+        end
+        local msg = table.concat(messages, '\n')
+        vim.fn.setreg('+', msg)
+        vim.notify('Copied: ' .. msg, vim.log.levels.INFO)
+      end, {})
     '';
 
     # Rainbow highlight colors - ibl.setupより前に定義する必要あり
@@ -1535,6 +1630,23 @@
 
       function _lazygit_toggle()
         lazygit:toggle()
+      end
+
+      -- Claude CLI専用ターミナル
+      local claude_term = Terminal:new({
+        cmd = "claude",
+        direction = "float",
+        hidden = true,
+        float_opts = {
+          border = "curved",
+        },
+        on_open = function(term)
+          vim.cmd("startinsert!")
+        end,
+      })
+
+      function _claude_toggle()
+        claude_term:toggle()
       end
     '';
   };
