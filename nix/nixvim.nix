@@ -1221,15 +1221,50 @@
           desc = "New buffer from clipboard";
         };
       }
-      # ===== Claude =====
+      # ===== Claude (claudecode.nvim) =====
       {
         mode = "n";
         key = "<leader>at";
-        action.__raw = "function() _claude_toggle() end";
+        action = "<cmd>ClaudeCode<CR>";
         options = {
-          desc = "Toggle Claude CLI terminal";
+          desc = "Toggle Claude Code";
           silent = true;
-          noremap = true;
+        };
+      }
+      {
+        mode = "n";
+        key = "<leader>af";
+        action = "<cmd>ClaudeCodeFocus<CR>";
+        options = {
+          desc = "Focus Claude Code";
+          silent = true;
+        };
+      }
+      {
+        mode = "v";
+        key = "<leader>as";
+        action = "<cmd>ClaudeCodeSend<CR>";
+        options = {
+          desc = "Send selection to Claude";
+          silent = true;
+        };
+      }
+      {
+        mode = "n";
+        key = "<leader>ad";
+        action = "<cmd>ClaudeCodeDiffAccept<CR>";
+        options = {
+          desc = "Accept Claude diff";
+          silent = true;
+        };
+      }
+      {
+        mode = "n";
+        key = "<leader>aD";
+        action = "<cmd>ClaudeCodeDiffDeny<CR>";
+        options = {
+          desc = "Deny Claude diff";
+          silent = true;
         };
       }
       {
@@ -1503,6 +1538,18 @@
     # ========================================
     extraPlugins = with pkgs.vimPlugins; [
       onedarkpro-nvim # カラースキーム
+      snacks-nvim     # claudecode.nvimの依存
+      (pkgs.vimUtils.buildVimPlugin {
+        name = "claudecode.nvim";
+        src = pkgs.fetchFromGitHub {
+          owner = "coder";
+          repo = "claudecode.nvim";
+          rev = "v0.3.0";
+          # nix-prefetch-github coder claudecode.nvim --rev v0.3.0 で更新
+          sha256 = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+        };
+        doCheck = false;
+      })
     ];
 
     # ToggleTerm setup
@@ -1526,22 +1573,8 @@
         lazygit:toggle()
       end
 
-      -- Claude CLI専用ターミナル
-      local claude_term = Terminal:new({
-        cmd = "claude",
-        direction = "float",
-        hidden = true,
-        float_opts = {
-          border = "curved",
-        },
-        on_open = function(term)
-          vim.cmd("startinsert!")
-        end,
-      })
-
-      function _claude_toggle()
-        claude_term:toggle()
-      end
+      -- claudecode.nvim setup
+      require("claudecode").setup()
     '';
   };
 }
