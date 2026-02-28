@@ -456,17 +456,16 @@
       # Git signs
       gitsigns = {
         enable = true;
+      };
+      gitblame = {
+        enable = true;
         settings = {
-          current_line_blame = true; # 現在行のblame表示
-          current_line_blame_opts = {
-            virt_text = true;
-            virt_text_pos = "eol"; # 行末に表示
-            delay = 0; # 表示までの遅延(ms)
-          };
-          current_line_blame_formatter = "<author>, <author_time:%Y-%m-%d> - <summary>";
+          enabled = true;
+          delay = 0;
+          message_template = "<author>, <date> - <summary>";
+          date_format = "%Y-%m-%d %H:%M:%S";
         };
       };
-
       # Autopairs
       nvim-autopairs = {
         enable = true;
@@ -1043,11 +1042,22 @@
       # ===== Git =====
       {
         mode = "n";
-        key = "<leader>g";
+        key = "<leader>gg";
         action = "<cmd>lua _lazygit_toggle()<CR>";
         options.desc = "Lazygit";
       }
-
+      {
+        mode = "n";
+        key = "<leader>gc";
+        action = "<cmd>GitBlameOpenCommitURL<cr>";
+        options.desc = "Open Connit in browser";
+      }
+      {
+        mode = "n";
+        key = "<leader>gp";
+        action = "<cmd>GitBlameCopyPRURL<cr>";
+        options.desc = "Copy PR in browser";
+      }
       # ===== Save/Quit =====
       {
         mode = "n";
@@ -1328,6 +1338,7 @@
         { "<leader>t", group = "Terminal" },
         { "<leader>s", group = "Session" },
         { "<leader>y", group = "Yank" },
+        { "<leader>g", group = "Git" },
       })
 
       require('auto-session').setup({
