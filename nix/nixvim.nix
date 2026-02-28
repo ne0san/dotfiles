@@ -133,9 +133,7 @@
               -- lazygitなどの専用ターミナルはスキップ
               if term.cmd ~= nil and term.cmd ~= "${pkgs.fish}/bin/fish" then return end
               -- nvimのカレントディレクトリに移動（direnvフックを発火させる）
-              -- floatはフォーカスを戻すと閉じてしまうのでgo_back=false
-              local go_back = term.direction ~= "float"
-              term:send("cd " .. vim.fn.shellescape(vim.fn.getcwd()), go_back)
+              term:send("cd " .. vim.fn.shellescape(vim.fn.getcwd()), false)
             end
           '';
         };
