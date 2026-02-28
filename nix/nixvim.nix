@@ -1221,53 +1221,7 @@
           desc = "New buffer from clipboard";
         };
       }
-      # ===== CodeCompanion =====
-      {
-        mode = [
-          "n"
-          "v"
-        ];
-        key = "<C-a>";
-        action = "<cmd>CodeCompanionActions<cr>";
-        options = {
-          desc = "CodeCompanion Actions";
-          silent = true;
-          noremap = true;
-        };
-      }
-      {
-        mode = [
-          "n"
-          "v"
-        ];
-        key = "<leader>ac";
-        action = "<cmd>CodeCompanionChat Toggle<cr>";
-        options = {
-          desc = "Toggle CodeCompanion Chat";
-          silent = true;
-          noremap = true;
-        };
-      }
-      {
-        mode = "v";
-        key = "<leader>aa";
-        action = "<cmd>CodeCompanionChat Add<cr>";
-        options = {
-          desc = "Add to CodeCompanion Chat";
-          silent = true;
-          noremap = true;
-        };
-      }
-      {
-        mode = "n";
-        key = "<leader>ai";
-        action = "<cmd>CodeCompanion<cr>";
-        options = {
-          desc = "Inline CodeCompanion";
-          silent = true;
-          noremap = true;
-        };
-      }
+      # ===== Claude =====
       {
         mode = "n";
         key = "<leader>at";
@@ -1492,53 +1446,6 @@
         vim.cmd('diffoff!')
       end, {})
 
-      require('codecompanion').setup({
-        strategies = {
-          -- デフォルトはClaude (ANTHROPIC_API_KEY 環境変数が必要)
-          chat = {
-            adapter = "anthropic",
-          },
-          inline = {
-            adapter = "anthropic",
-          },
-        },
-
-        adapters = {
-          -- Claude (Anthropic API)
-          anthropic = function()
-            return require("codecompanion.adapters").extend("anthropic", {
-              schema = {
-                model = {
-                  default = "claude-opus-4-6",
-                },
-              },
-            })
-          end,
-          -- ローカルLLM (Ollama) もオプションとして残す
-          ollama = function()
-            return require("codecompanion.adapters").extend("ollama", {
-              schema = {
-                model = {
-                  default = "qwen2.5-coder:7b",
-                },
-              },
-            })
-          end,
-        },
-
-        display = {
-          chat = {
-            window = {
-              layout = "vertical",
-            },
-            show_settings = true,
-            show_token_count = true,
-          },
-        },
-      })
-
-      vim.cmd([[cab cc CodeCompanion]])
-
       -- 現在行のGitHub URLをクリップボードにコピー
       vim.api.nvim_create_user_command('CopyGitHubLineURL', function()
         local file = vim.fn.expand('%:p')
@@ -1596,19 +1503,6 @@
     # ========================================
     extraPlugins = with pkgs.vimPlugins; [
       onedarkpro-nvim # カラースキーム
-      # CodeCompanion.nvim
-      (pkgs.vimUtils.buildVimPlugin {
-        name = "codecompanion.nvim";
-        src = pkgs.fetchFromGitHub {
-          owner = "olimorris";
-          repo = "codecompanion.nvim";
-          rev = "main";
-          sha256 = "sha256-PA5zZeFjQbR0zvi1gHac/aZLuHsgkZGtEvMmxAQmttU=";
-        };
-        doCheck = false;
-      })
-
-      plenary-nvim
     ];
 
     # ToggleTerm setup
