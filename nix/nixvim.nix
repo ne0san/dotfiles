@@ -1073,15 +1073,6 @@
         action = "<cmd>GitBlameOpenPRURL<cr>";
         options.desc = "Open PR in browser";
       }
-      {
-        mode = "n";
-        key = "<leader>gL";
-        action = "<cmd>CopyGitHubLineURL<CR>";
-        options = {
-          silent = true;
-          desc = "Copy GitHub line URL";
-        };
-      }
       # ===== Save/Quit =====
       {
         mode = "n";
@@ -1192,6 +1183,15 @@
         options = {
           silent = true;
           desc = "Yank entire file to clipboard";
+        };
+      }
+      {
+        mode = "n";
+        key = "<leader>yg";
+        action = "<cmd>CopyGitHubLineURL<CR>";
+        options = {
+          silent = true;
+          desc = "Yank GitHub line URL";
         };
       }
       {
