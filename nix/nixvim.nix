@@ -132,8 +132,9 @@
             function(term)
               -- lazygitなどの専用ターミナルはスキップ
               if term.cmd ~= nil and term.cmd ~= "${pkgs.fish}/bin/fish" then return end
-              -- nvimのカレントディレクトリに移動（direnvフックを発火させる）
-              term:send("cd " .. vim.fn.shellescape(vim.fn.getcwd()), false)
+              -- nvimのカレントディレクトリに移動し、direnv/devenvを明示的に適用する
+              local cwd = vim.fn.shellescape(vim.fn.getcwd())
+              term:send("cd " .. cwd .. "; direnv reload", false)
             end
           '';
         };
