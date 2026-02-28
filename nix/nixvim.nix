@@ -1015,15 +1015,6 @@
         action = "<cmd>lua vim.diagnostic.goto_next()<CR>";
         options.desc = "Next diagnostic";
       }
-      {
-        mode = "n";
-        key = "<leader>lC";
-        action = "<cmd>CopyDiagnostic<CR>";
-        options = {
-          silent = true;
-          desc = "Copy diagnostic message";
-        };
-      }
 
       # ===== Terminal =====
       {
@@ -1201,6 +1192,15 @@
         options = {
           silent = true;
           desc = "Yank entire file to clipboard";
+        };
+      }
+      {
+        mode = "n";
+        key = "<leader>yd";
+        action = "<cmd>CopyDiagnostic<CR>";
+        options = {
+          silent = true;
+          desc = "Yank diagnostic message";
         };
       }
       {
