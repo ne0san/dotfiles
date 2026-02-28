@@ -1485,17 +1485,17 @@
       vim.api.nvim_create_user_command('CopyGitHubLineURL', function()
         local file = vim.fn.expand('%:p')
         local line = vim.fn.line('.')
-        local remote = vim.fn.system('git remote get-url origin 2>/dev/null'):gsub('%s+$', '')
-        if remote == '' then
+        local remote = vim.fn.system('git remote get-url origin 2>/dev/null'):gsub('%s+$', "")
+        if remote == "" then
           vim.notify('No git remote found', vim.log.levels.WARN)
           return
         end
-        local branch = vim.fn.system('git rev-parse --abbrev-ref HEAD 2>/dev/null'):gsub('%s+$', '')
-        local root = vim.fn.system('git rev-parse --show-toplevel 2>/dev/null'):gsub('%s+$', '')
+        local branch = vim.fn.system('git rev-parse --abbrev-ref HEAD 2>/dev/null'):gsub('%s+$', "")
+        local root = vim.fn.system('git rev-parse --show-toplevel 2>/dev/null'):gsub('%s+$', "")
         local rel_path = file:sub(#root + 2)
         -- SSH URL を HTTPS に変換
         remote = remote:gsub('^git@github%.com:', 'https://github.com/')
-        remote = remote:gsub('%.git$', '')
+        remote = remote:gsub('%.git$', "")
         local url = remote .. '/blob/' .. branch .. '/' .. rel_path .. '#L' .. line
         vim.fn.setreg('+', url)
         vim.notify('Copied: ' .. url, vim.log.levels.INFO)
