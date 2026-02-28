@@ -1545,8 +1545,7 @@
           owner = "coder";
           repo = "claudecode.nvim";
           rev = "v0.3.0";
-          # nix-prefetch-github coder claudecode.nvim --rev v0.3.0 で更新
-          sha256 = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+          sha256 = "sha256-sOBY2y/buInf+SxLwz6uYlUouDULwebY/nmDlbFbGa8=";
         };
         doCheck = false;
       })
