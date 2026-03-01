@@ -1068,12 +1068,6 @@
         action = "<cmd>GitBlameCopyPRURL<cr>";
         options.desc = "Copy PR URL";
       }
-      {
-        mode = "n";
-        key = "<leader>gP";
-        action = "<cmd>GitBlameOpenPRURL<cr>";
-        options.desc = "Open PR in browser";
-      }
       # ===== Save/Quit =====
       {
         mode = "n";
