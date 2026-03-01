@@ -32,4 +32,16 @@ nix:
 	@echo $$PATH
 	@echo "\033[0;32mDone.\033[0m"
 
-.PHONY: all phase1 phase2 phase3 xcode brew nix
+# ローカルのgit識別情報ファイルを生成（リポジトリには含まれない）
+# home.nixはこのファイルを参照してgitのuser.nameとuser.emailを設定する
+git-identity:
+	@printf "\033[0;34mGit username: \033[0m"; \
+	read name; \
+	printf "\033[0;34mGit email: \033[0m"; \
+	read email; \
+	mkdir -p $$HOME/.config; \
+	printf "%s" "$$name" > $$HOME/.config/git-identity-name; \
+	printf "%s" "$$email" > $$HOME/.config/git-identity-email; \
+	echo "\033[0;32mGit identity saved to ~/.config/git-identity-{name,email}\033[0m"
+
+.PHONY: all phase1 phase2 phase3 xcode brew nix git-identity

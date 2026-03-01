@@ -127,6 +127,16 @@
           float_opts = {
             border = "curved";
           };
+          # ターミナル開いた時にnvimのcwdに移動してdevenv/direnvを適用する
+          on_open.__raw = ''
+            function(term)
+              -- lazygitなどの専用ターミナルはスキップ
+              if term.cmd ~= nil and term.cmd ~= "${pkgs.fish}/bin/fish" then return end
+              -- nvimのカレントディレクトリに移動し、direnv/devenvを明示的に適用する
+              local cwd = vim.fn.shellescape(vim.fn.getcwd())
+              term:send("cd " .. cwd .. "; direnv reload", false)
+            end
+          '';
         };
       };
       # Treesitter
@@ -1056,7 +1066,7 @@
         mode = "n";
         key = "<leader>gp";
         action = "<cmd>GitBlameCopyPRURL<cr>";
-        options.desc = "Copy PR in browser";
+        options.desc = "Copy PR URL";
       }
       # ===== Save/Quit =====
       {
@@ -1172,6 +1182,24 @@
       }
       {
         mode = "n";
+        key = "<leader>yg";
+        action = "<cmd>CopyGitHubLineURL<CR>";
+        options = {
+          silent = true;
+          desc = "Yank GitHub line URL";
+        };
+      }
+      {
+        mode = "n";
+        key = "<leader>yd";
+        action = "<cmd>CopyDiagnostic<CR>";
+        options = {
+          silent = true;
+          desc = "Yank diagnostic message";
+        };
+      }
+      {
+        mode = "n";
         key = "<leader>D";
         action = "<cmd>%d_<CR>";
         options = {
@@ -1188,51 +1216,50 @@
           desc = "New buffer from clipboard";
         };
       }
-      # ===== CodeCompanion =====
+      # ===== Claude (claudecode.nvim) =====
       {
-        mode = [
-          "n"
-          "v"
-        ];
-        key = "<C-a>";
-        action = "<cmd>CodeCompanionActions<cr>";
+        mode = "n";
+        key = "<leader>at";
+        action = "<cmd>ClaudeCode<CR>";
         options = {
-          desc = "CodeCompanion Actions";
+          desc = "Toggle Claude Code";
           silent = true;
-          noremap = true;
-        };
-      }
-      {
-        mode = [
-          "n"
-          "v"
-        ];
-        key = "<leader>ac";
-        action = "<cmd>CodeCompanionChat Toggle<cr>";
-        options = {
-          desc = "Toggle CodeCompanion Chat";
-          silent = true;
-          noremap = true;
-        };
-      }
-      {
-        mode = "v";
-        key = "<leader>aa";
-        action = "<cmd>CodeCompanionChat Add<cr>";
-        options = {
-          desc = "Add to CodeCompanion Chat";
-          silent = true;
-          noremap = true;
         };
       }
       {
         mode = "n";
-        key = "<leader>ai";
-        action = "<cmd>CodeCompanion<cr>";
+        key = "<leader>af";
+        action = "<cmd>ClaudeCodeFocus<CR>";
         options = {
-          desc = "Inline CodeCompanion";
+          desc = "Focus Claude Code";
           silent = true;
-          noremap = true;
+        };
+      }
+      {
+        mode = "v";
+        key = "<leader>as";
+        action = "<cmd>ClaudeCodeSend<CR>";
+        options = {
+          desc = "Send selection to Claude";
+          silent = true;
+        };
+      }
+      {
+        mode = "n";
+        key = "<leader>ad";
+        action = "<cmd>ClaudeCodeDiffAccept<CR>";
+        options = {
+          desc = "Accept Claude diff";
+          silent = true;
+        };
+      }
+      {
+        mode = "n";
+        key = "<leader>aD";
+        action = "<cmd>ClaudeCodeDiffDeny<CR>";
+        options = {
+          desc = "Deny Claude diff";
+          silent = true;
         };
       }
       {
@@ -1339,6 +1366,7 @@
         { "<leader>s", group = "Session" },
         { "<leader>y", group = "Yank" },
         { "<leader>g", group = "Git" },
+        { "<leader>a", group = "AI/Claude" },
       })
 
       require('auto-session').setup({
@@ -1448,40 +1476,44 @@
         vim.cmd('diffoff!')
       end, {})
 
-      require('codecompanion').setup({
-        strategies = {
-          chat = {
-            adapter = "ollama",
-          },
-          inline = {
-            adapter = "ollama",
-          },
-        },
+      -- 現在行のGitHub URLをクリップボードにコピー
+      vim.api.nvim_create_user_command('CopyGitHubLineURL', function()
+        local file = vim.fn.expand('%:p')
+        local line = vim.fn.line('.')
+        local remote = vim.fn.system('git remote get-url origin 2>/dev/null'):gsub('%s+$', "")
+        if remote == "" then
+          vim.notify('No git remote found', vim.log.levels.WARN)
+          return
+        end
+        local branch = vim.fn.system('git rev-parse --abbrev-ref HEAD 2>/dev/null'):gsub('%s+$', "")
+        local root = vim.fn.system('git rev-parse --show-toplevel 2>/dev/null'):gsub('%s+$', "")
+        local rel_path = file:sub(#root + 2)
+        -- SSH URL を HTTPS に変換
+        remote = remote:gsub('^git@github%.com:', 'https://github.com/')
+        remote = remote:gsub('%.git$', "")
+        local url = remote .. '/blob/' .. branch .. '/' .. rel_path .. '#L' .. line
+        vim.fn.setreg('+', url)
+        vim.notify('Copied: ' .. url, vim.log.levels.INFO)
+      end, {})
 
-        adapters = {
-          ollama = function()
-            return require("codecompanion.adapters").extend("ollama", {
-              schema = {
-                model = {
-                  default = "qwen2.5-coder:7b",  -- ここで好きなモデル指定!
-                },
-              },
-            })
-          end,
-        },
-
-        display = {
-          chat = {
-            window = {
-              layout = "vertical",
-            },
-            show_settings = true,
-            show_token_count = true,
-          },
-        },
-      })
-
-      vim.cmd([[cab cc CodeCompanion]])
+      -- フォーカス行の診断メッセージをクリップボードにコピー
+      vim.api.nvim_create_user_command('CopyDiagnostic', function()
+        local lnum = vim.fn.line('.') - 1
+        local diagnostics = vim.diagnostic.get(0, { lnum = lnum })
+        if #diagnostics == 0 then
+          vim.notify('No diagnostics on this line', vim.log.levels.INFO)
+          return
+        end
+        local severity_names = { 'ERROR', 'WARN', 'INFO', 'HINT' }
+        local messages = {}
+        for _, d in ipairs(diagnostics) do
+          local sev = severity_names[d.severity] or 'INFO'
+          table.insert(messages, string.format('[%s] %s', sev, d.message))
+        end
+        local msg = table.concat(messages, '\n')
+        vim.fn.setreg('+', msg)
+        vim.notify('Copied: ' .. msg, vim.log.levels.INFO)
+      end, {})
     '';
 
     # Rainbow highlight colors - ibl.setupより前に定義する必要あり
@@ -1501,19 +1533,17 @@
     # ========================================
     extraPlugins = with pkgs.vimPlugins; [
       onedarkpro-nvim # カラースキーム
-      # CodeCompanion.nvim
+      snacks-nvim     # claudecode.nvimの依存
       (pkgs.vimUtils.buildVimPlugin {
-        name = "codecompanion.nvim";
+        name = "claudecode.nvim";
         src = pkgs.fetchFromGitHub {
-          owner = "olimorris";
-          repo = "codecompanion.nvim";
-          rev = "main";
-          sha256 = "sha256-PA5zZeFjQbR0zvi1gHac/aZLuHsgkZGtEvMmxAQmttU=";
+          owner = "coder";
+          repo = "claudecode.nvim";
+          rev = "v0.3.0";
+          sha256 = "sha256-sOBY2y/buInf+SxLwz6uYlUouDULwebY/nmDlbFbGa8=";
         };
         doCheck = false;
       })
-
-      plenary-nvim
     ];
 
     # ToggleTerm setup
@@ -1536,6 +1566,9 @@
       function _lazygit_toggle()
         lazygit:toggle()
       end
+
+      -- claudecode.nvim setup
+      require("claudecode").setup()
     '';
   };
 }

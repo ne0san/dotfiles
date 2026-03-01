@@ -3,6 +3,7 @@
 {
   nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
     "1password-cli"
+    "claude-code"
   ];
   # Nix設定
   nix.settings.experimental-features = "nix-command flakes";
