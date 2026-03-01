@@ -15,3 +15,5 @@ dotfiles fot my mac
 ### AppCleanerのインストール
 
 ### その他必要なアプリのインストール
+
+### `gh`と`claude`のauth
