@@ -1532,8 +1532,9 @@
     # Extra Plugins
     # ========================================
     extraPlugins = with pkgs.vimPlugins; [
-      onedarkpro-nvim # カラースキーム
-      snacks-nvim     # claudecode.nvimの依存
+      onedarkpro-nvim  # カラースキーム
+      snacks-nvim      # claudecode.nvimの依存
+      codewindow-nvim  # ミニマップ
       (pkgs.vimUtils.buildVimPlugin {
         name = "claudecode.nvim";
         src = pkgs.fetchFromGitHub {
@@ -1569,6 +1570,11 @@
 
       -- claudecode.nvim setup
       require("claudecode").setup()
+
+      -- codewindow.nvim setup
+      local codewindow = require("codewindow")
+      codewindow.setup()
+      codewindow.apply_default_keybinds()
     '';
   };
 }
