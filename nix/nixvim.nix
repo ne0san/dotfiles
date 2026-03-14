@@ -59,6 +59,22 @@
         '';
         desc = "Close all special buffers and quit Neovim";
       }
+      {
+        event = "VimEnter";
+        callback.__raw = ''
+          function()
+            local ft = vim.bo.filetype
+            local excluded = { "neo-tree", "aerial", "alpha", "toggleterm", "" }
+            for _, f in ipairs(excluded) do
+              if ft == f then return end
+            end
+            vim.defer_fn(function()
+              require("codewindow").open()
+            end, 100)
+          end
+        '';
+        desc = "Auto open minimap on startup";
+      }
     ];
     opts = {
       # 行番号
@@ -443,6 +459,11 @@
       # Bufferline (バッファタブ)
       bufferline = {
         enable = true;
+        settings.options = {
+          close_command = "Bdelete! %d";
+          right_mouse_command = "Bdelete! %d";
+          middle_mouse_command = "Bdelete! %d";
+        };
       };
 
       # Indent-blankline
@@ -505,6 +526,7 @@
           };
           show_guides = true;
           filter_kind = false;
+          open_automatic = true;
         };
       };
 
@@ -1367,6 +1389,8 @@
         { "<leader>y", group = "Yank" },
         { "<leader>g", group = "Git" },
         { "<leader>a", group = "AI/Claude" },
+        { "<leader>m", group = "Minimap" },
+        { "<leader>n", group = "New" },
       })
 
       require('auto-session').setup({
@@ -1573,7 +1597,11 @@
 
       -- codewindow.nvim setup
       local codewindow = require("codewindow")
-      codewindow.setup()
+      codewindow.setup({
+        use_lsp = true,        -- LSP diagnostics（エラー/警告）をミニマップに表示
+        use_treesitter = true, -- treesitter によるシンタックスハイライト
+        show_cursor = true,    -- カーソル位置を表示
+      })
       codewindow.apply_default_keybinds()
     '';
   };
