@@ -59,22 +59,6 @@
         '';
         desc = "Close all special buffers and quit Neovim";
       }
-      {
-        event = "VimEnter";
-        callback.__raw = ''
-          function()
-            local ft = vim.bo.filetype
-            local excluded = { "neo-tree", "aerial", "alpha", "toggleterm", "" }
-            for _, f in ipairs(excluded) do
-              if ft == f then return end
-            end
-            vim.defer_fn(function()
-              require("codewindow").open()
-            end, 100)
-          end
-        '';
-        desc = "Auto open minimap on startup";
-      }
     ];
     opts = {
       # 行番号
@@ -1026,6 +1010,32 @@
         action = "<cmd>AerialToggle<CR>";
         options.desc = "Symbols outline";
       }
+
+      # ===== Minimap (neominimap) =====
+      {
+        mode = "n";
+        key = "<leader>mt";
+        action = "<cmd>Neominimap Toggle<CR>";
+        options.desc = "Toggle minimap (global)";
+      }
+      {
+        mode = "n";
+        key = "<leader>mb";
+        action = "<cmd>Neominimap BufToggle<CR>";
+        options.desc = "Toggle minimap (buffer)";
+      }
+      {
+        mode = "n";
+        key = "<leader>mf";
+        action = "<cmd>Neominimap ToggleFocus<CR>";
+        options.desc = "Focus minimap";
+      }
+      {
+        mode = "n";
+        key = "<leader>mr";
+        action = "<cmd>Neominimap Refresh<CR>";
+        options.desc = "Refresh minimap";
+      }
       {
         mode = "n";
         key = "[d";
@@ -1558,7 +1568,16 @@
     extraPlugins = with pkgs.vimPlugins; [
       onedarkpro-nvim  # カラースキーム
       snacks-nvim      # claudecode.nvimの依存
-      codewindow-nvim  # ミニマップ
+      (pkgs.vimUtils.buildVimPlugin {
+        name = "neominimap.nvim";
+        src = pkgs.fetchFromGitHub {
+          owner = "Isrothy";
+          repo = "neominimap.nvim";
+          rev = "6a9d8b0d2f2c0d9d7853b377fa225990cb24837a";
+          sha256 = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+        };
+        doCheck = false;
+      })
       (pkgs.vimUtils.buildVimPlugin {
         name = "claudecode.nvim";
         src = pkgs.fetchFromGitHub {
@@ -1595,14 +1614,14 @@
       -- claudecode.nvim setup
       require("claudecode").setup()
 
-      -- codewindow.nvim setup
-      local codewindow = require("codewindow")
-      codewindow.setup({
-        use_lsp = true,        -- LSP diagnostics（エラー/警告）をミニマップに表示
-        use_treesitter = true, -- treesitter によるシンタックスハイライト
-        show_cursor = true,    -- カーソル位置を表示
+      -- neominimap.nvim setup
+      require("neominimap").setup({
+        auto_enable = true,
+        treesitter = { enabled = true },
+        diagnostic = { enabled = true, mode = "line" },
+        git = { enabled = true, mode = "sign" },
+        search = { enabled = true, mode = "line" },
       })
-      codewindow.apply_default_keybinds()
     '';
   };
 }
