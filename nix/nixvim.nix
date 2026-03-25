@@ -1547,7 +1547,16 @@
     extraPlugins = with pkgs.vimPlugins; [
       onedarkpro-nvim  # カラースキーム
       snacks-nvim      # claudecode.nvimの依存
-      codewindow-nvim  # ミニマップ
+      (pkgs.vimUtils.buildVimPlugin {  # ミニマップ
+        name = "neominimap.nvim";
+        src = pkgs.fetchFromGitHub {
+          owner = "Isrothy";
+          repo = "neominimap.nvim";
+          rev = "v3.15.5";
+          sha256 = "sha256-zfrBBM80hDZyrrVxBlSRar/XpaQOJE+SQHNyBEuGynA=";
+        };
+        doCheck = false;
+      })
       (pkgs.vimUtils.buildVimPlugin {
         name = "claudecode.nvim";
         src = pkgs.fetchFromGitHub {
@@ -1584,18 +1593,14 @@
       -- claudecode.nvim setup
       require("claudecode").setup()
 
-      -- codewindow.nvim setup
-      local codewindow = require("codewindow")
-      codewindow.setup()
-      codewindow.apply_default_keybinds()
+      -- neominimap.nvim setup (v3以降は vim.g.neominimap で設定)
+      vim.g.neominimap = { auto_enable = true }
 
-      -- nvim-treesitter が highlighter.active に登録しない場合のフォールバック
-      -- codewindow は highlighter.active を参照するため明示的に start する
-      vim.api.nvim_create_autocmd("FileType", {
-        callback = function(args)
-          pcall(vim.treesitter.start, args.buf)
-        end,
-      })
+      -- キーマップ (codewindow と同様の <leader>m プレフィックス)
+      vim.keymap.set("n", "<leader>mm", "<cmd>Neominimap Toggle<cr>", { desc = "Toggle minimap" })
+      vim.keymap.set("n", "<leader>mo", "<cmd>Neominimap On<cr>",     { desc = "Open minimap" })
+      vim.keymap.set("n", "<leader>mc", "<cmd>Neominimap Off<cr>",    { desc = "Close minimap" })
+      vim.keymap.set("n", "<leader>mf", "<cmd>Neominimap Focus<cr>",  { desc = "Focus minimap" })
     '';
   };
 }
