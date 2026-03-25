@@ -1522,6 +1522,15 @@
 
     # Rainbow highlight colors - ibl.setupより前に定義する必要あり
     extraConfigLuaPre = ''
+      -- nvim-treesitter と Neovim 0.11.x のバージョン不一致対応
+      -- nvim-treesitter (新) が Neovim 本体に委譲した述語を手動登録する
+      vim.treesitter.query.add_predicate("is-not?", function()
+        return true
+      end, { force = true })
+      vim.treesitter.query.add_predicate("is?", function()
+        return true
+      end, { force = true })
+
       vim.opt.shortmess:append("I")
       vim.api.nvim_set_hl(0, "RainbowRed", { fg = "#E06C75" })
       vim.api.nvim_set_hl(0, "RainbowYellow", { fg = "#E5C07B" })
@@ -1579,6 +1588,14 @@
       local codewindow = require("codewindow")
       codewindow.setup()
       codewindow.apply_default_keybinds()
+
+      -- nvim-treesitter が highlighter.active に登録しない場合のフォールバック
+      -- codewindow は highlighter.active を参照するため明示的に start する
+      vim.api.nvim_create_autocmd("FileType", {
+        callback = function(args)
+          pcall(vim.treesitter.start, args.buf)
+        end,
+      })
     '';
   };
 }
