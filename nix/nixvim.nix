@@ -1597,10 +1597,10 @@
       vim.g.neominimap = { auto_enable = true }
 
       -- キーマップ (codewindow と同様の <leader>m プレフィックス)
-      vim.keymap.set("n", "<leader>mm", "<cmd>Neominimap toggle<cr>", { desc = "Toggle minimap" })
-      vim.keymap.set("n", "<leader>mo", "<cmd>Neominimap on<cr>",     { desc = "Open minimap" })
-      vim.keymap.set("n", "<leader>mc", "<cmd>Neominimap off<cr>",    { desc = "Close minimap" })
-      vim.keymap.set("n", "<leader>mf", "<cmd>Neominimap focus<cr>",  { desc = "Focus minimap" })
+      vim.keymap.set("n", "<leader>mm", "<cmd>Neominimap Toggle<cr>", { desc = "Toggle minimap" })
+      vim.keymap.set("n", "<leader>mo", "<cmd>Neominimap On<cr>",     { desc = "Open minimap" })
+      vim.keymap.set("n", "<leader>mc", "<cmd>Neominimap Off<cr>",    { desc = "Close minimap" })
+      vim.keymap.set("n", "<leader>mf", "<cmd>Neominimap Focus<cr>",  { desc = "Focus minimap" })
     '';
   };
 }
