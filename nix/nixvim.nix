@@ -1371,6 +1371,8 @@
         { "<leader>y", group = "Yank" },
         { "<leader>g", group = "Git" },
         { "<leader>a", group = "AI/Claude" },
+        { "<leader>n", group = "New" },
+        { "<leader>m", group = "Minimap" },
       })
 
       require('auto-session').setup({
