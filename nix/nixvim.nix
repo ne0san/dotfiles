@@ -1199,7 +1199,7 @@
           enabled = true,
           win = {
             style = "float",
-            border = "curved",
+            border = "rounded",
           },
         },
 
