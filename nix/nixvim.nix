@@ -1553,7 +1553,7 @@
           owner = "Isrothy";
           repo = "neominimap.nvim";
           rev = "v3.15.5";
-          sha256 = pkgs.lib.fakeHash;
+          sha256 = "sha256-zfrBBM80hDZyrrVxBlSRar/XpaQOJE+SQHNyBEuGynA=";
         };
         doCheck = false;
       })
