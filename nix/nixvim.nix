@@ -1588,6 +1588,14 @@
       local codewindow = require("codewindow")
       codewindow.setup()
       codewindow.apply_default_keybinds()
+
+      -- nvim-treesitter が highlighter.active に登録しない場合のフォールバック
+      -- codewindow は highlighter.active を参照するため明示的に start する
+      vim.api.nvim_create_autocmd("FileType", {
+        callback = function(args)
+          pcall(vim.treesitter.start, args.buf)
+        end,
+      })
     '';
   };
 }
