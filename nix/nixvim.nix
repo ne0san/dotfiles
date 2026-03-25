@@ -973,6 +973,15 @@
       }
       {
         mode = "n";
+        key = "<leader>yG";
+        action = "<cmd>CopyGitHubMasterLineURL<CR>";
+        options = {
+          silent = true;
+          desc = "Yank GitHub line URL (master)";
+        };
+      }
+      {
+        mode = "n";
         key = "<leader>yd";
         action = "<cmd>CopyDiagnostic<CR>";
         options = {
@@ -1382,6 +1391,24 @@
         remote = remote:gsub('^git@github%.com:', 'https://github.com/')
         remote = remote:gsub('%.git$', "")
         local url = remote .. '/blob/' .. branch .. '/' .. rel_path .. '#L' .. line
+        vim.fn.setreg('+', url)
+        vim.notify('Copied: ' .. url, vim.log.levels.INFO)
+      end, {})
+
+      -- 現在行のGitHub URL (master固定) をクリップボードにコピー
+      vim.api.nvim_create_user_command('CopyGitHubMasterLineURL', function()
+        local file = vim.fn.expand('%:p')
+        local line = vim.fn.line('.')
+        local remote = vim.fn.system('git remote get-url origin 2>/dev/null'):gsub('%s+$', "")
+        if remote == "" then
+          vim.notify('No git remote found', vim.log.levels.WARN)
+          return
+        end
+        local root = vim.fn.system('git rev-parse --show-toplevel 2>/dev/null'):gsub('%s+$', "")
+        local rel_path = file:sub(#root + 2)
+        remote = remote:gsub('^git@github%.com:', 'https://github.com/')
+        remote = remote:gsub('%.git$', "")
+        local url = remote .. '/blob/master/' .. rel_path .. '#L' .. line
         vim.fn.setreg('+', url)
         vim.notify('Copied: ' .. url, vim.log.levels.INFO)
       end, {})
