@@ -1522,23 +1522,14 @@
 
     # Rainbow highlight colors - ibl.setupより前に定義する必要あり
     extraConfigLuaPre = ''
-      -- nvim-treesitter.ts_utils 互換シム
-      -- 新しいバージョンでは get_vim_range が削除されているため補完する
-      do
-        local ok, ts_utils = pcall(require, "nvim-treesitter.ts_utils")
-        if not ok or type(ts_utils.get_vim_range) ~= "function" then
-          local shim = ok and ts_utils or {}
-          shim.get_vim_range = function(range, _buf)
-            local sr, sc, er, ec = unpack(range)
-            if ec == 0 then
-              return sr + 1, sc + 1, er, -1
-            else
-              return sr + 1, sc + 1, er + 1, ec
-            end
-          end
-          package.loaded["nvim-treesitter.ts_utils"] = shim
-        end
-      end
+      -- nvim-treesitter と Neovim 0.11.x のバージョン不一致対応
+      -- nvim-treesitter (新) が Neovim 本体に委譲した述語を手動登録する
+      vim.treesitter.query.add_predicate("is-not?", function()
+        return true
+      end, { force = true })
+      vim.treesitter.query.add_predicate("is?", function()
+        return true
+      end, { force = true })
 
       vim.opt.shortmess:append("I")
       vim.api.nvim_set_hl(0, "RainbowRed", { fg = "#E06C75" })
