@@ -18,13 +18,11 @@
       {
         event = "FileType";
         pattern = [
-          "neo-tree"
           "NvimTree"
-          "TelescopePrompt"
           "qf"
           "help"
           "aerial"
-          "alpha"
+          "snacks_dashboard"
         ];
         callback = {
           __raw = ''
@@ -109,36 +107,6 @@
     # Plugins
     # ========================================
     plugins = {
-      toggleterm = {
-        enable = true;
-        settings = {
-          size = ''
-            function(term)
-              if term.direction == "horizontal" then
-                return 15
-              elseif term.direction == "vertical" then
-                return vim.o.columns * 0.4
-              end
-            end
-          '';
-          open_mapping = "[[<c-\\>]]";
-          direction = "float";
-          shell = "${pkgs.fish}/bin/fish";
-          float_opts = {
-            border = "curved";
-          };
-          # ターミナル開いた時にnvimのcwdに移動してdevenv/direnvを適用する
-          on_open.__raw = ''
-            function(term)
-              -- lazygitなどの専用ターミナルはスキップ
-              if term.cmd ~= nil and term.cmd ~= "${pkgs.fish}/bin/fish" then return end
-              -- nvimのカレントディレクトリに移動し、direnv/devenvを明示的に適用する
-              local cwd = vim.fn.shellescape(vim.fn.getcwd())
-              term:send("direnv reload", false)
-            end
-          '';
-        };
-      };
       # Treesitter
       treesitter = {
         enable = true;
@@ -242,181 +210,6 @@
       # Snippets
       luasnip.enable = true;
 
-      # Neo-tree (ファイルツリー)
-      neo-tree = {
-        enable = true;
-        settings = {
-          filesystem = {
-            follow_current_file = {
-              enabled = true;
-            };
-            hijack_netrw_behavior = "open_current";
-            use_libuv_file_watcher = true;
-            filtered_items = {
-              visible = false;
-              show_hidden_count = true;
-              hide_dotfiles = false;
-              hide_gitignored = false;
-              hide_by_name = [
-                "node_modules"
-                "thumbs.db"
-              ];
-              never_show = [
-                ".git"
-                ".DS_Store"
-                ".history"
-              ];
-            };
-          };
-        };
-      };
-
-      # Alpha (ダッシュボード)
-      alpha = {
-        enable = true;
-        settings = {
-          layout = [
-            {
-              type = "padding";
-              val = 2;
-            }
-            {
-              type = "text";
-              val = [
-                "         _            _          _     _          _        "
-                "        /\\ \\     _   /\\ \\      / /\\  /_/\\        / /\\      "
-                "       /  \\ \\   /\\_\\/  \\ \\    / /  \\ \\_\\ \\      / /  \\     "
-                "      / /\\ \\ \\_/ / / /\\ \\ \\  / / /\\ \\/\\_\\/     / / /\\ \\__  "
-                "     / / /\\ \\___/ / / /\\ \\_\\/ / /\\ \\ \\/_/     / / /\\ \\___\\ "
-                "    / / /  \\/____/ /_/_ \\/_/_/ /  \\ \\ \\       \\ \\ \\ \\/___/ "
-                "   / / /    / / / /____/\\  \\ \\ \\   \\ \\ \\       \\ \\ \\       "
-                "  / / /    / / / /\\____\\/   \\ \\ \\   \\ \\ \\  _    \\ \\ \\      "
-                " / / /    / / / / /______    \\ \\ \\___\\ \\ \\/_/\\__/ / /      "
-                "/ / /    / / / / /_______\\    \\ \\/____\\ \\ \\ \\/___/ /       "
-                "\\/_/     \\/_/\\/__________/     \\_________\\/\\_____\\/ _      "
-                "        /\\ \\     _ /\\ \\    _ / /\\     /\\ \\     /\\_\\/\\_\\ _  "
-                "       /  \\ \\   /\\_\\ \\ \\  /_/ / /     \\ \\ \\   / / / / //\\_\\"
-                "      / /\\ \\ \\_/ / /\\ \\ \\ \\___\\/      /\\ \\_\\ /\\ \\/ \\ \\/ / /"
-                "     / / /\\ \\___/ / / / /  \\ \\ \\     / /\\/_//  \\____\\__/ / "
-                "    / / /  \\/____/  \\ \\ \\   \\_\\ \\   / / /  / /\\/________/  "
-                "   / / /    / / /    \\ \\ \\  / / /  / / /  / / /\\/_// / /   "
-                "  / / /    / / /      \\ \\ \\/ / /  / / /  / / /    / / /    "
-                " / / /    / / /        \\ \\ \\/ /__/ / /__/ / /    / / /     "
-                "/ / /    / / /          \\ \\  /\\__\\/_/___\\/_/    / / /      "
-                "\\/_/     \\/_/            \\_\\/\\/_________/       \\/_/       "
-              ];
-              opts = {
-                position = "center";
-                hl = "Type";
-                shell = "${pkgs.fish}/bin/fish";
-              };
-            }
-            {
-              type = "padding";
-              val = 2;
-            }
-            {
-              type = "group";
-              val = [
-                {
-                  type = "button";
-                  val = "  Find File";
-                  on_press.__raw = "function() require('telescope.builtin').find_files() end";
-                  opts = {
-                    keymap = [
-                      "n"
-                      "f"
-                      ":Telescope find_files<CR>"
-                      {
-                        silent = true;
-                        noremap = true;
-                      }
-                    ];
-                    shortcut = "f";
-                    position = "center";
-                    cursor = 3;
-                    width = 50;
-                    align_shortcut = "right";
-                    hl_shortcut = "Keyword";
-                  };
-                }
-                {
-                  type = "button";
-                  val = "  New File";
-                  on_press.__raw = "function() vim.cmd('ene') end";
-                  opts = {
-                    keymap = [
-                      "n"
-                      "n"
-                      ":ene<CR>"
-                      {
-                        silent = true;
-                        noremap = true;
-                      }
-                    ];
-                    shortcut = "n";
-                    position = "center";
-                    cursor = 3;
-                    width = 50;
-                    align_shortcut = "right";
-                    hl_shortcut = "Keyword";
-                  };
-                }
-                {
-                  type = "button";
-                  val = "  Recent Files";
-                  on_press.__raw = "function() require('telescope.builtin').oldfiles() end";
-                  opts = {
-                    keymap = [
-                      "n"
-                      "r"
-                      ":Telescope oldfiles<CR>"
-                      {
-                        silent = true;
-                        noremap = true;
-                      }
-                    ];
-                    shortcut = "r";
-                    position = "center";
-                    cursor = 3;
-                    width = 50;
-                    align_shortcut = "right";
-                    hl_shortcut = "Keyword";
-                  };
-                }
-                {
-                  type = "button";
-                  val = "  Quit";
-                  on_press.__raw = "function() vim.cmd('qa') end";
-                  opts = {
-                    keymap = [
-                      "n"
-                      "q"
-                      ":qa<CR>"
-                      {
-                        silent = true;
-                        noremap = true;
-                      }
-                    ];
-                    shortcut = "q";
-                    position = "center";
-                    cursor = 3;
-                    width = 50;
-                    align_shortcut = "right";
-                    hl_shortcut = "Keyword";
-                  };
-                }
-              ];
-            }
-          ];
-        };
-      };
-
-      # Telescope (ファジーファインダー)
-      telescope = {
-        enable = true;
-      };
-
       # Which-key (キーバインドヘルプ)
       which-key = {
         enable = true;
@@ -444,26 +237,8 @@
       bufferline = {
         enable = true;
         settings.options = {
-          close_command.__raw = "function(bufnum) vim.cmd('Bdelete! ' .. bufnum) end";
-          right_mouse_command.__raw = "function(bufnum) vim.cmd('Bdelete! ' .. bufnum) end";
-        };
-      };
-
-      # Indent-blankline
-      indent-blankline = {
-        enable = true;
-        settings = {
-          indent = {
-            highlight = [
-              "RainbowRed"
-              "RainbowYellow"
-              "RainbowBlue"
-              "RainbowOrange"
-              "RainbowGreen"
-              "RainbowViolet"
-              "RainbowCyan"
-            ];
-          };
+          close_command.__raw = "function(bufnum) Snacks.bufdelete(bufnum, { force = true }) end";
+          right_mouse_command.__raw = "function(bufnum) Snacks.bufdelete(bufnum) end";
         };
       };
 
@@ -616,9 +391,6 @@
         enable = true;
       };
 
-      vim-bbye = {
-        enable = true;
-      };
     };
 
     # ========================================
@@ -719,13 +491,13 @@
       {
         mode = "n";
         key = "<leader>bf";
-        action = "<cmd>Telescope buffers<CR>";
+        action.__raw = "function() Snacks.picker.buffers() end";
         options.desc = "Find buffers";
       }
       {
         mode = "n";
         key = "<leader>bD";
-        action = "<cmd>Bdelete!<CR>";
+        action.__raw = "function() Snacks.bufdelete(0, { force = true }) end";
         options = {
           silent = true;
           desc = "Force delete buffer keep window";
@@ -734,7 +506,7 @@
       {
         mode = "n";
         key = "<leader>bd";
-        action = "<cmd>Bdelete<CR>";
+        action.__raw = "function() Snacks.bufdelete() end";
         options = {
           silent = true;
           desc = "Delete buffer keep window";
@@ -889,61 +661,61 @@
         action.__raw = "function() require('smart-splits').resize_right() end";
         options.desc = "Resize window right";
       }
-      # ===== Neo-tree =====
+      # ===== Explorer (snacks.explorer) =====
       {
         mode = "n";
         key = "<leader>e";
-        action = "<cmd>Neotree toggle<CR>";
+        action.__raw = "function() Snacks.explorer() end";
         options.desc = "Toggle file explorer";
       }
       {
         mode = "n";
         key = "<leader>o";
-        action = "<cmd>Neotree focus<CR>";
+        action.__raw = "function() Snacks.explorer() end";
         options.desc = "Focus file explorer";
       }
 
-      # ===== Telescope =====
+      # ===== Finder (snacks.picker) =====
       {
         mode = "n";
         key = "<leader>ff";
-        action = "<cmd>Telescope find_files<CR>";
+        action.__raw = "function() Snacks.picker.files() end";
         options.desc = "Find files";
       }
       {
         mode = "n";
         key = "<leader>fg";
-        action = "<cmd>Telescope live_grep<CR>";
+        action.__raw = "function() Snacks.picker.grep() end";
         options.desc = "Live grep";
       }
       {
         mode = "n";
         key = "<leader>fb";
-        action = "<cmd>Telescope buffers<CR>";
+        action.__raw = "function() Snacks.picker.buffers() end";
         options.desc = "Find buffers";
       }
       {
         mode = "n";
         key = "<leader>fh";
-        action = "<cmd>Telescope help_tags<CR>";
+        action.__raw = "function() Snacks.picker.help() end";
         options.desc = "Help tags";
       }
       {
         mode = "n";
         key = "<leader>fo";
-        action = "<cmd>Telescope oldfiles<CR>";
+        action.__raw = "function() Snacks.picker.recent() end";
         options.desc = "Recent files";
       }
       {
         mode = "n";
         key = "<leader>fw";
-        action = "<cmd>Telescope grep_string<CR>";
+        action.__raw = "function() Snacks.picker.grep_word() end";
         options.desc = "Find word under cursor";
       }
       {
         mode = "n";
         key = "<leader>ft";
-        action = "<cmd>TodoTelescope<CR>";
+        action.__raw = "function() Snacks.picker.todo_comments() end";
         options.desc = "Find TODOs";
       }
 
@@ -1021,23 +793,29 @@
         options.desc = "Next diagnostic";
       }
 
-      # ===== Terminal =====
+      # ===== Terminal (snacks.terminal) =====
+      {
+        mode = ["n" "t"];
+        key = "<C-\\>";
+        action.__raw = "function() Snacks.terminal.toggle() end";
+        options.desc = "Toggle terminal";
+      }
       {
         mode = "n";
         key = "<leader>tf";
-        action = "<cmd>ToggleTerm direction=float<CR>";
+        action.__raw = "function() Snacks.terminal.toggle(nil, { win = { style = \"float\" } }) end";
         options.desc = "Float terminal";
       }
       {
         mode = "n";
         key = "<leader>th";
-        action = "<cmd>ToggleTerm direction=horizontal<CR>";
+        action.__raw = "function() Snacks.terminal.toggle(nil, { win = { position = \"bottom\", height = 0.3 } }) end";
         options.desc = "Horizontal terminal";
       }
       {
         mode = "n";
         key = "<leader>tv";
-        action = "<cmd>ToggleTerm direction=vertical<CR>";
+        action.__raw = "function() Snacks.terminal.toggle(nil, { win = { position = \"right\", width = 0.4 } }) end";
         options.desc = "Vertical terminal";
       }
       {
@@ -1057,14 +835,14 @@
       {
         mode = "n";
         key = "<leader>gg";
-        action = "<cmd>lua _lazygit_toggle()<CR>";
+        action.__raw = "function() Snacks.lazygit() end";
         options.desc = "Lazygit";
       }
       {
         mode = "n";
         key = "<leader>gc";
-        action = "<cmd>GitBlameOpenCommitURL<cr>";
-        options.desc = "Open Connit in browser";
+        action.__raw = "function() Snacks.gitbrowse() end";
+        options.desc = "Open file/commit in browser";
       }
       {
         mode = "n";
@@ -1351,6 +1129,114 @@
     # Extra Config (Lua)
     # ========================================
     extraConfigLua = ''
+      -- Snacks setup
+      -- snacks.nvim に移行したプラグイン:
+      --   alpha        → snacks.dashboard
+      --   neo-tree     → snacks.explorer
+      --   telescope    → snacks.picker
+      --   toggleterm   → snacks.terminal + snacks.lazygit
+      --   indent-blankline → snacks.indent
+      --   vim-bbye     → snacks.bufdelete
+      require("snacks").setup({
+        -- Picker (telescope の代替)
+        picker = { enabled = true },
+
+        -- Dashboard (alpha の代替)
+        dashboard = {
+          enabled = true,
+          preset = {
+            header = [[
+         _            _          _     _          _
+        /\ \     _   /\ \      / /\  /_/\        / /\
+       /  \ \   /\_\/  \ \    / /  \ \_\ \      / /  \
+      / /\ \ \_/ / / /\ \ \  / / /\ \/\_\/     / / /\ \__
+     / / /\ \___/ / / /\ \_\/ / /\ \ \/_/     / / /\ \___\
+    / / /  \/____/ /_/_ \/_/_/ /  \ \ \       \ \ \ \/___/
+   / / /    / / / /____/\  \ \ \   \ \ \       \ \ \
+  / / /    / / / /\____\/   \ \ \   \ \ \  _    \ \ \
+ / / /    / / / / /______    \ \ \___\ \ \/_/\__/ / /
+/ / /    / / / / /_______\    \ \/____\ \ \ \/___/ /
+\/_/     \/_/\/__________/     \_________\/\_____\/ _
+        /\ \     _ /\ \    _ / /\     /\ \     /\_\/\_\ _
+       /  \ \   /\_\ \ \  /_/ / /     \ \ \   / / / / //\_\
+      / /\ \ \_/ / /\ \ \ \___\/      /\ \_\ /\ \/ \ \/ / /
+     / / /\ \___/ / / / /  \ \ \     / /\/_//  \____\__/ /
+    / / /  \/____/  \ \ \   \_\ \   / / /  / /\/________/
+   / / /    / / /    \ \ \  / / /  / / /  / / /\/_// / /
+  / / /    / / /      \ \ \/ / /  / / /  / / /    / / /
+ / / /    / / /        \ \ \/ /__/ / /__/ / /    / / /
+/ / /    / / /          \ \  /\__\/_/___\/_/    / / /
+\/_/     \/_/            \_\/\/__________/       \/_/       ]],
+            keys = {
+              { icon = " ", key = "f", desc = "Find File",    action = function() Snacks.picker.files() end },
+              { icon = " ", key = "n", desc = "New File",     action = ":ene | startinsert" },
+              { icon = " ", key = "r", desc = "Recent Files", action = function() Snacks.picker.recent() end },
+              { icon = " ", key = "q", desc = "Quit",         action = ":qa" },
+            },
+          },
+          sections = {
+            { section = "header" },
+            { section = "keys", gap = 1, padding = 1 },
+            { section = "startup" },
+          },
+        },
+
+        -- Explorer (neo-tree の代替)
+        explorer = { enabled = true },
+
+        -- Indent (indent-blankline の代替)
+        indent = {
+          enabled = true,
+          indent = {
+            hl = {
+              "RainbowRed", "RainbowYellow", "RainbowBlue",
+              "RainbowOrange", "RainbowGreen", "RainbowViolet", "RainbowCyan",
+            },
+          },
+        },
+
+        -- Terminal (toggleterm の代替)
+        terminal = {
+          enabled = true,
+          win = {
+            style = "float",
+            border = "curved",
+          },
+        },
+
+        -- Lazygit (toggleterm lazygit の代替)
+        lazygit = { enabled = true },
+
+        -- Bufdelete (vim-bbye の代替)
+        bufdelete = { enabled = true },
+
+        -- Git browse
+        gitbrowse = { enabled = true },
+
+        -- Input UI 強化
+        input = { enabled = true },
+
+        -- その他便利機能
+        bigfile    = { enabled = true },
+        quickfile  = { enabled = true },
+        statuscolumn = { enabled = true },
+        words      = { enabled = true },
+      })
+
+      -- TermOpen: lazygit 以外のターミナルで direnv reload を実行
+      vim.api.nvim_create_autocmd("TermOpen", {
+        callback = function(ev)
+          local name = vim.api.nvim_buf_get_name(ev.buf)
+          if name:match("lazygit") then return end
+          local chan = vim.b[ev.buf].terminal_job_id
+          if chan and chan > 0 then
+            vim.defer_fn(function()
+              pcall(vim.fn.chansend, chan, "direnv reload\n")
+            end, 500)
+          end
+        end,
+      })
+
       -- OneDarkPro setup
       require("onedarkpro").setup({
         options = {
@@ -1390,8 +1276,7 @@
         close_unsupported_windows = true,
 
         bypass_save_filetypes = {
-          "neo-tree",
-          "alpha",
+          "snacks_dashboard",
         },
 
         auto_delete_empty_sessions = true,
@@ -1415,10 +1300,10 @@
         end,
       })
 
-      -- :bdを:Bdeleteに上書き
-      vim.api.nvim_create_user_command('Bd', 'Bdelete', { force = true })
-      vim.cmd('cnoreabbrev bd Bdelete')
-      vim.cmd('cnoreabbrev bdelete Bdelete')
+      -- :bdをsnacks.bufdeleteに上書き
+      vim.api.nvim_create_user_command('Bd', function() Snacks.bufdelete() end, { force = true })
+      vim.cmd('cnoreabbrev bd lua Snacks.bufdelete()')
+      vim.cmd('cnoreabbrev bdelete lua Snacks.bufdelete()')
 
       -- 相対パスをクリップボードにコピー
       vim.api.nvim_create_user_command('CopyRelPath', function()
@@ -1522,7 +1407,7 @@
       end, {})
     '';
 
-    # Rainbow highlight colors - ibl.setupより前に定義する必要あり
+    # Rainbow highlight colors - snacks.indent用
     extraConfigLuaPre = ''
       -- nvim-treesitter と Neovim 0.11.x のバージョン不一致対応
       -- nvim-treesitter (新) が Neovim 本体に委譲した述語を手動登録する
@@ -1548,7 +1433,7 @@
     # ========================================
     extraPlugins = with pkgs.vimPlugins; [
       onedarkpro-nvim  # カラースキーム
-      snacks-nvim      # claudecode.nvimの依存
+      snacks-nvim      # dashboard/picker/terminal/explorer/indent/lazygit/bufdelete
       (pkgs.vimUtils.buildVimPlugin {  # ミニマップ
         name = "neominimap.nvim";
         src = pkgs.fetchFromGitHub {
@@ -1571,27 +1456,8 @@
       })
     ];
 
-    # ToggleTerm setup
+    # Post setup
     extraConfigLuaPost = ''
-      -- Lazygit専用ターミナル (別インスタンスとして管理)
-      local Terminal = require("toggleterm.terminal").Terminal
-      local lazygit = Terminal:new({
-        cmd = "lazygit",
-        dir = "git_dir",
-        direction = "float",
-        hidden = true,
-        float_opts = {
-          border = "curved",
-        },
-        on_open = function(term)
-          vim.cmd("startinsert!")
-        end,
-      })
-
-      function _lazygit_toggle()
-        lazygit:toggle()
-      end
-
       -- claudecode.nvim setup
       require("claudecode").setup()
 
