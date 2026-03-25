@@ -1577,7 +1577,7 @@
 
       -- codewindow.nvim setup
       local codewindow = require("codewindow")
-      codewindow.setup()
+      codewindow.setup({ use_treesitter = true })
       codewindow.apply_default_keybinds()
     '';
   };
