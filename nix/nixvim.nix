@@ -1547,7 +1547,16 @@
     extraPlugins = with pkgs.vimPlugins; [
       onedarkpro-nvim  # カラースキーム
       snacks-nvim      # claudecode.nvimの依存
-      neominimap-nvim  # ミニマップ
+      (pkgs.vimUtils.buildVimPlugin {  # ミニマップ
+        name = "neominimap.nvim";
+        src = pkgs.fetchFromGitHub {
+          owner = "Isrothy";
+          repo = "neominimap.nvim";
+          rev = "v3.15.5";
+          sha256 = pkgs.lib.fakeHash;
+        };
+        doCheck = false;
+      })
       (pkgs.vimUtils.buildVimPlugin {
         name = "claudecode.nvim";
         src = pkgs.fetchFromGitHub {
