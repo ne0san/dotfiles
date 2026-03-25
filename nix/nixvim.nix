@@ -443,6 +443,10 @@
       # Bufferline (バッファタブ)
       bufferline = {
         enable = true;
+        settings.options = {
+          close_command.__raw = "function(bufnum) vim.cmd('Bdelete! ' .. bufnum) end";
+          right_mouse_command.__raw = "function(bufnum) vim.cmd('Bdelete! ' .. bufnum) end";
+        };
       };
 
       # Indent-blankline
