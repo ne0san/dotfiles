@@ -1,4 +1,4 @@
-{ pkgs, username, ... }:
+{ pkgs, username, lib, ... }:
 let
   # ローカルのgit識別情報を読み込む（make git-identity で生成）
   # ~/.config/git-identity-{name,email} からユーザー情報を取得
@@ -13,6 +13,18 @@ let
     in if builtins.pathExists f
       then builtins.replaceStrings ["\n"] [""] (builtins.readFile f)
       else "unknown@example.com";
+  tle = pkgs.buildGoModule {
+    pname = "tle";
+    version = "1.2.0";
+    src = pkgs.fetchFromGitHub {
+      owner = "drand";
+      repo = "tlock";
+      rev = "v1.2.0";
+      sha256 = "sha256-3qO5xGcKj7m033B/lWoeewUf9XbiY+GrQFBBuymOXzo=";
+    };
+    vendorHash = "sha256-gy2aPcOrhN1M27qYiqRvNjy987Oh7/MHMvbRLEpV3Iw=";
+    subPackages = [ "cmd/tle" ];
+  };
 in
 {
   home.enableNixpkgsReleaseCheck = false;
@@ -41,6 +53,7 @@ in
     _1password-cli
     gh
     claude-code
+    tle
   ];
   home.file = {
   };
