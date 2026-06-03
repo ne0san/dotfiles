@@ -6,7 +6,9 @@ on:
   issue_comment:
     types: [created]
 
-# env:
+
+env:
+  CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
 
 jobs:
   claude:
