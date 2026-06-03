@@ -7,7 +7,6 @@ on:
     types: [created]
 
 env:
-  DEFAULT_CLAUDE_MODEL: claude-haiku-4-5-20251001
 
 jobs:
   claude:
