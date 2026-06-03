@@ -1,0 +1,67 @@
+name: Issue to PR
+
+on:
+  issues:
+    types: [opened]
+  issue_comment:
+    types: [created]
+
+env:
+  DEFAULT_CLAUDE_MODEL: claude-haiku-4-5-20251001
+
+jobs:
+  claude:
+    if: |
+      (github.event_name == 'issues' && contains(github.event.issue.body, '@claude')) ||
+      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      id-token: write
+      issues: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v6
+
+      - name: Set Claude Model
+        env:
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          COMMENT_BODY: ${{ github.event.comment.body }}
+        run: |
+          if [ "${{ github.event_name }}" = "issues" ]; then
+            BODY="$ISSUE_BODY"
+          else
+            BODY="$COMMENT_BODY"
+          fi
+
+          MODEL_NAME=$(echo "$BODY" | grep -oE 'model=[A-Za-z0-9._:-]+' | head -n 1 | cut -d= -f2 | tr -d '\r\n')
+
+          case "$MODEL_NAME" in
+            sonnet) CLAUDE_MODEL="claude-sonnet-4-5-20250929" ;;
+            opus)   CLAUDE_MODEL="claude-opus-4-5-20251101" ;;
+            haiku)  CLAUDE_MODEL="${{ env.DEFAULT_CLAUDE_MODEL }}" ;;
+            *)      CLAUDE_MODEL="${{ env.DEFAULT_CLAUDE_MODEL }}" ;;
+          esac
+
+          echo "使用されるモデル: $CLAUDE_MODEL"
+          echo "CLAUDE_MODEL=$CLAUDE_MODEL" >> $GITHUB_ENV
+
+      - name: Run Issue to PR
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          # claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            REPO: ${{ github.repository }}
+            ISSUE NUMBER: ${{ github.event.issue.number }}
+
+            issueの内容を確認し、必要な修正を行い、プルリクエストを作成してください。
+            issueの取得、ブランチの作成、プルリクエストの作成などのGitHubの操作は、MCPツールを使用してください。
+            プルリクエストのタイトルや説明は日本語で記述してください。
+
+          claude_args: |
+            --model ${{ env.CLAUDE_MODEL }}
+            --allowedTools "Read,Write,Edit,WebSearch,WebFetch,Bash(npm view:*),mcp__github__get_issue,mcp__github__add_issue_comment,mcp__github__push_files,mcp__github__create_branch,mcp__github__create_pull_request,mcp__github__update_pull_request"
