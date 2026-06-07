@@ -256,13 +256,13 @@ in
       };
 
       language-server.typescript-language-server = {
-        command = "${pkgs.nodePackages.typescript-language-server}/bin/typescript-language-server";
+        command = "${pkgs.typescript-language-server}/bin/typescript-language-server";
         args = [ "--stdio" ];
         config = {
           plugins = [
             {
               name = "@vue/typescript-plugin";
-              location = "${pkgs.nodePackages."@vue/language-server"}/lib/node_modules/@vue/language-server";
+              location = "${pkgs.vue-language-server}/lib/node_modules/@vue/language-server";
               languages = [ "vue" ];
             }
           ];
