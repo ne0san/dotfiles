@@ -1,4 +1,4 @@
-{ pkgs, username, lib, ... }:
+{ pkgs, username, ... }:
 let
   # ローカルのgit識別情報を読み込む（make git-identity で生成）
   # ~/.config/git-identity-{name,email} からユーザー情報を取得
@@ -54,6 +54,7 @@ in
     gh
     claude-code
     tle
+    fd
   ];
   home.file = {
   };
