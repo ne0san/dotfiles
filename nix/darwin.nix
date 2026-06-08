@@ -55,6 +55,7 @@
       autohide = true;
       show-recents = false;
       minimize-to-application = true;
+      mineffect = "scale";
     };
 
     # Finder

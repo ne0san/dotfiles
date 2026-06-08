@@ -105,7 +105,7 @@ in
         "0xProto Nerd Font"
         "MyricaM M"
       ];
-      font-size = 10;
+      font-size = 12;
       macos-option-as-alt = true;
     };
   };
