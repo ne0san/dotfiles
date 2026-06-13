@@ -1042,8 +1042,8 @@
           function()
             local file = vim.api.nvim_buf_get_name(0)
             local line = vim.api.nvim_win_get_cursor(0)[1]
-            vim.cmd("ClaudeCodeAdd " .. vim.fn.fnameescape(file) .. " " .. line .. " " .. line)
             vim.cmd("ClaudeCodeFocus")
+            vim.cmd("ClaudeCodeAdd " .. vim.fn.fnameescape(file) .. " " .. line .. " " .. line)
           end
         '';
         options = {
@@ -1247,11 +1247,12 @@
         words      = { enabled = true },
       })
 
-      -- TermOpen: lazygit 以外のターミナルで direnv reload を実行
+      -- TermOpen: lazygit/Claude Code 以外、かつ direnv 管理下のディレクトリでのみ direnv reload を実行
       vim.api.nvim_create_autocmd("TermOpen", {
         callback = function(ev)
-          local name = vim.api.nvim_buf_get_name(ev.buf)
-          if name:match("lazygit") then return end
+          local name = vim.api.nvim_buf_get_name(ev.buf):lower()
+          if name:match("lazygit") or name:match("claude") then return end
+          if vim.fn.findfile(".envrc", ".;") == "" then return end
           local chan = vim.b[ev.buf].terminal_job_id
           if chan and chan > 0 then
             vim.defer_fn(function()
