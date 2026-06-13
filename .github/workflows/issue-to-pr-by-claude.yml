@@ -5,7 +5,9 @@ on:
     types: [opened]
   issue_comment:
     types: [created]
-
+env:
+  DEFAULT_CLAUDE_MODEL: claude-sonnet-4-6
+  
 jobs:
   claude:
     if: |
