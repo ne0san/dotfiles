@@ -1037,6 +1037,22 @@
       }
       {
         mode = "n";
+        key = "<leader>al";
+        action.__raw = ''
+          function()
+            local file = vim.api.nvim_buf_get_name(0)
+            local line = vim.api.nvim_win_get_cursor(0)[1]
+            vim.cmd("ClaudeCodeAdd " .. vim.fn.fnameescape(file) .. " " .. line .. " " .. line)
+            vim.cmd("ClaudeCodeFocus")
+          end
+        '';
+        options = {
+          desc = "Add current line to Claude context and focus";
+          silent = true;
+        };
+      }
+      {
+        mode = "n";
         key = "<leader>ad";
         action = "<cmd>ClaudeCodeDiffAccept<CR>";
         options = {
