@@ -412,6 +412,13 @@
         action = "<Esc>";
         options.desc = "Exit insert mode";
       }
+      # qqでノーマルモードに戻る
+      {
+        mode = "i";
+        key = "qq";
+        action = "<Esc>";
+        options.desc = "Exit insert mode";
+      }
 
       # ===== comment ======
       {
