@@ -65,7 +65,7 @@ in
     enable = true;
     settings = {
 
-      format = "$all$time$status$character";
+      format = "$all$custom$time$status$character";
 
       time = {
         disabled = false;
@@ -91,6 +91,15 @@ in
 
       git_branch = {
         symbol = "🔧 ";
+      };
+
+      custom = {
+        shell = {
+          command = "ps -p $$ -o comm= | tr -d '-'";
+          when = "true";
+          format = "[$output]($style) ";
+          style = "bold cyan";
+        };
       };
     };
   };
