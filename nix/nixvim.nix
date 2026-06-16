@@ -1523,8 +1523,8 @@
 
       -- キーマップ (codewindow と同様の <leader>m プレフィックス)
       vim.keymap.set("n", "<leader>mm", "<cmd>Neominimap Toggle<cr>", { desc = "Toggle minimap" })
-      vim.keymap.set("n", "<leader>mo", "<cmd>Neominimap On<cr>",     { desc = "Open minimap" })
-      vim.keymap.set("n", "<leader>mc", "<cmd>Neominimap Off<cr>",    { desc = "Close minimap" })
+      vim.keymap.set("n", "<leader>mo", "<cmd>Neominimap Enable<cr>",  { desc = "Open minimap" })
+      vim.keymap.set("n", "<leader>mc", "<cmd>Neominimap Disable<cr>", { desc = "Close minimap" })
       vim.keymap.set("n", "<leader>mf", "<cmd>Neominimap Focus<cr>",  { desc = "Focus minimap" })
     '';
   };
