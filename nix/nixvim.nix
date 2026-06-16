@@ -1519,7 +1519,7 @@
       require("claudecode").setup()
 
       -- neominimap.nvim setup (v3以降は vim.g.neominimap で設定)
-      vim.g.neominimap = { auto_enable = true, win_width = 14 }
+      vim.g.neominimap = { auto_enable = true, win_width = 14, win_opt = { signcolumn = "no" } }
 
       -- キーマップ (codewindow と同様の <leader>m プレフィックス)
       vim.keymap.set("n", "<leader>mm", "<cmd>Neominimap Toggle<cr>", { desc = "Toggle minimap" })
