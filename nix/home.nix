@@ -65,7 +65,7 @@ in
     enable = true;
     settings = {
 
-      format = "$all$time$status$character";
+      format = "$all$env_var$time$status$character";
 
       time = {
         disabled = false;
@@ -91,6 +91,14 @@ in
 
       git_branch = {
         symbol = "🔧 ";
+      };
+
+      env_var = {
+        STARSHIP_SHELL = {
+          variable = "STARSHIP_SHELL";
+          format = "[$env_value]($style) ";
+          style = "bold cyan";
+        };
       };
     };
   };
