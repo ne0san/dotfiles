@@ -737,20 +737,26 @@
       {
         mode = "n";
         key = "gd";
-        action = "<cmd>lua vim.lsp.buf.definition()<CR>";
-        options.desc = "Go to definition";
+        action = "<cmd>vsplit | lua vim.lsp.buf.definition()<CR>";
+        options.desc = "Go to definition (vsplit)";
       }
       {
         mode = "n";
         key = "gD";
-        action = "<cmd>lua vim.lsp.buf.declaration()<CR>";
-        options.desc = "Go to declaration";
+        action = "<cmd>split | lua vim.lsp.buf.definition()<CR>";
+        options.desc = "Go to definition (split)";
       }
       {
         mode = "n";
         key = "gr";
-        action = "<cmd>lua vim.lsp.buf.references()<CR>";
-        options.desc = "Go to references";
+        action = "<cmd>vsplit | lua vim.lsp.buf.references()<CR>";
+        options.desc = "Go to references (vsplit)";
+      }
+      {
+        mode = "n";
+        key = "gR";
+        action = "<cmd>split | lua vim.lsp.buf.references()<CR>";
+        options.desc = "Go to references (split)";
       }
       {
         mode = "n";
