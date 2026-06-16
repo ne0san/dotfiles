@@ -65,7 +65,7 @@ in
     enable = true;
     settings = {
 
-      format = "$all$custom$time$status$character";
+      format = "$all$env_var$time$status$character";
 
       time = {
         disabled = false;
@@ -93,11 +93,10 @@ in
         symbol = "🔧 ";
       };
 
-      custom = {
-        shell = {
-          command = "ps -p $$ -o comm= | tr -d '-'";
-          when = "true";
-          format = "[$output]($style) ";
+      env_var = {
+        STARSHIP_SHELL = {
+          variable = "STARSHIP_SHELL";
+          format = "[$env_value]($style) ";
           style = "bold cyan";
         };
       };
