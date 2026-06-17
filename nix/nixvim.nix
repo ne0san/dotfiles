@@ -595,6 +595,15 @@
       }
       {
         mode = "n";
+        key = "<leader>bz";
+        action = "<cmd>DeleteHiddenBuffers<CR>";
+        options = {
+          silent = true;
+          desc = "Delete buffers not shown in any window";
+        };
+      }
+      {
+        mode = "n";
         key = "<leader>bc";
         action = "<cmd>DiffBuffers<CR>";
         options = {
@@ -1483,6 +1492,26 @@
 
       vim.api.nvim_create_user_command('DiffOff', function()
         vim.cmd('diffoff!')
+      end, {})
+
+      -- どのウィンドウからも表示されていないバッファを全削除
+      vim.api.nvim_create_user_command('DeleteHiddenBuffers', function()
+        local visible_bufs = {}
+        for _, win in ipairs(vim.api.nvim_list_wins()) do
+          visible_bufs[vim.api.nvim_win_get_buf(win)] = true
+        end
+
+        local deleted = 0
+        for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+          if vim.api.nvim_buf_is_valid(buf)
+             and vim.bo[buf].buflisted
+             and not visible_bufs[buf] then
+            Snacks.bufdelete(buf)
+            deleted = deleted + 1
+          end
+        end
+
+        vim.notify('Deleted ' .. deleted .. ' hidden buffer(s)', vim.log.levels.INFO)
       end, {})
 
       -- 現在行のGitHub URLをクリップボードにコピー
