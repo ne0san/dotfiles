@@ -582,7 +582,7 @@
       }
       {
         mode = "n";
-        key = "<leader>bx";
+        key = "<leader>bz";
         action = "<cmd>DeleteHiddenBuffers<CR>";
         options = {
           silent = true;
