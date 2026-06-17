@@ -1535,12 +1535,12 @@
       require("claudecode").setup()
 
       -- neominimap.nvim setup (v3以降は vim.g.neominimap で設定)
-      vim.g.neominimap = { auto_enable = true }
+      vim.g.neominimap = { auto_enable = true, win_width = 14, win_opt = { signcolumn = "no" } }
 
       -- キーマップ (codewindow と同様の <leader>m プレフィックス)
       vim.keymap.set("n", "<leader>mm", "<cmd>Neominimap Toggle<cr>", { desc = "Toggle minimap" })
-      vim.keymap.set("n", "<leader>mo", "<cmd>Neominimap On<cr>",     { desc = "Open minimap" })
-      vim.keymap.set("n", "<leader>mc", "<cmd>Neominimap Off<cr>",    { desc = "Close minimap" })
+      vim.keymap.set("n", "<leader>mo", "<cmd>Neominimap Enable<cr>",  { desc = "Open minimap" })
+      vim.keymap.set("n", "<leader>mc", "<cmd>Neominimap Disable<cr>", { desc = "Close minimap" })
       vim.keymap.set("n", "<leader>mf", "<cmd>Neominimap Focus<cr>",  { desc = "Focus minimap" })
     '';
   };
