@@ -787,6 +787,26 @@
         options.desc = "Find TODOs";
       }
 
+      # ===== Search & Replace (nvim-spectre) =====
+      {
+        mode = "n";
+        key = "<leader>S";
+        action.__raw = "function() require('spectre').toggle() end";
+        options.desc = "Toggle Spectre (search & replace)";
+      }
+      {
+        mode = "n";
+        key = "<leader>sw";
+        action.__raw = "function() require('spectre').open_visual({ select_word = true }) end";
+        options.desc = "Search current word (Spectre)";
+      }
+      {
+        mode = "n";
+        key = "<leader>sf";
+        action.__raw = "function() require('spectre').open_file_search({ select_word = true }) end";
+        options.desc = "Search in current file (Spectre)";
+      }
+
       # ===== LSP =====
       {
         mode = "n";
@@ -1560,6 +1580,8 @@
     extraPlugins = with pkgs.vimPlugins; [
       onedarkpro-nvim  # カラースキーム
       snacks-nvim      # dashboard/picker/terminal/explorer/indent/lazygit/bufdelete
+      plenary-nvim     # nvim-spectre の依存
+      nvim-spectre     # プロジェクト全体の検索・一括置換
       (pkgs.vimUtils.buildVimPlugin {  # ミニマップ
         name = "neominimap.nvim";
         src = pkgs.fetchFromGitHub {
@@ -1586,6 +1608,9 @@
     extraConfigLuaPost = ''
       -- claudecode.nvim setup
       require("claudecode").setup()
+
+      -- nvim-spectre setup
+      require("spectre").setup()
 
       -- neominimap.nvim setup (v3以降は vim.g.neominimap で設定)
       vim.g.neominimap = { auto_enable = true, win_width = 14, win_opt = { signcolumn = "no" } }
