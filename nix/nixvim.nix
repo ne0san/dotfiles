@@ -480,6 +480,19 @@
         action = "<C-\\><C-n>";
         options.desc = "Exit terminal mode";
       }
+      # Opt+Deleteで単語削除（テキストボックスと同じ挙動）
+      {
+        mode = "i";
+        key = "<M-BS>";
+        action = "<C-w>";
+        options.desc = "Delete word before cursor";
+      }
+      {
+        mode = "i";
+        key = "<M-Del>";
+        action = "<C-o>dw";
+        options.desc = "Delete word after cursor";
+      }
 
       # ===== comment ======
       {
