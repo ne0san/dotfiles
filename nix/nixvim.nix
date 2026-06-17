@@ -257,6 +257,7 @@
           delay = 0;
           message_template = "<author>, <date> - <summary>";
           date_format = "%Y-%m-%d %H:%M:%S";
+          highlight_group = "GitBlame";
         };
       };
       # Autopairs
@@ -1499,6 +1500,9 @@
       vim.api.nvim_set_hl(0, "RainbowGreen", { fg = "#98C379" })
       vim.api.nvim_set_hl(0, "RainbowViolet", { fg = "#C678DD" })
       vim.api.nvim_set_hl(0, "RainbowCyan", { fg = "#56B6C2" })
+
+      -- gitblame の文字色がコメントと被って見づらいため専用のハイライトを定義
+      vim.api.nvim_set_hl(0, "GitBlame", { fg = "#4A88C7", italic = true })
     '';
 
     # ========================================
