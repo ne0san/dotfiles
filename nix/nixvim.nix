@@ -761,8 +761,14 @@
       {
         mode = "n";
         key = "gi";
-        action = "<cmd>lua vim.lsp.buf.implementation()<CR>";
-        options.desc = "Go to implementation";
+        action = "<cmd>vsplit | lua vim.lsp.buf.implementation()<CR>";
+        options.desc = "Go to implementation (vsplit)";
+      }
+      {
+        mode = "n";
+        key = "gI";
+        action = "<cmd>split | lua vim.lsp.buf.implementation()<CR>";
+        options.desc = "Go to implementation (split)";
       }
       {
         mode = "n";
