@@ -1565,7 +1565,7 @@
           local count = vim.v.count1
           local col = vim.fn.col('.')
           local char = vim.fn.getline('.'):sub(col, col)
-          if char ~= '' and not char:match('%s') then
+          if char ~= "" and not char:match('%s') then
             local boundary = big and [[\(^\|\s\)\zs\S]] or [[\<]]
             local pos = vim.fn.searchpos(boundary, 'bcn')
             if pos[1] ~= 0 then
