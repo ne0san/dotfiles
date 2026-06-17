@@ -72,7 +72,21 @@
             end
             local winid = vim.api.nvim_get_current_win()
             local _, lines = context.get(winid)
-            vim.wo[winid].scrolloff = lines and #lines or 0
+            local height = lines and #lines or 0
+            vim.wo[winid].scrolloff = height
+
+            -- scrolloffの更新は次回のカーソル移動から効くため、
+            -- ネストが深くなった直後の1回はまだ古いscrolloffで
+            -- スクロールされ、ヘッダと重なってしまう。
+            -- 検出した瞬間にビューを直接補正して即座に解消する。
+            if height > 0 then
+              local winline = vim.fn.winline()
+              if winline <= height then
+                local view = vim.fn.winsaveview()
+                view.topline = view.topline + (height - winline + 1)
+                vim.fn.winrestview(view)
+              end
+            end
           end
         '';
         desc = "ヘッダ追従(treesitter-context)の実際の高さに合わせてscrolloffを動的に調整し、カーソルとの重なりを防ぐ";
