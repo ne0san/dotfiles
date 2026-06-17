@@ -145,7 +145,11 @@
         settings = {
           max_lines = 3; # 表示する最大行数
           min_window_height = 0;
-          mode = "topline"; # or "cursor"
+          mode = "topline"; # ウィンドウ最上行基準で絶対的に表示する(カーソル位置に依存しない)
+          multiwindow = true; # フォーカスしていないウィンドウでもヘッダ追従を表示する
+          trim_scope = "outer";
+          separator = "─";
+          zindex = 30;
         };
       };
 
