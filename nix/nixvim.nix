@@ -164,7 +164,6 @@
           mode = "topline"; # ウィンドウ最上行基準で絶対的に表示する(カーソル位置に依存しない)
           multiwindow = true; # フォーカスしていないウィンドウでもヘッダ追従を表示する
           trim_scope = "outer";
-          separator = null;
           zindex = 30;
         };
       };
