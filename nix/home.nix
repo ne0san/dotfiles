@@ -233,6 +233,9 @@ in
       gui = {
         language = "ja";
       };
+      os = {
+        editPreset = "nvim-remote";
+      };
     };
   };
   programs.helix = {
