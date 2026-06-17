@@ -57,6 +57,40 @@
         '';
         desc = "Close all special buffers and quit Neovim";
       }
+      {
+        event = [
+          "WinScrolled"
+          "BufWinEnter"
+          "CursorMoved"
+          "CursorMovedI"
+        ];
+        callback.__raw = ''
+          function()
+            local ok, context = pcall(require, "treesitter-context.context")
+            if not ok then
+              return
+            end
+            local winid = vim.api.nvim_get_current_win()
+            local _, lines = context.get(winid)
+            local height = lines and #lines or 0
+            vim.wo[winid].scrolloff = height
+
+            -- scrolloffの更新は次回のカーソル移動から効くため、
+            -- ネストが深くなった直後の1回はまだ古いscrolloffで
+            -- スクロールされ、ヘッダと重なってしまう。
+            -- 検出した瞬間にビューを直接補正して即座に解消する。
+            if height > 0 then
+              local winline = vim.fn.winline()
+              if winline <= height then
+                local view = vim.fn.winsaveview()
+                view.topline = view.topline + (height - winline + 1)
+                vim.fn.winrestview(view)
+              end
+            end
+          end
+        '';
+        desc = "ヘッダ追従(treesitter-context)の実際の高さに合わせてscrolloffを動的に調整し、カーソルとの重なりを防ぐ";
+      }
     ];
     opts = {
       # 行番号
@@ -142,10 +176,25 @@
 
       treesitter-context = {
         enable = true;
+        # アップストリームはカーソルとウィンドウ最上行との距離でヘッダの高さを
+        # 強制的に縮める実装になっており、設定では無効化できない(calc_max_lines内)。
+        # ヘッダがカーソル接近時に省略されるのを防ぐため、ウィンドウ高さ基準に
+        # 差し替えるパッチを当てる。
+        package = pkgs.vimPlugins.nvim-treesitter-context.overrideAttrs (old: {
+          postPatch = (old.postPatch or "") + ''
+            substituteInPlace lua/treesitter-context/context.lua \
+              --replace-fail \
+                "local max_from_cursor = cursor - wintop" \
+                "local max_from_cursor = api.nvim_win_get_height(winid)"
+          '';
+        });
         settings = {
-          max_lines = 3; # 表示する最大行数
+          max_lines = 0; # 表示する最大行数の制限をなくす
           min_window_height = 0;
-          mode = "topline"; # or "cursor"
+          mode = "topline"; # ウィンドウ最上行基準で絶対的に表示する(カーソル位置に依存しない)
+          multiwindow = true; # フォーカスしていないウィンドウでもヘッダ追従を表示する
+          trim_scope = "outer";
+          zindex = 30;
         };
       };
 
