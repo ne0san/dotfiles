@@ -99,6 +99,10 @@
       # 分割時の新ウィンドウ配置（vsplitは右、splitは下に新ウィンドウを開く）
       splitright = true;
       splitbelow = true;
+
+      # ヘッダ追従(treesitter-context)とカーソルが重ならないよう、
+      # ウィンドウ最上部に常に余白を確保してスクロールさせる
+      scrolloff = 8;
     };
 
     # ========================================
@@ -160,7 +164,7 @@
           mode = "topline"; # ウィンドウ最上行基準で絶対的に表示する(カーソル位置に依存しない)
           multiwindow = true; # フォーカスしていないウィンドウでもヘッダ追従を表示する
           trim_scope = "outer";
-          separator = "─";
+          separator = null;
           zindex = 30;
         };
       };
