@@ -57,6 +57,26 @@
         '';
         desc = "Close all special buffers and quit Neovim";
       }
+      {
+        event = [
+          "WinScrolled"
+          "BufWinEnter"
+          "CursorMoved"
+          "CursorMovedI"
+        ];
+        callback.__raw = ''
+          function()
+            local ok, context = pcall(require, "treesitter-context.context")
+            if not ok then
+              return
+            end
+            local winid = vim.api.nvim_get_current_win()
+            local _, lines = context.get(winid)
+            vim.wo[winid].scrolloff = lines and #lines or 0
+          end
+        '';
+        desc = "ヘッダ追従(treesitter-context)の実際の高さに合わせてscrolloffを動的に調整し、カーソルとの重なりを防ぐ";
+      }
     ];
     opts = {
       # 行番号
@@ -99,10 +119,6 @@
       # 分割時の新ウィンドウ配置（vsplitは右、splitは下に新ウィンドウを開く）
       splitright = true;
       splitbelow = true;
-
-      # ヘッダ追従(treesitter-context)とカーソルが重ならないよう、
-      # ウィンドウ最上部に常に余白を確保してスクロールさせる
-      scrolloff = 8;
     };
 
     # ========================================
