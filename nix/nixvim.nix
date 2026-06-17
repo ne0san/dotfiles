@@ -95,6 +95,10 @@
       # 折りたたみ
       foldlevel = 99; # 最初は全部開いた状態
       foldlevelstart = 99; # ファイル開いた時も全部開く
+
+      # 分割時の新ウィンドウ配置（vsplitは右、splitは下に新ウィンドウを開く）
+      splitright = true;
+      splitbelow = true;
     };
 
     # ========================================
@@ -737,26 +741,38 @@
       {
         mode = "n";
         key = "gd";
-        action = "<cmd>lua vim.lsp.buf.definition()<CR>";
-        options.desc = "Go to definition";
+        action.__raw = "function() Snacks.picker.lsp_definitions({ confirm = 'edit_vsplit' }) end";
+        options.desc = "Go to definition (vsplit)";
       }
       {
         mode = "n";
         key = "gD";
-        action = "<cmd>lua vim.lsp.buf.declaration()<CR>";
-        options.desc = "Go to declaration";
+        action.__raw = "function() Snacks.picker.lsp_definitions({ confirm = 'edit_split' }) end";
+        options.desc = "Go to definition (split)";
       }
       {
         mode = "n";
         key = "gr";
-        action = "<cmd>lua vim.lsp.buf.references()<CR>";
-        options.desc = "Go to references";
+        action.__raw = "function() Snacks.picker.lsp_references({ confirm = 'edit_vsplit' }) end";
+        options.desc = "Go to references (vsplit)";
+      }
+      {
+        mode = "n";
+        key = "gR";
+        action.__raw = "function() Snacks.picker.lsp_references({ confirm = 'edit_split' }) end";
+        options.desc = "Go to references (split)";
       }
       {
         mode = "n";
         key = "gi";
-        action = "<cmd>lua vim.lsp.buf.implementation()<CR>";
-        options.desc = "Go to implementation";
+        action.__raw = "function() Snacks.picker.lsp_implementations({ confirm = 'edit_vsplit' }) end";
+        options.desc = "Go to implementation (vsplit)";
+      }
+      {
+        mode = "n";
+        key = "gI";
+        action.__raw = "function() Snacks.picker.lsp_implementations({ confirm = 'edit_split' }) end";
+        options.desc = "Go to implementation (split)";
       }
       {
         mode = "n";
