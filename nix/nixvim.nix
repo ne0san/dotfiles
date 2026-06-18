@@ -1627,8 +1627,8 @@ _| \_|   \_/   ___|_|  _| ]],
       -- gitblame の文字色がコメントと被って見づらいため専用のハイライトを定義
       vim.api.nvim_set_hl(0, "GitBlame", { fg = "#4A88C7", italic = true })
 
-      -- 分割ウィンドウの境目をはっきりさせる(ただし主張しすぎない明るめのグレー)
-      vim.api.nvim_set_hl(0, "WinSeparator", { fg = "#8B92A6" })
+      -- 分割ウィンドウの境目をデフォルトより少しだけはっきりさせる
+      vim.api.nvim_set_hl(0, "WinSeparator", { fg = "#5C6370" })
 
       -- ミニマップの境目は自己主張を弱めた色にする(背景に近い色)
       vim.api.nvim_set_hl(0, "NeominimapBorder", { fg = "#3B4048" })
