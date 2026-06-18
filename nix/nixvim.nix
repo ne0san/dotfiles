@@ -1627,8 +1627,8 @@ _| \_|   \_/   ___|_|  _| ]],
       -- gitblame の文字色がコメントと被って見づらいため専用のハイライトを定義
       vim.api.nvim_set_hl(0, "GitBlame", { fg = "#4A88C7", italic = true })
 
-      -- 分割ウィンドウの境目をはっきりとした白色にする
-      vim.api.nvim_set_hl(0, "WinSeparator", { fg = "#FFFFFF" })
+      -- 分割ウィンドウの境目をはっきりさせる(ただし主張しすぎない明るめのグレー)
+      vim.api.nvim_set_hl(0, "WinSeparator", { fg = "#8B92A6" })
 
       -- ミニマップの境目は自己主張を弱めた色にする(背景に近い色)
       vim.api.nvim_set_hl(0, "NeominimapBorder", { fg = "#3B4048" })
@@ -1670,8 +1670,13 @@ _| \_|   \_/   ___|_|  _| ]],
       -- neominimap.nvim setup (v3以降は vim.g.neominimap で設定)
       vim.g.neominimap = {
         auto_enable = true,
-        win_width = 14,
-        win_opt = { signcolumn = "no", winhighlight = "WinSeparator:NeominimapBorder" },
+        float = {
+          minimap_width = 14,
+          window_border = "single", -- 境目を描画させる(色は NeominimapBorder ハイライトで指定)
+        },
+        winopt = function(opt, _winid)
+          opt.signcolumn = "no"
+        end,
       }
 
       -- キーマップ (codewindow と同様の <leader>m プレフィックス)
