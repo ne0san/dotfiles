@@ -42,7 +42,6 @@ in
     elixir
     nil  # Nix LSP
     lua-language-server
-    winetricks
     nushell
     nerd-fonts.fira-code
     nerd-fonts.symbols-only
