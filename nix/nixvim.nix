@@ -1671,7 +1671,7 @@ _| \_|   \_/   ___|_|  _| ]],
 
       -- neominimap.nvim setup (v3以降は vim.g.neominimap で設定)
       vim.g.neominimap = {
-        auto_enable = true,
+        auto_enable = false,
         float = {
           minimap_width = 14,
           window_border = "single", -- 境目を描画させる(色は NeominimapBorder ハイライトで指定)
