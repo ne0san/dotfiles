@@ -236,6 +236,12 @@
           jsonls = {
             enable = true;
           };
+          fsautocomplete = {
+            enable = true;
+          };
+          elixirls = {
+            enable = true;
+          };
         };
       };
 
