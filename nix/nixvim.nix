@@ -846,6 +846,12 @@
       }
       {
         mode = "n";
+        key = "gD";
+        action.__raw = "function() Snacks.picker.lsp_type_definitions({ auto_confirm = false }) end";
+        options.desc = "Go to type definition (choose action in popup)";
+      }
+      {
+        mode = "n";
         key = "gr";
         action.__raw = "function() Snacks.picker.lsp_references({ auto_confirm = false }) end";
         options.desc = "Go to references (choose action in popup)";
