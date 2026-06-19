@@ -48,6 +48,7 @@ in
     nerd-fonts.symbols-only
     gopls
     nodejs
+    tree-sitter
     yazi
     zellij
     _1password-cli
