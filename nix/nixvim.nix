@@ -171,6 +171,8 @@
           yaml
           toml
           go
+          elixir
+          fsharp
         ];
       };
 
