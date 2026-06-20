@@ -999,6 +999,13 @@
         action = "<cmd>q<CR>";
         options.desc = "Quit";
       }
+      # 行末画面内自動折り返しのトグル
+      {
+        mode = "n";
+        key = "<leader>uw";
+        action = "<cmd>set wrap!<CR>";
+        options.desc = "Toggle line wrap";
+      }
       {
         mode = "n";
         key = "<leader>Q";
