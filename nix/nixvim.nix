@@ -1680,6 +1680,23 @@ _| \_|   \_/   ___|_|  _| ]],
         terminal_cmd = "direnv exec . claude",
       })
 
+      -- gitblame と tiny-inline-diagnostic がどちらも行末に表示するため、
+      -- カーソル行に診断がある間は gitblame を無効化して重なりを防ぐ
+      -- (gitblame に enabled のバッファローカル設定は存在しないため M.enable/M.disable を使う)
+      vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI", "DiagnosticChanged" }, {
+        group = vim.api.nvim_create_augroup("GitBlameDiagnosticConflict", { clear = true }),
+        callback = function()
+          local lnum = vim.api.nvim_win_get_cursor(0)[1] - 1
+          local has_diagnostic = #vim.diagnostic.get(0, { lnum = lnum }) > 0
+          local gitblame = require("gitblame")
+          if has_diagnostic then
+            gitblame.disable()
+          else
+            gitblame.enable()
+          end
+        end,
+      })
+
       -- neominimap.nvim setup (v3以降は vim.g.neominimap で設定)
       vim.g.neominimap = {
         auto_enable = false,
