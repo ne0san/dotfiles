@@ -1415,6 +1415,7 @@ _| \_|   \_/   ___|_|  _| ]],
         { "<leader>a", group = "AI/Claude" },
         { "<leader>n", group = "New" },
         { "<leader>m", group = "Minimap" },
+        { "<leader>u", group = "UI" },
       })
 
       require('auto-session').setup({
