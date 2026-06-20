@@ -847,38 +847,26 @@
       {
         mode = "n";
         key = "gd";
-        action.__raw = "function() Snacks.picker.lsp_definitions({ confirm = 'edit_vsplit' }) end";
-        options.desc = "Go to definition (vsplit)";
+        action.__raw = "function() Snacks.picker.lsp_definitions({ auto_confirm = false }) end";
+        options.desc = "Go to definition (choose action in popup)";
       }
       {
         mode = "n";
         key = "gD";
-        action.__raw = "function() Snacks.picker.lsp_definitions({ confirm = 'edit_split' }) end";
-        options.desc = "Go to definition (split)";
+        action.__raw = "function() Snacks.picker.lsp_type_definitions({ auto_confirm = false }) end";
+        options.desc = "Go to type definition (choose action in popup)";
       }
       {
         mode = "n";
         key = "gr";
-        action.__raw = "function() Snacks.picker.lsp_references({ confirm = 'edit_vsplit' }) end";
-        options.desc = "Go to references (vsplit)";
-      }
-      {
-        mode = "n";
-        key = "gR";
-        action.__raw = "function() Snacks.picker.lsp_references({ confirm = 'edit_split' }) end";
-        options.desc = "Go to references (split)";
+        action.__raw = "function() Snacks.picker.lsp_references({ auto_confirm = false }) end";
+        options.desc = "Go to references (choose action in popup)";
       }
       {
         mode = "n";
         key = "gi";
-        action.__raw = "function() Snacks.picker.lsp_implementations({ confirm = 'edit_vsplit' }) end";
-        options.desc = "Go to implementation (vsplit)";
-      }
-      {
-        mode = "n";
-        key = "gI";
-        action.__raw = "function() Snacks.picker.lsp_implementations({ confirm = 'edit_split' }) end";
-        options.desc = "Go to implementation (split)";
+        action.__raw = "function() Snacks.picker.lsp_implementations({ auto_confirm = false }) end";
+        options.desc = "Go to implementation (choose action in popup)";
       }
       {
         mode = "n";
