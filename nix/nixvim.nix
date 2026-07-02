@@ -1295,7 +1295,15 @@
       --   vim-bbye     → snacks.bufdelete
       require("snacks").setup({
         -- Picker (telescope の代替)
-        picker = { enabled = true },
+        picker = {
+          enabled = true,
+          sources = {
+            -- Explorer で隠しファイルもデフォルト表示する
+            explorer = {
+              hidden = true,
+            },
+          },
+        },
 
         -- Dashboard (alpha の代替)
         dashboard = {
