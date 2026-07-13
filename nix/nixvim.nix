@@ -110,7 +110,7 @@
       # True Color
       termguicolors = true;
 
-      # タブ設定
+      # タブ設定 (デフォルト値。sleuthプラグインがファイルごとに自動判別して上書きする)
       expandtab = true;
       shiftwidth = 2;
       tabstop = 2;
@@ -450,6 +450,11 @@
       };
 
       modicator = {
+        enable = true;
+      };
+
+      # ファイルごとにshiftwidth/expandtabを自動判別する
+      sleuth = {
         enable = true;
       };
 
