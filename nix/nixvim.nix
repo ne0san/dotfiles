@@ -1448,8 +1448,8 @@ _| \_|   \_/   ___|_|  _| ]],
         pattern = '*',
         callback = function()
           vim.highlight.on_yank({
-            higroup = 'IncSearch',  -- ハイライトグループ
-            timeout = 100,          -- 表示時間（ミリ秒）
+            higroup = 'YankHighlight', -- ハイライトグループ（検索ハイライトと区別するため専用色）
+            timeout = 100,             -- 表示時間（ミリ秒）
           })
         end,
       })
@@ -1645,6 +1645,9 @@ _| \_|   \_/   ___|_|  _| ]],
 
       -- ミニマップの境目は自己主張を弱めた色にする(背景に近い色)
       vim.api.nvim_set_hl(0, "NeominimapBorder", { fg = "#3B4048" })
+
+      -- ヤンク時のハイライトが検索ハイライト(IncSearch)と同色で紛らわしいため専用の色を定義
+      vim.api.nvim_set_hl(0, "YankHighlight", { bg = "#98C379", fg = "#282C34" })
     '';
 
     # ========================================
