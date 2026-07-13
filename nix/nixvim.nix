@@ -91,6 +91,18 @@
         '';
         desc = "ヘッダ追従(treesitter-context)の実際の高さに合わせてscrolloffを動的に調整し、カーソルとの重なりを防ぐ";
       }
+      {
+        event = "LspAttach";
+        callback.__raw = ''
+          function(args)
+            local client = vim.lsp.get_client_by_id(args.data.client_id)
+            if client and client:supports_method("textDocument/inlayHint") then
+              vim.lsp.inlay_hint.enable(true, { bufnr = args.buf })
+            end
+          end
+        '';
+        desc = "LSPが対応していれば型注釈などのインレイヒントを自動的に有効化する（VSCode Ionideのような表示）";
+      }
     ];
     opts = {
       # 行番号
@@ -238,6 +250,15 @@
           };
           fsautocomplete = {
             enable = true;
+            settings = {
+              FSharp = {
+                InlayHints = {
+                  enabled = true;
+                  typeAnnotations = true;
+                  parameterNames = true;
+                };
+              };
+            };
           };
           elixirls = {
             enable = true;
@@ -903,6 +924,17 @@
         key = "<leader>lS";
         action = "<cmd>AerialToggle<CR>";
         options.desc = "Symbols outline";
+      }
+      {
+        mode = "n";
+        key = "<leader>li";
+        action.__raw = ''
+          function()
+            local enabled = vim.lsp.inlay_hint.is_enabled({ bufnr = 0 })
+            vim.lsp.inlay_hint.enable(not enabled, { bufnr = 0 })
+          end
+        '';
+        options.desc = "Toggle inlay hints";
       }
       {
         mode = "n";
