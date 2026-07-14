@@ -13,6 +13,9 @@
     globals = {
       mapleader = " ";
       maplocalleader = ",";
+      # Ionide-vimはインデント(indent/fsharp.vim)目的でのみ導入し、
+      # LSPクライアントはnixvim側のfsautocomplete設定と二重起動するため無効化する
+      "fsharp#backend" = "disable";
     };
     autoCmd = [
       {
@@ -1686,6 +1689,9 @@ _| \_|   \_/   ___|_|  _| ]],
     extraPlugins = with pkgs.vimPlugins; [
       onedarkpro-nvim  # カラースキーム
       snacks-nvim      # dashboard/picker/terminal/explorer/indent/lazygit/bufdelete
+      # F#のオフサイドルールに対応したインデント(indent/fsharp.vim)目的で導入。
+      # LSPバックエンドはg:fsharp#backendで無効化済み(fsautocompleteはnixvim側で設定)
+      Ionide-vim
       (pkgs.vimUtils.buildVimPlugin {  # ミニマップ
         name = "neominimap.nvim";
         src = pkgs.fetchFromGitHub {
@@ -1740,6 +1746,63 @@ _| \_|   \_/   ___|_|  _| ]],
           end
           orig_handler(err, result, ctx, config)
         end
+      end
+
+      -- F#: VSCode Ionideのように "///" を打つとXMLドキュメントコメントの
+      -- テンプレート(summary/param/returns)をよしなに自動生成する。
+      -- fsautocomplete側に対応する専用LSPエンドポイントが無いため、
+      -- 直下の宣言行を簡易パースしてクライアント側で生成する。
+      -- 対応できるのは "(name: Type)" 形式の型注釈付き引数のみで、
+      -- 型注釈のないカリー化引数(let f x y = ...)は<param>を生成しない。
+      do
+        local function fsharp_generate_doc_comment(bufnr, lnum)
+          local total_lines = vim.api.nvim_buf_line_count(bufnr)
+          local sig_line = nil
+          local scan = lnum -- 0-indexed: lnum行目(1-indexed)の次の行から
+          while scan < total_lines do
+            local text = vim.api.nvim_buf_get_lines(bufnr, scan, scan + 1, false)[1] or ""
+            local trimmed = vim.trim(text)
+            if trimmed ~= "" and not trimmed:match("^///") then
+              sig_line = text
+              break
+            end
+            scan = scan + 1
+          end
+
+          local doc_lines = { "/// <summary>", "///", "/// </summary>" }
+          if sig_line then
+            for pname in sig_line:gmatch("%(%s*([%a_][%w_']*)%s*:[^%(%)]*%)") do
+              table.insert(doc_lines, string.format('/// <param name="%s"></param>', pname))
+            end
+            if sig_line:match("%)%s*:%s*[%a_][%w_%.<>,%s]*%s*=") then
+              table.insert(doc_lines, "/// <returns></returns>")
+            end
+          end
+
+          local indent = (vim.api.nvim_buf_get_lines(bufnr, lnum - 1, lnum, false)[1] or ""):match("^%s*") or ""
+          for i, l in ipairs(doc_lines) do
+            doc_lines[i] = indent .. l
+          end
+          vim.api.nvim_buf_set_lines(bufnr, lnum - 1, lnum, false, doc_lines)
+          vim.api.nvim_win_set_cursor(0, { lnum + 1, #doc_lines[2] })
+        end
+
+        vim.api.nvim_create_autocmd("FileType", {
+          pattern = "fsharp",
+          group = vim.api.nvim_create_augroup("FSharpDocComment", { clear = true }),
+          callback = function(args)
+            vim.api.nvim_create_autocmd("TextChangedI", {
+              buffer = args.buf,
+              group = vim.api.nvim_create_augroup("FSharpDocCommentBuf" .. args.buf, { clear = true }),
+              callback = function()
+                if vim.trim(vim.api.nvim_get_current_line()) == "///" then
+                  local lnum = vim.api.nvim_win_get_cursor(0)[1]
+                  fsharp_generate_doc_comment(args.buf, lnum)
+                end
+              end,
+            })
+          end,
+        })
       end
 
       -- claudecode.nvim setup
