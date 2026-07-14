@@ -257,9 +257,7 @@
                   typeAnnotations = true;
                   parameterNames = true;
                 };
-                # コンピュテーション式内の束縛（let!等）が実際には使われているにも関わらず
-                # 「This value is unused」という誤検知の[HINT]が出るため無効化する
-                UnusedDeclarationsAnalyzer = false;
+                UnusedDeclarationsAnalyzer = true;
               };
             };
           };
@@ -1712,6 +1710,38 @@ _| \_|   \_/   ___|_|  _| ]],
 
     # Post setup
     extraConfigLuaPost = ''
+      -- fsautocomplete の UnusedDeclarationsAnalyzer は、コンピュテーション式内の
+      -- let!/and!/use!/do!/match! 等の束縛を実際に使っていても誤って
+      -- 「This value is unused」の[HINT]を出すことがある(F#コンパイラ側の既知の制限)。
+      -- 分析自体は有効なまま保ち、該当行がCEキーワードを含む場合の
+      -- unused系Hintだけをクライアント側で除外する。
+      do
+        local orig_handler = vim.lsp.handlers["textDocument/publishDiagnostics"]
+        vim.lsp.handlers["textDocument/publishDiagnostics"] = function(err, result, ctx, config)
+          if result and result.diagnostics then
+            local client = vim.lsp.get_client_by_id(ctx.client_id)
+            if client and client.name == "fsautocomplete" then
+              local bufnr = vim.uri_to_bufnr(result.uri)
+              result.diagnostics = vim.tbl_filter(function(d)
+                local is_unused_hint = d.severity == vim.diagnostic.severity.HINT
+                  and d.message
+                  and d.message:lower():find("unused", 1, true)
+                if not is_unused_hint then
+                  return true
+                end
+                if not vim.api.nvim_buf_is_loaded(bufnr) then
+                  return true
+                end
+                local line = vim.api.nvim_buf_get_lines(bufnr, d.range.start.line, d.range.start.line + 1, false)[1] or ""
+                local is_ce_binding = line:find("let!") or line:find("and!") or line:find("use!") or line:find("do!") or line:find("match!")
+                return not is_ce_binding
+              end, result.diagnostics)
+            end
+          end
+          orig_handler(err, result, ctx, config)
+        end
+      end
+
       -- claudecode.nvim setup
       -- claudecode.nvim はシェルを経由せず claude バイナリを直接起動するため、
       -- direnv のシェルフックが発火せず devenv の環境変数が反映されない。
