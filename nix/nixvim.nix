@@ -257,6 +257,9 @@
                   typeAnnotations = true;
                   parameterNames = true;
                 };
+                # コンピュテーション式内の束縛（let!等）が実際には使われているにも関わらず
+                # 「This value is unused」という誤検知の[HINT]が出るため無効化する
+                UnusedDeclarationsAnalyzer = false;
               };
             };
           };
