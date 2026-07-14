@@ -672,7 +672,6 @@
         };
       }
       # ===== タブ操作 (AstroNvim風) =====
-      # タブ切り替え自体は標準の gt/gT で足りるため、作成・破棄系のみ用意する
       {
         mode = "n";
         key = "<leader><Tab>n";
@@ -696,6 +695,20 @@
         key = "<leader><Tab>m";
         action = "<C-w>T";
         options.desc = "Move window to new tab";
+      }
+      # 標準の gt/gT でも切り替え可能だが、<leader><Tab> グループ側からも
+      # 一貫して操作できるようにエイリアスを用意する
+      {
+        mode = "n";
+        key = "<leader><Tab>]";
+        action = "<cmd>tabnext<CR>";
+        options.desc = "Next tab";
+      }
+      {
+        mode = "n";
+        key = "<leader><Tab>[";
+        action = "<cmd>tabprevious<CR>";
+        options.desc = "Previous tab";
       }
       # ===== ウィンドウ分割 (AstroNvim風) =====
       {
