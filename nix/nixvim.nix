@@ -482,12 +482,9 @@
         options.desc = "Exit insert mode";
       }
       # ターミナルモードでqqでノーマルモードに戻る
-      {
-        mode = "t";
-        key = "qq";
-        action = "<C-\\><C-n>";
-        options.desc = "Exit terminal mode";
-      }
+      # (claudecode.nvim 等、日本語入力を行うターミナルバッファでは
+      #  IME変換中に qq/jj/Esc Esc が誤爆するため、TermOpen autocmd で
+      #  バッファローカルに設定し、claudecode バッファのみ除外している)
       # Opt+Deleteで単語削除（テキストボックスと同じ挙動）
       {
         mode = "i";
@@ -942,18 +939,6 @@
         action.__raw = "function() Snacks.terminal.toggle(\"fish\", { win = { position = \"right\", width = 0.4 } }) end";
         options.desc = "Vertical terminal";
       }
-      {
-        mode = "t";
-        key = "<Esc><Esc>";
-        action = "<C-\\><C-n>";
-        options.desc = "Exit terminal mode";
-      }
-      {
-        mode = "t";
-        key = "jj";
-        action = "<C-\\><C-n>";
-        options.desc = "Exit terminal mode";
-      }
 
       # ===== Git =====
       {
@@ -1387,6 +1372,20 @@ _| \_|   \_/   ___|_|  _| ]],
               pcall(vim.fn.chansend, chan, "direnv reload\n")
             end, 500)
           end
+        end,
+      })
+
+      -- TermOpen: qq/jj/Esc Esc でターミナルモードを抜けるショートカット。
+      -- claudecode.nvim のバッファでは日本語IME変換中にこれらのキー列が
+      -- 誤爆してノーマルモードへ戻されてしまうため、claude バッファのみ除外する。
+      vim.api.nvim_create_autocmd("TermOpen", {
+        callback = function(ev)
+          local name = vim.api.nvim_buf_get_name(ev.buf):lower()
+          if name:match("claude") then return end
+          local opts = { buffer = ev.buf, desc = "Exit terminal mode" }
+          vim.keymap.set("t", "qq", [[<C-\><C-n>]], opts)
+          vim.keymap.set("t", "jj", [[<C-\><C-n>]], opts)
+          vim.keymap.set("t", "<Esc><Esc>", [[<C-\><C-n>]], opts)
         end,
       })
 
