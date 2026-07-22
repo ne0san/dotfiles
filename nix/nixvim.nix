@@ -165,7 +165,14 @@
         enable = true;
         settings = {
           highlight.enable = true;
-          indent.enable = true;
+          indent = {
+            enable = true;
+            # nvim-treesitterのfsharpグラマーにはindents.scmが無く、
+            # indent.enable=trueのままだとFileType発火時にindentexprが
+            # treesitter側(no-op)で上書きされ、Ionide-vimのindent/fsharp.vim
+            # (オフサイドルール対応)が効かなくなるため対象外にする
+            disable = [ "fsharp" ];
+          };
         };
         # Lua, Rust, TypeScript + 基本的な言語
         grammarPackages = with pkgs.vimPlugins.nvim-treesitter.builtGrammars; [
