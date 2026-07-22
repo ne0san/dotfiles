@@ -165,14 +165,7 @@
         enable = true;
         settings = {
           highlight.enable = true;
-          indent = {
-            enable = true;
-            # nvim-treesitterのfsharpグラマーにはindents.scmが無く、
-            # indent.enable=trueのままだとFileType発火時にindentexprが
-            # treesitter側(no-op)で上書きされ、Ionide-vimのindent/fsharp.vim
-            # (オフサイドルール対応)が効かなくなるため対象外にする
-            disable = [ "fsharp" ];
-          };
+          indent.enable = true;
         };
         # Lua, Rust, TypeScript + 基本的な言語
         grammarPackages = with pkgs.vimPlugins.nvim-treesitter.builtGrammars; [
@@ -1811,6 +1804,28 @@ _| \_|   \_/   ___|_|  _| ]],
           end,
         })
       end
+
+      -- F#: インデントをIonide-vim(indent/fsharp.vim)に強制的に委ねる。
+      -- nvim-treesitterは2026年4月にmainブランチへ全面書き換えられてアーカイブされ、
+      -- 従来の`indent.enable/disable`という宣言的な言語別設定が効かなくなり、
+      -- indentexprがグローバルにtreesitter側の関数で上書きされてしまう
+      -- (indent/fsharp.vimがbuiltinのindent.vimローダーより先に評価されず、
+      -- 一切読み込まれないケースも確認された)。
+      -- そのため、この設定ファイルの中で最後にFileTypeへ登録して強制的に
+      -- indent/fsharp.vimを読み込み、indentexprを上書きし直す。
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = "fsharp",
+        group = vim.api.nvim_create_augroup("FSharpForceIndent", { clear = true }),
+        callback = function(args)
+          -- indent/fsharp.vim内のb:did_indentガードで再読み込みがスキップ
+          -- されないよう、先にクリアしてから強制的に読み込む
+          vim.cmd("unlet! b:did_indent")
+          vim.cmd("runtime! indent/fsharp.vim")
+          if vim.fn.exists("*FSharpIndent") == 1 then
+            vim.bo[args.buf].indentexpr = "FSharpIndent()"
+          end
+        end,
+      })
 
       -- claudecode.nvim setup
       -- claudecode.nvim はシェルを経由せず claude バイナリを直接起動するため、
