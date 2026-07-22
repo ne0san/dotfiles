@@ -701,6 +701,45 @@
           desc = "Previous diff";
         };
       }
+      # ===== タブ操作 (AstroNvim風) =====
+      {
+        mode = "n";
+        key = "<leader><Tab>n";
+        action = "<cmd>tabnew<CR>";
+        options.desc = "New tab";
+      }
+      {
+        mode = "n";
+        key = "<leader><Tab>c";
+        action = "<cmd>tabclose<CR>";
+        options.desc = "Close tab";
+      }
+      {
+        mode = "n";
+        key = "<leader><Tab>o";
+        action = "<cmd>tabonly<CR>";
+        options.desc = "Close other tabs";
+      }
+      {
+        mode = "n";
+        key = "<leader><Tab>m";
+        action = "<C-w>T";
+        options.desc = "Move window to new tab";
+      }
+      # 標準の gt/gT でも切り替え可能だが、<leader><Tab> グループ側からも
+      # 一貫して操作できるようにエイリアスを用意する
+      {
+        mode = "n";
+        key = "<leader><Tab>]";
+        action = "<cmd>tabnext<CR>";
+        options.desc = "Next tab";
+      }
+      {
+        mode = "n";
+        key = "<leader><Tab>[";
+        action = "<cmd>tabprevious<CR>";
+        options.desc = "Previous tab";
+      }
       # ===== ウィンドウ分割 (AstroNvim風) =====
       {
         mode = "n";
@@ -1444,6 +1483,7 @@ _| \_|   \_/   ___|_|  _| ]],
       local wk = require("which-key")
       wk.add({
         { "<leader>b", group = "Buffer" },
+        { "<leader><Tab>", group = "Tab" },
         { "<leader>f", group = "Find" },
         { "<leader>l", group = "LSP" },
         { "<leader>t", group = "Terminal" },
