@@ -39,21 +39,17 @@ in
     gnupg
     tree
     lua
-    elixir
     nil  # Nix LSP
     lua-language-server
-    nushell
     nerd-fonts.fira-code
     nerd-fonts.symbols-only
     gopls
-    nodejs
-    yazi
-    zellij
     _1password-cli
     gh
     claude-code
     tle
     fd
+    dotnet-sdk
   ];
   home.file = {
   };
@@ -153,6 +149,7 @@ in
       flupd = "nix flake update --flake ~/dotfiles/nix";
       drsw = "sudo USER=$USER darwin-rebuild switch --flake ~/dotfiles/nix#ne0san --impure";
       freload = "source ~/.config/fish/config.fish";
+      fsi = "dotnet fsi";
     };
 
   };
