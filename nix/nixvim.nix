@@ -541,20 +541,6 @@
         options.desc = "Delete word after cursor";
       }
 
-      # Shift-Tabでインデントを1段階消す(dedent)
-      {
-        mode = "n";
-        key = "<S-Tab>";
-        action = "<<";
-        options.desc = "Decrease indent";
-      }
-      {
-        mode = "v";
-        key = "<S-Tab>";
-        action = "<gv";
-        options.desc = "Decrease indent (keep selection)";
-      }
-
       # ===== yw/yW/dw/dW: 単語先頭から操作 =====
       {
         mode = "n";
