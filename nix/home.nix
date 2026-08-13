@@ -49,7 +49,7 @@ in
     claude-code
     tle
     fd
-    dotnet-sdk
+    dotnet-sdk_10
   ];
   home.file = {
   };
