@@ -1852,7 +1852,10 @@ _| \_|   \_/   ___|_|  _| ]],
               buffer = args.buf,
               group = vim.api.nvim_create_augroup("FSharpDocCommentBuf" .. args.buf, { clear = true }),
               callback = function()
-                if vim.trim(vim.api.nvim_get_current_line()) == "///" then
+                -- vim.trim()で前後の空白を除去して比較すると、生成済みテンプレートの
+                -- 空行(2行目の"///")に末尾スペースを入力しただけでも一致してしまい、
+                -- 二重生成を招く。末尾に何も無い完全な"///"の場合のみトリガーする。
+                if vim.api.nvim_get_current_line():match("^%s*///$") then
                   local lnum = vim.api.nvim_win_get_cursor(0)[1]
                   fsharp_generate_doc_comment(args.buf, lnum)
                 end
