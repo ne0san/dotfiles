@@ -106,6 +106,23 @@
         '';
         desc = "LSPが対応していれば型注釈などのインレイヒントを自動的に有効化する（VSCode Ionideのような表示）";
       }
+      {
+        event = "LspAttach";
+        callback.__raw = ''
+          function(args)
+            local client = vim.lsp.get_client_by_id(args.data.client_id)
+            -- fsautocompleteのセマンティックトークンは、型注釈なしの多段メソッド
+            -- チェーン(page.Locator(...).Firstのような)を含むバッファでデコード処理が
+            -- 極端に重くなり、nvimがフリーズする不具合を確認したため無効化する。
+            -- 構文ハイライトはtreesitter(fsharpグラマー)で代替できるため実害はない。
+            if client and client.name == "fsautocomplete" then
+              client.server_capabilities.semanticTokensProvider = nil
+              vim.lsp.semantic_tokens.stop(args.buf, client.id)
+            end
+          end
+        '';
+        desc = "fsautocompleteのセマンティックトークンを無効化(フリーズ対策)";
+      }
     ];
     opts = {
       # 行番号
