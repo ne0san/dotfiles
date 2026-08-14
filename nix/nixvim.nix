@@ -352,8 +352,9 @@
         };
       };
       # Autopairs
+      # TODO: F#編集時のフリーズ原因調査のため一時的に無効化(切り分け用)
       nvim-autopairs = {
-        enable = true;
+        enable = false;
       };
 
       # Comment
