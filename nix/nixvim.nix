@@ -117,7 +117,7 @@
             -- 構文ハイライトはtreesitter(fsharpグラマー)で代替できるため実害はない。
             if client and client.name == "fsautocomplete" then
               client.server_capabilities.semanticTokensProvider = nil
-              vim.lsp.semantic_tokens.stop(args.buf, client.id)
+              vim.lsp.semantic_tokens.enable(false, { bufnr = args.buf, client_id = client.id })
             end
           end
         '';
