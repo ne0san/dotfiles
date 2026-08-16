@@ -1459,11 +1459,23 @@ _| \_|   \_/   ___|_|  _| ]],
           win = {
             style = "float",
             border = "rounded",
+            -- backdrop(全画面を覆う暗転オーバーレイ)は背後のウィンドウの文字を
+            -- 空白セルで上書きしてしまい、explorerペインが「何も表示されない」
+            -- 状態に見える原因になるため無効化する。
+            -- 代わりにwinblendでフロート自体を擬似的に半透明化する。
+            backdrop = false,
+            wo = { winblend = 15 },
           },
         },
 
         -- Lazygit (toggleterm lazygit の代替)
-        lazygit = { enabled = true },
+        lazygit = {
+          enabled = true,
+          win = {
+            backdrop = false,
+            wo = { winblend = 15 },
+          },
+        },
 
         -- Bufdelete (vim-bbye の代替)
         bufdelete = { enabled = true },
