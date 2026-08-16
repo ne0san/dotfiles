@@ -1554,7 +1554,7 @@ _| \_|   \_/   ___|_|  _| ]],
         group = vim.api.nvim_create_augroup('highlight_yank', {}),
         pattern = '*',
         callback = function()
-          vim.highlight.on_yank({
+          vim.hl.on_yank({
             higroup = 'YankHighlight', -- ハイライトグループ（検索ハイライトと区別するため専用色）
             timeout = 100,             -- 表示時間（ミリ秒）
           })
