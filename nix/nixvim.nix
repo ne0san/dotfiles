@@ -1407,10 +1407,6 @@
             -- Explorer で隠しファイルもデフォルト表示する
             explorer = {
               hidden = true,
-              win = {
-                list = { wo = { winblend = 15 } },
-                input = { wo = { winblend = 15 } },
-              },
             },
           },
         },
