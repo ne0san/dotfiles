@@ -117,7 +117,7 @@
             -- 構文ハイライトはtreesitter(fsharpグラマー)で代替できるため実害はない。
             if client and client.name == "fsautocomplete" then
               client.server_capabilities.semanticTokensProvider = nil
-              vim.lsp.semantic_tokens.stop(args.buf, client.id)
+              vim.lsp.semantic_tokens.enable(false, { bufnr = args.buf })
             end
           end
         '';
@@ -1554,7 +1554,7 @@ _| \_|   \_/   ___|_|  _| ]],
         group = vim.api.nvim_create_augroup('highlight_yank', {}),
         pattern = '*',
         callback = function()
-          vim.highlight.on_yank({
+          vim.hl.on_yank({
             higroup = 'YankHighlight', -- ハイライトグループ（検索ハイライトと区別するため専用色）
             timeout = 100,             -- 表示時間（ミリ秒）
           })
