@@ -95,6 +95,23 @@
         desc = "ヘッダ追従(treesitter-context)の実際の高さに合わせてscrolloffを動的に調整し、カーソルとの重なりを防ぐ";
       }
       {
+        event = [
+          "FocusGained"
+          "BufEnter"
+          "CursorHold"
+          "CursorHoldI"
+        ];
+        pattern = "*";
+        callback.__raw = ''
+          function()
+            if vim.bo.buftype == "" then
+              vim.cmd("checktime")
+            end
+          end
+        '';
+        desc = "編集中(未保存の変更なし)であればnvim外部でのファイル変更を自動でバッファに反映する";
+      }
+      {
         event = "LspAttach";
         callback.__raw = ''
           function(args)
@@ -157,6 +174,7 @@
       undofile = true;
       updatetime = 250;
       timeoutlen = 300;
+      autoread = true; # 編集中でなければnvim外部での変更を自動でバッファに反映
 
       # 折りたたみ
       foldlevel = 99; # 最初は全部開いた状態
