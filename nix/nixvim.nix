@@ -1508,6 +1508,60 @@ _| \_|   \_/   ___|_|  _| ]],
         end,
       })
 
+      -- .sln (Visual Studio Solution) のファイルタイプ検出
+      vim.filetype.add({
+        extension = {
+          sln = "sln",
+        },
+      })
+
+      -- .sln シンタックスハイライト
+      -- .slnはVisual Studio独自の中間フォーマットで、treesitterの文法(グラマー)が
+      -- 存在しないため、Vim標準のsyntaxコマンドベースで実装する
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = "sln",
+        group = vim.api.nvim_create_augroup("SlnSyntax", { clear = true }),
+        callback = function()
+          if vim.b.current_syntax then
+            return
+          end
+          vim.b.current_syntax = "sln"
+
+          vim.cmd([[
+            syntax match slnComment /^\s*#.*$/
+            syntax match slnHeader /^Microsoft Visual Studio Solution File.*$/
+
+            syntax keyword slnKeyword Project EndProject
+            syntax keyword slnKeyword Global EndGlobal
+            syntax keyword slnKeyword GlobalSection EndGlobalSection
+            syntax keyword slnKeyword ProjectSection EndProjectSection
+            syntax keyword slnKeyword ProjectDependencies NestedProjects
+            syntax keyword slnKeyword VisualStudioVersion MinimumVisualStudioVersion
+
+            syntax keyword slnConstant preSolution postSolution
+            syntax keyword slnBoolean TRUE FALSE
+
+            syntax match slnGuid /{[0-9A-Fa-f]\{8}-[0-9A-Fa-f]\{4}-[0-9A-Fa-f]\{4}-[0-9A-Fa-f]\{4}-[0-9A-Fa-f]\{12}}/
+
+            syntax region slnString start=/"/ skip=/\\"/ end=/"/
+
+            syntax match slnNumber /\<\d\+\%(\.\d\+\)*\>/
+
+            syntax match slnOperator /=/
+
+            highlight default link slnComment Comment
+            highlight default link slnHeader Special
+            highlight default link slnKeyword Keyword
+            highlight default link slnConstant Constant
+            highlight default link slnBoolean Boolean
+            highlight default link slnGuid Identifier
+            highlight default link slnString String
+            highlight default link slnNumber Number
+            highlight default link slnOperator Operator
+          ]])
+        end,
+      })
+
       -- OneDarkPro setup
       require("onedarkpro").setup({
         options = {
