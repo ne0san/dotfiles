@@ -98,8 +98,6 @@
         event = [
           "FocusGained"
           "BufEnter"
-          "CursorHold"
-          "CursorHoldI"
         ];
         pattern = "*";
         callback.__raw = ''
@@ -110,6 +108,27 @@
           end
         '';
         desc = "編集中(未保存の変更なし)であればnvim外部でのファイル変更を自動でバッファに反映する";
+      }
+      {
+        event = "VimEnter";
+        callback.__raw = ''
+          function()
+            -- CursorHoldは放置中に最初の1回しか発火せずポーリングにならないため、
+            -- タイマーで定期的にcheckttimeを呼び、外部での変更をほぼリアルタイムに検知する。
+            -- ノーマルモード(未編集中)の時だけ実行し、入力中のバッファを不用意に書き換えない。
+            local timer = vim.uv.new_timer()
+            timer:start(
+              500,
+              500,
+              vim.schedule_wrap(function()
+                if vim.fn.mode() == "n" and vim.bo.buftype == "" then
+                  vim.cmd("checktime")
+                end
+              end)
+            )
+          end
+        '';
+        desc = "編集中でなければnvim外部でのファイル変更を定期ポーリングで自動反映する";
       }
       {
         event = "LspAttach";
