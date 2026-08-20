@@ -95,6 +95,36 @@
         desc = "ヘッダ追従(treesitter-context)の実際の高さに合わせてscrolloffを動的に調整し、カーソルとの重なりを防ぐ";
       }
       {
+        event = [
+          "FocusGained"
+          "BufEnter"
+          "CursorHold"
+          "CursorHoldI"
+          "TextChangedT"
+        ];
+        pattern = "*";
+        callback.__raw = ''
+          function()
+            -- checktime()は引数なしで呼ぶと全バッファを対象にするため、
+            -- 現在のバッファ種別(ターミナル等)によらず呼んでよい。
+            -- 未保存の変更があるバッファは自動的にスキップされる(autoreadの仕様)。
+            -- TextChangedTはnvim内蔵ターミナルへの出力(コマンド実行結果)を
+            -- 検知するためのイベントで、ターミナルからファイルを変更した場合に
+            -- フォーカス移動を待たず反映させるのに必要。
+            -- ただしTextChangedTはジョブ出力を処理するfast event/textlockの
+            -- コンテキスト内で発火し、その場でcheckttimeを呼んでも失敗したり
+            -- 他ウィンドウの表示が再描画されなかったりするため、
+            -- vim.scheduleでメインループに逃がしてから実行し、
+            -- 明示的にredrawして即座に画面へ反映させる。
+            vim.schedule(function()
+              vim.cmd("checktime")
+              vim.cmd("redraw")
+            end)
+          end
+        '';
+        desc = "編集中(未保存の変更なし)であればnvim外部(ターミナル内含む)でのファイル変更を自動でバッファに反映する";
+      }
+      {
         event = "LspAttach";
         callback.__raw = ''
           function(args)
@@ -157,6 +187,7 @@
       undofile = true;
       updatetime = 250;
       timeoutlen = 300;
+      autoread = true; # 編集中でなければnvim外部での変更を自動でバッファに反映
 
       # 折りたたみ
       foldlevel = 99; # 最初は全部開いた状態
