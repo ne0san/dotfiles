@@ -1716,6 +1716,33 @@ _| \_|   \_/   ___|_|  _| ]],
         vim.fn.setreg('+', msg)
         vim.notify('Copied: ' .. msg, vim.log.levels.INFO)
       end, {})
+
+      -- 型注釈などのインレイヒントはデフォルトでCommentと同じ文字色になっており、
+      -- 通常のコメントと見分けづらいため、背景色だけ少し暗くして区別する。
+      -- 特定の色を決め打ちすると別のカラーテーマで浮いてしまうので、
+      -- その時点のNormalの背景色を基準に暗くするだけにとどめ、文字色には触れない。
+      local function darken_inlay_hint_bg()
+        local normal = vim.api.nvim_get_hl(0, { name = 'Normal', link = false })
+        if not normal.bg then
+          return
+        end
+        -- NeovimはLuaJIT(Lua 5.1相当)のため >> や & といったLua 5.3以降のビット演算子は使えず、
+        -- 算術演算(除算・剰余)でRGB各成分を取り出す。
+        local darken_ratio = 0.8
+        local r = math.floor(math.floor(normal.bg / 65536) % 256 * darken_ratio)
+        local g = math.floor(math.floor(normal.bg / 256) % 256 * darken_ratio)
+        local b = math.floor(normal.bg % 256 * darken_ratio)
+
+        local hint = vim.api.nvim_get_hl(0, { name = 'LspInlayHint', link = false })
+        hint.bg = r * 65536 + g * 256 + b
+        vim.api.nvim_set_hl(0, 'LspInlayHint', hint)
+      end
+      darken_inlay_hint_bg()
+      vim.api.nvim_create_autocmd('ColorScheme', {
+        group = vim.api.nvim_create_augroup('darken_inlay_hint_bg', {}),
+        callback = darken_inlay_hint_bg,
+        desc = 'カラーテーマ変更時にインレイヒントの背景を追従させて再計算する',
+      })
     '';
 
     # Rainbow highlight colors - snacks.indent用
