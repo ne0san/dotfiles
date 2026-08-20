@@ -1726,13 +1726,15 @@ _| \_|   \_/   ___|_|  _| ]],
         if not normal.bg then
           return
         end
+        -- NeovimはLuaJIT(Lua 5.1相当)のため >> や & といったLua 5.3以降のビット演算子は使えず、
+        -- 算術演算(除算・剰余)でRGB各成分を取り出す。
         local darken_ratio = 0.8
-        local r = math.floor(((normal.bg >> 16) & 0xFF) * darken_ratio)
-        local g = math.floor(((normal.bg >> 8) & 0xFF) * darken_ratio)
-        local b = math.floor((normal.bg & 0xFF) * darken_ratio)
+        local r = math.floor(math.floor(normal.bg / 65536) % 256 * darken_ratio)
+        local g = math.floor(math.floor(normal.bg / 256) % 256 * darken_ratio)
+        local b = math.floor(normal.bg % 256 * darken_ratio)
 
         local hint = vim.api.nvim_get_hl(0, { name = 'LspInlayHint', link = false })
-        hint.bg = (r << 16) + (g << 8) + b
+        hint.bg = r * 65536 + g * 256 + b
         vim.api.nvim_set_hl(0, 'LspInlayHint', hint)
       end
       darken_inlay_hint_bg()
