@@ -98,37 +98,23 @@
         event = [
           "FocusGained"
           "BufEnter"
+          "CursorHold"
+          "CursorHoldI"
+          "TextChangedT"
         ];
         pattern = "*";
         callback.__raw = ''
           function()
-            if vim.bo.buftype == "" then
-              vim.cmd("checktime")
-            end
+            -- checktime()は引数なしで呼ぶと全バッファを対象にするため、
+            -- 現在のバッファ種別(ターミナル等)によらず呼んでよい。
+            -- 未保存の変更があるバッファは自動的にスキップされる(autoreadの仕様)。
+            -- TextChangedTはnvim内蔵ターミナルへの出力(コマンド実行結果)を
+            -- 検知するためのイベントで、ターミナルからファイルを変更した場合に
+            -- フォーカス移動を待たず反映させるのに必要。
+            vim.cmd("checktime")
           end
         '';
-        desc = "編集中(未保存の変更なし)であればnvim外部でのファイル変更を自動でバッファに反映する";
-      }
-      {
-        event = "VimEnter";
-        callback.__raw = ''
-          function()
-            -- CursorHoldは放置中に最初の1回しか発火せずポーリングにならないため、
-            -- タイマーで定期的にcheckttimeを呼び、外部での変更をほぼリアルタイムに検知する。
-            -- ノーマルモード(未編集中)の時だけ実行し、入力中のバッファを不用意に書き換えない。
-            local timer = vim.uv.new_timer()
-            timer:start(
-              500,
-              500,
-              vim.schedule_wrap(function()
-                if vim.fn.mode() == "n" and vim.bo.buftype == "" then
-                  vim.cmd("checktime")
-                end
-              end)
-            )
-          end
-        '';
-        desc = "編集中でなければnvim外部でのファイル変更を定期ポーリングで自動反映する";
+        desc = "編集中(未保存の変更なし)であればnvim外部(ターミナル内含む)でのファイル変更を自動でバッファに反映する";
       }
       {
         event = "LspAttach";
