@@ -451,6 +451,12 @@
         enable = true;
         settings = {
           lsp = {
+            # LSPの処理状況(progress)通知を無効化。デフォルトでは右下に
+            # ミニウィンドウとして表示され続け、特にfsautocompleteの
+            # ワークスペース読み込み中などに頻繁に更新されて邪魔になるため。
+            progress = {
+              enabled = false;
+            };
             override = {
               "vim.lsp.util.convert_input_to_markdown_lines" = true;
               "vim.lsp.util.stylize_markdown" = true;
