@@ -111,7 +111,15 @@
             -- TextChangedTはnvim内蔵ターミナルへの出力(コマンド実行結果)を
             -- 検知するためのイベントで、ターミナルからファイルを変更した場合に
             -- フォーカス移動を待たず反映させるのに必要。
-            vim.cmd("checktime")
+            -- ただしTextChangedTはジョブ出力を処理するfast event/textlockの
+            -- コンテキスト内で発火し、その場でcheckttimeを呼んでも失敗したり
+            -- 他ウィンドウの表示が再描画されなかったりするため、
+            -- vim.scheduleでメインループに逃がしてから実行し、
+            -- 明示的にredrawして即座に画面へ反映させる。
+            vim.schedule(function()
+              vim.cmd("checktime")
+              vim.cmd("redraw")
+            end)
           end
         '';
         desc = "編集中(未保存の変更なし)であればnvim外部(ターミナル内含む)でのファイル変更を自動でバッファに反映する";
