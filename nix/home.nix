@@ -145,7 +145,7 @@ in
     shellAbbrs = {
       vi = "nvim";
       view = "nvim -R";
-      ll = "ls -l";
+      ll = "ls -alF";
       flupd = "nix flake update --flake ~/dotfiles/nix";
       drsw = "sudo USER=$USER darwin-rebuild switch --flake ~/dotfiles/nix#ne0san --impure";
       freload = "source ~/.config/fish/config.fish";
@@ -181,7 +181,7 @@ in
     shellAliases = {
       vi = "nvim";
       view = "nvim -R";
-      ll = "ls -l";
+      ll = "ls -alF";
       flupd = "nix flake update --flake ~/dotfiles/nix";
       drsw = "sudo USER=$USER darwin-rebuild switch --flake ~/dotfiles/nix#ne0san --impure";
       zreload = "source ~/.zshrc";
