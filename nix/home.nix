@@ -150,6 +150,7 @@ in
       drsw = "sudo USER=$USER darwin-rebuild switch --flake ~/dotfiles/nix#ne0san --impure";
       freload = "source ~/.config/fish/config.fish";
       fsi = "dotnet fsi";
+      dev = "~/Documents/Develop/";
     };
 
   };
@@ -185,6 +186,7 @@ in
       flupd = "nix flake update --flake ~/dotfiles/nix";
       drsw = "sudo USER=$USER darwin-rebuild switch --flake ~/dotfiles/nix#ne0san --impure";
       zreload = "source ~/.zshrc";
+      dev = "cd ~/Documents/Develop/";
     };
 
     # setopt系
@@ -219,6 +221,20 @@ in
       };
     };
   };
+
+  programs.jujutsu = {
+    enable = true;
+    settings = {
+      user = {
+        name = gitUserName;
+        email = gitUserEmail;
+      };
+      ui = {
+        default-command = "log";
+      };
+    };
+  };
+
   programs.direnv = {
     enable = true;
     nix-direnv.enable = true;
