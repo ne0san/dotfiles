@@ -232,6 +232,19 @@ in
       ui = {
         default-command = "log";
       };
+      revset-aliases = {
+        "closest_bookmark(to)" = "heads(::to & bookmarks())";
+      };
+      aliases = {
+        tug = [
+          "bookmark"
+          "move"
+          "--from"
+          "closest_bookmark(@-)"
+          "--to"
+          "@-"
+        ];
+      };
     };
   };
 
