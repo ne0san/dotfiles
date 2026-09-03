@@ -51,10 +51,6 @@ in
     fd
     dotnet-sdk_10
   ];
-  home.file = {
-  };
-  home.sessionVariables = {
-  };
   programs.home-manager.enable = true;
   programs.starship = {
     enable = true;
@@ -152,7 +148,6 @@ in
       fsi = "dotnet fsi";
       dev = "~/Documents/Develop/";
     };
-
   };
 
   programs.zsh = {
@@ -222,6 +217,18 @@ in
     };
   };
 
+  programs.lazygit = {
+    enable = true;
+    settings = {
+      gui = {
+        language = "ja";
+      };
+      os = {
+        editPreset = "nvim-remote";
+      };
+    };
+  };
+
   programs.jujutsu = {
     enable = true;
     settings = {
@@ -251,66 +258,5 @@ in
   programs.direnv = {
     enable = true;
     nix-direnv.enable = true;
-  };
-  programs.lazygit = {
-    enable = true;
-    settings = {
-      gui = {
-        language = "ja";
-      };
-      os = {
-        editPreset = "nvim-remote";
-      };
-    };
-  };
-  programs.helix = {
-    enable = true;
-    settings = {
-      theme = "onedark";
-      editor = {
-        lsp.display-messages = true;
-        cursor-shape = {
-          insert = "bar";
-          select = "underline";
-        };
-        file-picker = {
-          hidden = false;
-        };
-        inline-diagnostics = {
-          cursor-line = "hint";
-          other-lines = "warning";
-        };
-      };
-    };
-    languages = {
-      language-server.gopls = {
-        command = "${pkgs.gopls}/bin/gopls";
-        args = [ "-logfile=/tmp/gopls.log" "serve" ];
-        config = {
-          "ui.diagnostic.staticcheck" = true;
-        };
-      };
-
-      language-server.typescript-language-server = {
-        command = "${pkgs.typescript-language-server}/bin/typescript-language-server";
-        args = [ "--stdio" ];
-        config = {
-          plugins = [
-            {
-              name = "@vue/typescript-plugin";
-              location = "${pkgs.vue-language-server}/lib/node_modules/@vue/language-server";
-              languages = [ "vue" ];
-            }
-          ];
-        };
-      };
-
-      language = [
-        {
-          name = "vue";
-          language-servers = [ "typescript-language-server" "vuels" ];
-        }
-      ];
-    };
   };
 }
