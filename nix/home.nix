@@ -232,11 +232,11 @@ in
       ui = {
         default-command = "log";
       };
-      revset-aliases = {
-        "closest_bookmark(to)" = "heads(::to & bookmarks())";
+      revset-aliases = { # changeもしくはその集合を示すクエリのエイリアスを作成
+        "closest_bookmark(to)" = "heads(::to & bookmarks())";  # toから遡る全てのchangeのうち、bookmarkがついているものだけ、の先頭
       };
       aliases = {
-        tug = [
+        tug = [ # 一番近い過去のbookmarkを一個前のchangeに移動する
           "bookmark"
           "move"
           "--from"
