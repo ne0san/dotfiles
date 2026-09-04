@@ -50,7 +50,6 @@ in
     tle
     fd
     dotnet-sdk_10
-    jjui
   ];
   home.file = {
   };
@@ -247,6 +246,10 @@ in
         ];
       };
     };
+  };
+
+  programs.jjui = {
+    enable = true;
   };
 
   programs.direnv = {
