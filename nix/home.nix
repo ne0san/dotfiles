@@ -87,8 +87,8 @@ in
       };
 
       custom = {
-        # jjリポジトリ（gitとの共存含む）では「一番近いbookmark名 + そこからのchange数」
-        # （例: bookmarkの真上なら"main"、1つ先なら"main + 1"）を、
+        # jjリポジトリ（gitとの共存含む）では「一番近いbookmark名+そこからのchange数」
+        # （例: bookmarkの真上なら"main"、1つ先なら"main+1"、bookmarkが複数ヒットする場合は"(main,main)+1"）を、
         # 純粋なgitリポジトリではgitのブランチ名を表示する
         # jjとgitが共存する場合はjjの情報を優先する
         # closest_bookmark(to) は programs.jujutsu.settings.revset-aliases で定義済み
@@ -102,16 +102,22 @@ in
               conflict=$(jj log --no-graph -r @ -T 'if(conflict, "💥 ")' 2>/dev/null)
               bm=$(jj log --no-graph -r 'closest_bookmark(@)' -T 'bookmarks.map(|b| b.name()).join(",")' 2>/dev/null)
               if [ -n "$bm" ]; then
+                # 同名でlocal/remote両方のbookmarkがある等、複数ヒットする場合は()で囲む
+                case "$bm" in
+                  *,*) bm="($bm)" ;;
+                esac
                 dist=$(jj log --no-graph -r 'closest_bookmark(@)..@' -T '"."' 2>/dev/null | wc -c | tr -d ' ')
                 dist=''${dist:-0}
                 if [ "$dist" -gt 0 ]; then
-                  echo "$conflict$bm + $dist"
+                  # +N部分だけ薄い色にするため、ANSIエスケープを直接出力に埋め込む
+                  # （unsafe_no_escape=trueでこの出力をそのまま解釈させる）
+                  printf '%s%s\033[0m\033[2m+%s\033[0m' "$conflict" "$bm" "$dist"
                 else
-                  echo "$conflict$bm"
+                  printf '%s%s' "$conflict" "$bm"
                 fi
               else
                 change_id=$(jj log --no-graph -r @ -T 'change_id.shortest(8)' 2>/dev/null)
-                echo "$conflict$change_id"
+                printf '%s%s' "$conflict" "$change_id"
               fi
             else
               git branch --show-current 2>/dev/null
@@ -120,6 +126,7 @@ in
           symbol = "🔧 ";
           format = "[$symbol$output]($style) ";
           style = "bold green";
+          unsafe_no_escape = true;
         };
       };
 
