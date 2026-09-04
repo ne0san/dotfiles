@@ -196,6 +196,17 @@
       # 分割時の新ウィンドウ配置（vsplitは右、splitは下に新ウィンドウを開く）
       splitright = true;
       splitbelow = true;
+
+      # 不可視文字(タブ・行末スペース・改行位置)の可視化
+      list = true;
+      listchars = {
+        tab = "▸ ";
+        trail = "·";
+        nbsp = "␣";
+        extends = "›";
+        precedes = "‹";
+        eol = "↴";
+      };
     };
 
     # ========================================
@@ -1136,6 +1147,13 @@
         key = "<leader>uw";
         action = "<cmd>set wrap!<CR>";
         options.desc = "Toggle line wrap";
+      }
+      # タブ・行末スペース・改行位置の可視化トグル
+      {
+        mode = "n";
+        key = "<leader>ul";
+        action = "<cmd>set list!<CR>";
+        options.desc = "Toggle invisible characters";
       }
       {
         mode = "n";
