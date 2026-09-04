@@ -84,8 +84,29 @@ in
         truncate_to_repo = true;
       };
 
+      # ブランチ表示はcustom.vcs_branchに一本化するため無効化
+      # （jjとgitが共存するリポジトリでは、両方の表示が重複してしまうため）
       git_branch = {
-        symbol = "🔧 ";
+        disabled = true;
+      };
+
+      custom = {
+        # jjリポジトリ（gitとの共存含む）ではjjのブックマーク・change idを、
+        # 純粋なgitリポジトリではgitのブランチ名を表示する
+        # jjとgitが共存する場合はjjの情報を優先する
+        vcs_branch = {
+          when = "jj root --ignore-working-copy >/dev/null 2>&1 || git rev-parse --is-inside-work-tree >/dev/null 2>&1";
+          command = ''
+            if jj root --ignore-working-copy >/dev/null 2>&1; then
+              jj log --no-graph --color=never -r @ -T 'if(conflict, "💥 ") ++ if(bookmarks, bookmarks ++ " ", "") ++ change_id.shortest(8)' 2>/dev/null
+            else
+              git branch --show-current 2>/dev/null
+            fi
+          '';
+          symbol = "🔧 ";
+          format = "[$symbol$output]($style) ";
+          style = "bold green";
+        };
       };
 
       env_var = {
