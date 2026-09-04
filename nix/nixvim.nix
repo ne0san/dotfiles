@@ -560,10 +560,10 @@
         action = "<cmd>nohlsearch<CR>";
         options.desc = "Clear search highlight";
       }
-      # jjでノーマルモードに戻る
+      # ttでノーマルモードに戻る
       {
         mode = "i";
-        key = "jj";
+        key = "tt";
         action = "<Esc>";
         options.desc = "Exit insert mode";
       }
@@ -1093,7 +1093,7 @@
       }
       {
         mode = "t";
-        key = "jj";
+        key = "tt";
         action = "<C-\\><C-n>";
         options.desc = "Exit terminal mode";
       }
