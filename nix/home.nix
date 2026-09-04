@@ -109,13 +109,15 @@ in
                 dist=$(jj log --no-graph -r 'closest_bookmark(@)..@' -T '"."' 2>/dev/null | wc -c | tr -d ' ')
                 dist=''${dist:-0}
                 if [ "$dist" -gt 0 ]; then
-                  echo "$conflict$bm+$dist"
+                  # +N部分だけ薄い色にするため、ANSIエスケープを直接出力に埋め込む
+                  # （unsafe_no_escape=trueでこの出力をそのまま解釈させる）
+                  printf '%s%s\033[0m\033[2m+%s\033[0m' "$conflict" "$bm" "$dist"
                 else
-                  echo "$conflict$bm"
+                  printf '%s%s' "$conflict" "$bm"
                 fi
               else
                 change_id=$(jj log --no-graph -r @ -T 'change_id.shortest(8)' 2>/dev/null)
-                echo "$conflict$change_id"
+                printf '%s%s' "$conflict" "$change_id"
               fi
             else
               git branch --show-current 2>/dev/null
@@ -124,6 +126,7 @@ in
           symbol = "🔧 ";
           format = "[$symbol$output]($style) ";
           style = "bold green";
+          unsafe_no_escape = true;
         };
       };
 
