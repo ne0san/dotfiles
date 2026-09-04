@@ -84,8 +84,47 @@ in
         truncate_to_repo = true;
       };
 
+      # ブランチ表示はcustom.vcs_branchに一本化するため無効化
+      # （jjとgitが共存するリポジトリでは、両方の表示が重複してしまうため）
       git_branch = {
-        symbol = "🔧 ";
+        disabled = true;
+      };
+
+      custom = {
+        # jjリポジトリ（gitとの共存含む）では「一番近いbookmark名 + そこからのchange数」
+        # （例: bookmarkの真上なら"main"、1つ先なら"main + 1"）を、
+        # 純粋なgitリポジトリではgitのブランチ名を表示する
+        # jjとgitが共存する場合はjjの情報を優先する
+        # closest_bookmark(to) は programs.jujutsu.settings.revset-aliases で定義済み
+        vcs_branch = {
+          # shellを明示しないとSTARSHIP_SHELL（fish）経由で実行されてしまい、
+          # 下記の sh/POSIX 構文（if...then...fi 等）がパースエラーになるため固定する
+          shell = [ "sh" ];
+          when = "jj root --ignore-working-copy >/dev/null 2>&1 || git rev-parse --is-inside-work-tree >/dev/null 2>&1";
+          command = ''
+            if jj root --ignore-working-copy >/dev/null 2>&1; then
+              conflict=$(jj log --no-graph -r @ -T 'if(conflict, "💥 ")' 2>/dev/null)
+              bm=$(jj log --no-graph -r 'closest_bookmark(@)' -T 'bookmarks.map(|b| b.name()).join(",")' 2>/dev/null)
+              if [ -n "$bm" ]; then
+                dist=$(jj log --no-graph -r 'closest_bookmark(@)..@' -T '"."' 2>/dev/null | wc -c | tr -d ' ')
+                dist=''${dist:-0}
+                if [ "$dist" -gt 0 ]; then
+                  echo "$conflict$bm + $dist"
+                else
+                  echo "$conflict$bm"
+                fi
+              else
+                change_id=$(jj log --no-graph -r @ -T 'change_id.shortest(8)' 2>/dev/null)
+                echo "$conflict$change_id"
+              fi
+            else
+              git branch --show-current 2>/dev/null
+            fi
+          '';
+          symbol = "🔧 ";
+          format = "[$symbol$output]($style) ";
+          style = "bold green";
+        };
       };
 
       env_var = {
