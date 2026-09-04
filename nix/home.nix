@@ -91,14 +91,29 @@ in
       };
 
       custom = {
-        # jjリポジトリ（gitとの共存含む）ではjjのブックマーク・change idを、
+        # jjリポジトリ（gitとの共存含む）では「一番近いbookmark名 + そこからのchange数」
+        # （例: bookmarkの真上なら"main"、1つ先なら"main + 1"）を、
         # 純粋なgitリポジトリではgitのブランチ名を表示する
         # jjとgitが共存する場合はjjの情報を優先する
+        # closest_bookmark(to) は programs.jujutsu.settings.revset-aliases で定義済み
         vcs_branch = {
           when = "jj root --ignore-working-copy >/dev/null 2>&1 || git rev-parse --is-inside-work-tree >/dev/null 2>&1";
           command = ''
             if jj root --ignore-working-copy >/dev/null 2>&1; then
-              jj log --no-graph --color=never -r @ -T 'if(conflict, "💥 ") ++ if(bookmarks, bookmarks ++ " ", "") ++ change_id.shortest(8)' 2>/dev/null
+              conflict=$(jj log --no-graph -r @ -T 'if(conflict, "💥 ")' 2>/dev/null)
+              bm=$(jj log --no-graph -r 'closest_bookmark(@)' -T 'bookmarks.map(|b| b.name()).join(",")' 2>/dev/null)
+              if [ -n "$bm" ]; then
+                dist=$(jj log --no-graph -r 'closest_bookmark(@)..@' -T '"."' 2>/dev/null | wc -c | tr -d ' ')
+                dist=''${dist:-0}
+                if [ "$dist" -gt 0 ]; then
+                  echo "$conflict$bm + $dist"
+                else
+                  echo "$conflict$bm"
+                fi
+              else
+                change_id=$(jj log --no-graph -r @ -T 'change_id.shortest(8)' 2>/dev/null)
+                echo "$conflict$change_id"
+              fi
             else
               git branch --show-current 2>/dev/null
             fi
