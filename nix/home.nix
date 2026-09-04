@@ -50,6 +50,7 @@ in
     tle
     fd
     dotnet-sdk_10
+    jjui
   ];
   home.file = {
   };

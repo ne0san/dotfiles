@@ -1107,6 +1107,12 @@
       }
       {
         mode = "n";
+        key = "<leader>jj";
+        action.__raw = "function() Snacks.terminal.toggle(\"jjui\", { win = { style = \"float\", backdrop = false, wo = { winblend = 15 } }, count = 5 }) end";
+        options.desc = "Jjui";
+      }
+      {
+        mode = "n";
         key = "<leader>gc";
         action.__raw = "function() Snacks.gitbrowse() end";
         options.desc = "Open file/commit in browser";
@@ -1530,11 +1536,11 @@ _| \_|   \_/   ___|_|  _| ]],
         words      = { enabled = true },
       })
 
-      -- TermOpen: lazygit/Claude Code 以外、かつ direnv 管理下のディレクトリでのみ direnv reload を実行
+      -- TermOpen: lazygit/jjui/Claude Code 以外、かつ direnv 管理下のディレクトリでのみ direnv reload を実行
       vim.api.nvim_create_autocmd("TermOpen", {
         callback = function(ev)
           local name = vim.api.nvim_buf_get_name(ev.buf):lower()
-          if name:match("lazygit") or name:match("claude") then return end
+          if name:match("lazygit") or name:match("jjui") or name:match("claude") then return end
           if vim.fn.findfile(".envrc", ".;") == "" then return end
           local chan = vim.b[ev.buf].terminal_job_id
           if chan and chan > 0 then
