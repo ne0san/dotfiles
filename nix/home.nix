@@ -97,6 +97,9 @@ in
         # jjとgitが共存する場合はjjの情報を優先する
         # closest_bookmark(to) は programs.jujutsu.settings.revset-aliases で定義済み
         vcs_branch = {
+          # shellを明示しないとSTARSHIP_SHELL（fish）経由で実行されてしまい、
+          # 下記の sh/POSIX 構文（if...then...fi 等）がパースエラーになるため固定する
+          shell = [ "sh" ];
           when = "jj root --ignore-working-copy >/dev/null 2>&1 || git rev-parse --is-inside-work-tree >/dev/null 2>&1";
           command = ''
             if jj root --ignore-working-copy >/dev/null 2>&1; then
