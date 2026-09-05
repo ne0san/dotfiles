@@ -188,8 +188,10 @@ in
       vi = "nvim";
       view = "nvim -R";
       ll = "ls -alF";
-      flupd = "nix flake update --flake ~/dotfiles/nix";
-      drsw = "sudo USER=$USER darwin-rebuild switch --flake ~/dotfiles/nix#ne0san --impure";
+      flupd = "nix flake update --flake ~/dotfiles";
+      drsw = "sudo USER=$USER darwin-rebuild switch --flake ~/dotfiles#ne0san --impure";
+      hmsw = "home-manager switch --flake ~/dotfiles#ne0san --impure";
+      nvsw = "home-manager switch --flake ~/dotfiles#nixvim --impure";
       freload = "source ~/.config/fish/config.fish";
       fsi = "dotnet fsi";
       dev = "~/Documents/Develop/";
@@ -224,8 +226,10 @@ in
       vi = "nvim";
       view = "nvim -R";
       ll = "ls -alF";
-      flupd = "nix flake update --flake ~/dotfiles/nix";
-      drsw = "sudo USER=$USER darwin-rebuild switch --flake ~/dotfiles/nix#ne0san --impure";
+      flupd = "nix flake update --flake ~/dotfiles";
+      drsw = "sudo USER=$USER darwin-rebuild switch --flake ~/dotfiles#ne0san --impure";
+      hmsw = "home-manager switch --flake ~/dotfiles#ne0san --impure";
+      nvsw = "home-manager switch --flake ~/dotfiles#nixvim --impure";
       zreload = "source ~/.zshrc";
       dev = "cd ~/Documents/Develop/";
     };

@@ -15,4 +15,4 @@ fi
 sudo mv /etc/nix/nix.conf /etc/nix/nix.conf.before-nix-darwin
 sudo mv /etc/zshrc /etc/zshrc.before-nix-darwin
 sudo mv /etc/bashrc /etc/bashrc.before-nix-darwin
-sudo USER=$USER nix --extra-experimental-features "nix-command flakes" run nix-darwin -- switch --flake ~/dotfiles/nix#ne0san --impure
+sudo USER=$USER nix --extra-experimental-features "nix-command flakes" run nix-darwin -- switch --flake ~/dotfiles#ne0san --impure
