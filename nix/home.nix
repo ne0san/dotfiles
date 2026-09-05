@@ -91,7 +91,10 @@ in
         # （例: bookmarkの真上なら"main"、1つ先なら"main+1"、bookmarkが複数ヒットする場合は"(main,main)+1"）を、
         # 純粋なgitリポジトリではgitのブランチ名を表示する
         # jjとgitが共存する場合はjjの情報を優先する
-        # closest_bookmark(to) は programs.jujutsu.settings.revset-aliases で定義済み
+        # bookmarkより過去のchangeにいる（＝bookmarkを遡っている）場合は、
+        # 「bookmark名-遡っているchange数」を優先的に表示する（遡っている数は強調表示）
+        # closest_bookmark(to) / closest_bookmark_ahead(from) は
+        # programs.jujutsu.settings.revset-aliases で定義済み
         vcs_branch = {
           # shellを明示しないとSTARSHIP_SHELL（fish）経由で実行されてしまい、
           # 下記の sh/POSIX 構文（if...then...fi 等）がパースエラーになるため固定する
@@ -100,24 +103,41 @@ in
           command = ''
             if jj root --ignore-working-copy >/dev/null 2>&1; then
               conflict=$(jj log --no-graph -r @ -T 'if(conflict, "💥 ")' 2>/dev/null)
-              bm=$(jj log --no-graph -r 'closest_bookmark(@)' -T 'bookmarks.map(|b| b.name()).join(",")' 2>/dev/null)
-              if [ -n "$bm" ]; then
+              ahead_bm=$(jj log --no-graph -r 'closest_bookmark_ahead(@)' -T 'bookmarks.map(|b| b.name()).join(",")' 2>/dev/null)
+              if [ -n "$ahead_bm" ]; then
                 # 同名でlocal/remote両方のbookmarkがある等、複数ヒットする場合は()で囲む
-                case "$bm" in
-                  *,*) bm="($bm)" ;;
+                case "$ahead_bm" in
+                  *,*) ahead_bm="($ahead_bm)" ;;
                 esac
-                dist=$(jj log --no-graph -r 'closest_bookmark(@)..@' -T '"."' 2>/dev/null | wc -c | tr -d ' ')
+                dist=$(jj log --no-graph -r '@..closest_bookmark_ahead(@)' -T '"."' 2>/dev/null | wc -c | tr -d ' ')
                 dist=''${dist:-0}
                 if [ "$dist" -gt 0 ]; then
-                  # +N部分だけ薄い色にするため、ANSIエスケープを直接出力に埋め込む
+                  # 遡っている数を強調表示するため、太字のANSIエスケープを直接出力に埋め込む
                   # （unsafe_no_escape=trueでこの出力をそのまま解釈させる）
-                  printf '%s%s\033[0m\033[2m+%s\033[0m' "$conflict" "$bm" "$dist"
+                  printf '%s%s\033[0m\033[1;31m-%s\033[0m' "$conflict" "$ahead_bm" "$dist"
                 else
-                  printf '%s%s' "$conflict" "$bm"
+                  printf '%s%s' "$conflict" "$ahead_bm"
                 fi
               else
-                change_id=$(jj log --no-graph -r @ -T 'change_id.shortest(8)' 2>/dev/null)
-                printf '%s%s' "$conflict" "$change_id"
+                bm=$(jj log --no-graph -r 'closest_bookmark(@)' -T 'bookmarks.map(|b| b.name()).join(",")' 2>/dev/null)
+                if [ -n "$bm" ]; then
+                  # 同名でlocal/remote両方のbookmarkがある等、複数ヒットする場合は()で囲む
+                  case "$bm" in
+                    *,*) bm="($bm)" ;;
+                  esac
+                  dist=$(jj log --no-graph -r 'closest_bookmark(@)..@' -T '"."' 2>/dev/null | wc -c | tr -d ' ')
+                  dist=''${dist:-0}
+                  if [ "$dist" -gt 0 ]; then
+                    # +N部分だけ薄い色にするため、ANSIエスケープを直接出力に埋め込む
+                    # （unsafe_no_escape=trueでこの出力をそのまま解釈させる）
+                    printf '%s%s\033[0m\033[2m+%s\033[0m' "$conflict" "$bm" "$dist"
+                  else
+                    printf '%s%s' "$conflict" "$bm"
+                  fi
+                else
+                  change_id=$(jj log --no-graph -r @ -T 'change_id.shortest(8)' 2>/dev/null)
+                  printf '%s%s' "$conflict" "$change_id"
+                fi
               fi
             else
               git branch --show-current 2>/dev/null
@@ -287,6 +307,7 @@ in
       };
       revset-aliases = { # changeもしくはその集合を示すクエリのエイリアスを作成
         "closest_bookmark(to)" = "heads(::to & bookmarks())";  # toから遡る全てのchangeのうち、bookmarkがついているものだけ、の先頭
+        "closest_bookmark_ahead(from)" = "roots(from:: & bookmarks())";  # fromから進む全てのchangeのうち、bookmarkがついているものだけ、の先頭（fromがbookmarkより過去にいる＝遡っている場合に該当）
       };
       aliases = {
         tug = [ # 一番近い過去のbookmarkを一個前のchangeに移動する
