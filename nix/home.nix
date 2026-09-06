@@ -306,8 +306,11 @@ in
         default-command = "log";
       };
       revset-aliases = { # changeもしくはその集合を示すクエリのエイリアスを作成
-        "closest_bookmark(to)" = "heads(::to & bookmarks())";  # toから遡る全てのchangeのうち、bookmarkがついているものだけ、の先頭
-        "closest_bookmark_ahead(from)" = "roots(from:: & bookmarks())";  # fromから進む全てのchangeのうち、bookmarkがついているものだけ、の先頭（fromがbookmarkより過去にいる＝遡っている場合に該当）
+        # bookmarks()だけだとローカルにtrackされていないリモート追跡ブックマーク
+        # （例: push直後でまだ`jj bookmark track`していない`foo@origin`）を見逃すため、
+        # remote_bookmarks()も対象に含める
+        "closest_bookmark(to)" = "heads(::to & (bookmarks() | remote_bookmarks()))";  # toから遡る全てのchangeのうち、bookmarkがついているものだけ、の先頭
+        "closest_bookmark_ahead(from)" = "roots(from:: & (bookmarks() | remote_bookmarks()))";  # fromから進む全てのchangeのうち、bookmarkがついているものだけ、の先頭（fromがbookmarkより過去にいる＝遡っている場合に該当）
       };
       aliases = {
         tug = [ # 一番近い過去のbookmarkを一個前のchangeに移動する
