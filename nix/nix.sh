@@ -16,7 +16,3 @@ sudo mv /etc/nix/nix.conf /etc/nix/nix.conf.before-nix-darwin
 sudo mv /etc/zshrc /etc/zshrc.before-nix-darwin
 sudo mv /etc/bashrc /etc/bashrc.before-nix-darwin
 sudo USER=$USER nix --extra-experimental-features "nix-command flakes" run nix-darwin -- switch --flake ~/dotfiles#ne0san --impure
-
-# home-manager (dotfiles/nixvim) の初回反映
-# darwinConfigurationsとは独立管理のため、こちらも別途反映が必要
-nix --extra-experimental-features "nix-command flakes" run home-manager/master -- switch --flake ~/dotfiles#ne0san -b backup
