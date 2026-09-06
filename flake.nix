@@ -2,14 +2,9 @@
 #   nix run nix-darwin -- switch --flake .#ne0san --impure # 初回
 #   sudo darwin-rebuild switch --flake ~/dotfiles#ne0san --impure # 二回目以降 (drsw)
 #
-# home-manager単体 (home.nix + nixvim.nixだけを反映、macOS向け)
+# home-manager単体 (home.nix + nixvim.nixだけを反映)
 #   nix run home-manager/master -- switch --flake .#ne0san --impure -b backup # 初回
 #   home-manager switch --flake ~/dotfiles#ne0san --impure -b backup # 二回目以降 (hmsw)
-#
-# home-manager単体 (home.nix + nixvim.nixだけを反映、Linux向け)
-# アーキテクチャに応じて ne0san-linux-x86_64 / ne0san-linux-aarch64 を使い分ける
-#   nix run home-manager/master -- switch --flake .#ne0san-linux-x86_64 --impure -b backup # 初回
-#   home-manager switch --flake ~/dotfiles#ne0san-linux-x86_64 --impure -b backup # 二回目以降 (hmsw)
 #
 # home-managerはmodule統合とstandaloneの併用が非対応で、同じプロファイルを
 # 取り合って壊れる(darwin-rebuildのたびにhome-managerコマンドが消える等)ため、
@@ -41,24 +36,11 @@
       system = "aarch64-darwin";
       username = builtins.getEnv "USER";
       # home.nixのunfreeパッケージ(1password-cli, claude-code)を許可するpkgs
-      unfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [
-        "1password-cli"
-        "claude-code"
-      ];
-      mkPkgs = sys: import nixpkgs {
-        system = sys;
-        config.allowUnfreePredicate = unfreePredicate;
-      };
-      pkgs = mkPkgs system;
-      # home-manager単体: home.nix(dotfiles) + nixvim.nixをdarwinを介さず単体で反映
-      mkHomeConfiguration = sys: home-manager.lib.homeManagerConfiguration {
-        pkgs = mkPkgs sys;
-        # home-manager単体モード: home.nix側でdrswを無効化させる
-        extraSpecialArgs = { inherit username; darwinManagesHomeManager = false; };
-        modules = [
-          nixvim.homeModules.nixvim
-          ./nix/home.nix
-          ./nix/nixvim.nix
+      pkgs = import nixpkgs {
+        inherit system;
+        config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [
+          "1password-cli"
+          "claude-code"
         ];
       };
     in {
@@ -85,11 +67,16 @@
         specialArgs = { inherit username; };
       };
 
-      # home-manager単体 (macOS): darwinを介さずhome.nix/nixvim.nixだけを反映
-      homeConfigurations."ne0san" = mkHomeConfiguration system;
-
-      # home-manager単体 (Linux): darwin/homebrew前提の設定を切り離した状態で反映
-      homeConfigurations."ne0san-linux-x86_64" = mkHomeConfiguration "x86_64-linux";
-      homeConfigurations."ne0san-linux-aarch64" = mkHomeConfiguration "aarch64-linux";
+      # home-manager: home.nix(dotfiles) + nixvim.nixをdarwinを介さず単体で反映
+      homeConfigurations."ne0san" = home-manager.lib.homeManagerConfiguration {
+        inherit pkgs;
+        # home-manager単体モード: home.nix側でdrswを無効化させる
+        extraSpecialArgs = { inherit username; darwinManagesHomeManager = false; };
+        modules = [
+          nixvim.homeModules.nixvim
+          ./nix/home.nix
+          ./nix/nixvim.nix
+        ];
+      };
     };
 }
