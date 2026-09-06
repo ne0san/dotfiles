@@ -26,15 +26,15 @@ let
     subPackages = [ "cmd/tle" ];
   };
 
-  # darwinManagesHomeManagerモード(flake.nix評価時のDARWIN_MANAGES_HOME_MANAGER
-  # 環境変数で切り替え)に応じて、使わない方のエイリアスを無効化する
+  # darwinManagesHomeManagerモード(flake.nixで設定)に応じて、
+  # 使わない方のエイリアスを無効化する
   drswAlias =
     if darwinManagesHomeManager
       then "sudo USER=$USER darwin-rebuild switch --flake ~/dotfiles#ne0san --impure"
-      else "echo 'home-manager単体モードのため drsw は無効です(DARWIN_MANAGES_HOME_MANAGER=trueでhome-manager switchしてください)' >&2; false";
+      else "echo 'home-manager単体モードのため drsw は無効です(flake.nixのdarwinManagesHomeManagerをtrueにしてください)' >&2; false";
   hmswAlias =
     if darwinManagesHomeManager
-      then "echo 'darwin統合モードのため hmsw は無効です(DARWIN_MANAGES_HOME_MANAGER=falseでhome-manager switchしてください)' >&2; false"
+      then "echo 'darwin統合モードのため hmsw は無効です(flake.nixのdarwinManagesHomeManagerをfalseにしてください)' >&2; false"
       else "home-manager switch --flake ~/dotfiles#ne0san --impure -b backup";
 in
 {

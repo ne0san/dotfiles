@@ -1,22 +1,18 @@
-# DARWIN_MANAGES_HOME_MANAGER=false (デフォルトはtrue): home-manager/nixvimの
-# 管理方法をflake評価時の環境変数で切り替える。ファイルは書き換えなくてよい。
-#
-# デフォルト(未設定 or true): darwinにhome-manager/nixvimを統合
+# darwinManagesHomeManager = true (デフォルト): darwinにhome-manager/nixvimを統合
 #   nix run nix-darwin -- switch --flake .#ne0san --impure # 初回
 #   sudo darwin-rebuild switch --flake ~/dotfiles#ne0san --impure # 二回目以降 (drsw)
 #   ※このモードではhome-manager単体反映(hmsw)は無効化される
 #
-# DARWIN_MANAGES_HOME_MANAGER=false: home-manager/nixvimを単体で管理
-#   DARWIN_MANAGES_HOME_MANAGER=false nix run home-manager/master -- switch --flake .#ne0san --impure -b backup # 初回
-#   DARWIN_MANAGES_HOME_MANAGER=false home-manager switch --flake ~/dotfiles#ne0san --impure -b backup # 二回目以降 (hmsw)
+# darwinManagesHomeManager = false: home-manager/nixvimを単体で管理
+#   nix run home-manager/master -- switch --flake .#ne0san -b backup # 初回
+#   home-manager switch --flake ~/dotfiles#ne0san --impure -b backup # 二回目以降 (hmsw)
 #   ※このモードではdarwin-rebuild(drsw)は無効化される
 #
 # home-managerはmodule統合とstandaloneの併用が非対応で、同じプロファイルを
 # 取り合って壊れる(darwin-rebuildのたびにhome-managerコマンドが消える等)ため、
-# 必ずどちらか一方のモードに固定して使うこと。切り替えたときは、
-# 上記のDARWIN_MANAGES_HOME_MANAGERを指定してこれから使う方のコマンドを
-# 一度実行すれば、以降はnix/home.nixのdrsw/hmswエイリアスがそのモード用に
-# 生成される(逆側のエイリアスは無効化メッセージに置き換わる)。
+# 下のdarwinManagesHomeManagerで必ずどちらか一方のモードに固定する。
+# 切り替えたときは、これから使う方のコマンドを一度実行してから
+# nix/home.nixのdrsw/hmswエイリアスを使うこと。
 
 {
   description = "ne0san's dotfiles";
@@ -41,12 +37,9 @@
       lib = nixpkgs.lib;
       system = "aarch64-darwin";
       username = builtins.getEnv "USER";
-      # DARWIN_MANAGES_HOME_MANAGER環境変数でモードを切り替える(--impure必須)
-      # 未設定 or "false"/"0"以外: home-managerをdarwinに統合(drswで一括反映、hmswは無効)
-      # "false" または "0": home-managerを単体で管理(hmswで反映、drswは無効)
-      darwinManagesHomeManager =
-        let v = builtins.getEnv "DARWIN_MANAGES_HOME_MANAGER";
-        in v != "false" && v != "0";
+      # true: home-managerをdarwinに統合して管理(drswで一括反映、hmswは無効)
+      # false: home-managerを単体で管理(hmswで反映、drswは無効)
+      darwinManagesHomeManager = true;
       # home.nixのunfreeパッケージ(1password-cli, claude-code)を許可するpkgs
       pkgs = import nixpkgs {
         inherit system;
