@@ -18,10 +18,9 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nixvim = {
-      url = "github:nix-community/nixvim";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    # nixvimは対応確認済みのnixpkgsに強くピン留めされているため、
+    # follows で我々のnixpkgsに合わせず、nixvim自身の pin をそのまま使う
+    nixvim.url = "github:nix-community/nixvim";
   };
 
   outputs = { nixpkgs, nix-darwin, home-manager, nixvim, ... }:
