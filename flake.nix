@@ -1,9 +1,16 @@
-# darwin (system設定 + home-manager + nixvim をまとめて反映)
+# darwin (システム設定のみ反映。home-manager/nixvimはここでは管理しない)
 #   nix run nix-darwin -- switch --flake .#ne0san --impure # 初回
 #   sudo darwin-rebuild switch --flake ~/dotfiles#ne0san --impure # 二回目以降
-# home-manager単体 (システム設定に触れず、dotfiles部分だけ反映)
-#   nix run home-manager/master -- switch --flake .#ne0san # 初回
-#   home-manager switch --flake ~/dotfiles#ne0san # 二回目以降
+# home-manager (home.nix + nixvim.nixを反映)
+#   nix run home-manager/master -- switch --flake .#ne0san -b backup # 初回
+#   home-manager switch --flake ~/dotfiles#ne0san --impure -b backup # 二回目以降
+#
+# darwinConfigurationsにhome-manager.darwinModules.home-managerを混ぜてしまうと、
+# darwin-rebuildとhome-manager単体反映が同じプロファイルを取り合って、
+# darwin-rebuildのたびにhome-managerコマンドが消えるなどの不具合が起きる
+# (home-managerのmodule統合とstandaloneの併用は非対応のため)。
+# そのためdarwinはシステム設定専用にし、home-manager/nixvimはこちらのflake出力で
+# 完全に独立して管理する。
 
 {
   description = "ne0san's dotfiles";
@@ -27,8 +34,7 @@
     let
       system = "aarch64-darwin";
       username = builtins.getEnv "USER";
-      # home.nixのunfreeパッケージ(1password-cli, claude-code)を
-      # home-manager単体反映(homeConfigurations)でも許可するためのpkgs
+      # home.nixのunfreeパッケージ(1password-cli, claude-code)を許可するpkgs
       pkgs = import nixpkgs {
         inherit system;
         config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [
@@ -37,29 +43,14 @@
         ];
       };
     in {
-      # darwin: システム設定(darwin.nix) + home-manager(home.nix, nixvim.nix)をまとめて反映
+      # darwin: システム設定(darwin.nix)のみを反映
       darwinConfigurations."ne0san" = nix-darwin.lib.darwinSystem {
         inherit system;
-        modules = [
-          ./nix/darwin.nix
-          home-manager.darwinModules.home-manager {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.backupFileExtension = "backup";
-            home-manager.users.${username} = { ... }:{
-              imports = [
-                nixvim.homeModules.nixvim
-                ./nix/home.nix
-                ./nix/nixvim.nix
-              ];
-            };
-            home-manager.extraSpecialArgs = { inherit username; };
-          }
-        ];
+        modules = [ ./nix/darwin.nix ];
         specialArgs = { inherit username; };
       };
 
-      # home-manager: home.nix(dotfiles) + nixvim.nixをdarwinを介さず単体で反映
+      # home-manager: home.nix(dotfiles) + nixvim.nixを反映
       homeConfigurations."ne0san" = home-manager.lib.homeManagerConfiguration {
         inherit pkgs;
         extraSpecialArgs = { inherit username; };
