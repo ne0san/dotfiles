@@ -1,18 +1,17 @@
-# darwinManagesHomeManager = true (デフォルト): darwinにhome-manager/nixvimを統合
+# darwin (システム設定 + home-manager/nixvimを統合して反映)
 #   nix run nix-darwin -- switch --flake .#ne0san --impure # 初回
 #   sudo darwin-rebuild switch --flake ~/dotfiles#ne0san --impure # 二回目以降 (drsw)
-#   ※このモードではhome-manager単体反映(hmsw)は無効化される
 #
-# darwinManagesHomeManager = false: home-manager/nixvimを単体で管理
-#   nix run home-manager/master -- switch --flake .#ne0san -b backup # 初回
+# home-manager単体 (home.nix + nixvim.nixだけを反映)
+#   nix run home-manager/master -- switch --flake .#ne0san --impure -b backup # 初回
 #   home-manager switch --flake ~/dotfiles#ne0san --impure -b backup # 二回目以降 (hmsw)
-#   ※このモードではdarwin-rebuild(drsw)は無効化される
 #
 # home-managerはmodule統合とstandaloneの併用が非対応で、同じプロファイルを
 # 取り合って壊れる(darwin-rebuildのたびにhome-managerコマンドが消える等)ため、
-# 下のdarwinManagesHomeManagerで必ずどちらか一方のモードに固定する。
-# 切り替えたときは、これから使う方のコマンドを一度実行してから
-# nix/home.nixのdrsw/hmswエイリアスを使うこと。
+# 直近に反映した方だけが安全に使えるモードになる。
+# darwinConfigurations/homeConfigurationsそれぞれがhome.nixにdarwinManagesHomeManager
+# フラグを渡しており、その値に応じてnix/home.nixのdrsw/hmswエイリアスのうち
+# 今のモードで使わない方が自動的に無効化される。
 
 {
   description = "ne0san's dotfiles";
@@ -34,27 +33,22 @@
 
   outputs = { nixpkgs, nix-darwin, home-manager, nixvim, ... }:
     let
-      lib = nixpkgs.lib;
       system = "aarch64-darwin";
       username = builtins.getEnv "USER";
-      # true: home-managerをdarwinに統合して管理(drswで一括反映、hmswは無効)
-      # false: home-managerを単体で管理(hmswで反映、drswは無効)
-      darwinManagesHomeManager = true;
       # home.nixのunfreeパッケージ(1password-cli, claude-code)を許可するpkgs
       pkgs = import nixpkgs {
         inherit system;
-        config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
+        config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [
           "1password-cli"
           "claude-code"
         ];
       };
     in {
-      # darwin: システム設定(darwin.nix)を反映
-      # darwinManagesHomeManager = true のときはhome-manager(home.nix, nixvim.nix)も
-      # まとめて反映する
+      # darwin: システム設定(darwin.nix) + home-manager(home.nix, nixvim.nix)をまとめて反映
       darwinConfigurations."ne0san" = nix-darwin.lib.darwinSystem {
         inherit system;
-        modules = [ ./nix/darwin.nix ] ++ lib.optionals darwinManagesHomeManager [
+        modules = [
+          ./nix/darwin.nix
           home-manager.darwinModules.home-manager {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
@@ -66,17 +60,18 @@
                 ./nix/nixvim.nix
               ];
             };
-            home-manager.extraSpecialArgs = { inherit username darwinManagesHomeManager; };
+            # darwin統合モード: home.nix側でhmswを無効化させる
+            home-manager.extraSpecialArgs = { inherit username; darwinManagesHomeManager = true; };
           }
         ];
-        specialArgs = { inherit username darwinManagesHomeManager; };
+        specialArgs = { inherit username; };
       };
 
-      # home-manager: home.nix(dotfiles) + nixvim.nixを単体で反映
-      # (darwinManagesHomeManager = false のときに使う)
+      # home-manager: home.nix(dotfiles) + nixvim.nixをdarwinを介さず単体で反映
       homeConfigurations."ne0san" = home-manager.lib.homeManagerConfiguration {
         inherit pkgs;
-        extraSpecialArgs = { inherit username darwinManagesHomeManager; };
+        # home-manager単体モード: home.nix側でdrswを無効化させる
+        extraSpecialArgs = { inherit username; darwinManagesHomeManager = false; };
         modules = [
           nixvim.homeModules.nixvim
           ./nix/home.nix
