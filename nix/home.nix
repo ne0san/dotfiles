@@ -1,8 +1,10 @@
 { pkgs, lib, username, darwinManagesHomeManager ? true, ... }:
 let
+  isDarwin = pkgs.stdenv.isDarwin;
+  homeDirectory = if isDarwin then "/Users/${username}" else "/home/${username}";
   # ローカルのgit識別情報を読み込む（make git-identity で生成）
   # ~/.config/git-identity-{name,email} からユーザー情報を取得
-  configDir = "/Users/${username}/.config";
+  configDir = "${homeDirectory}/.config";
   gitUserName =
     let f = "${configDir}/git-identity-name";
     in if builtins.pathExists f
@@ -26,6 +28,12 @@ let
     subPackages = [ "cmd/tle" ];
   };
 
+  # home-manager単体反映時に使うflakeの出力名（プラットフォーム/アーキテクチャに対応）
+  homeFlakeAttr =
+    if isDarwin then "ne0san"
+    else if pkgs.system == "aarch64-linux" then "ne0san-linux-aarch64"
+    else "ne0san-linux-x86_64";
+
   # darwinManagesHomeManagerは、直近にどちらのflake出力で反映したか
   # (darwinConfigurations = true / homeConfigurations = false)を表す。
   # 使わない方のエイリアス(drsw/hmsw)はshellAbbrs/shellAliasesに含めず、
@@ -34,13 +42,13 @@ let
     drsw = "sudo USER=$USER darwin-rebuild switch --flake ~/dotfiles#ne0san --impure";
   };
   hmswAliasAttrs = lib.optionalAttrs (!darwinManagesHomeManager) {
-    hmsw = "home-manager switch --flake ~/dotfiles#ne0san --impure -b backup";
+    hmsw = "home-manager switch --flake ~/dotfiles#${homeFlakeAttr} --impure -b backup";
   };
 in
 {
   home.enableNixpkgsReleaseCheck = false;
   home.username = username;
-  home.homeDirectory = "/Users/${username}";
+  home.homeDirectory = homeDirectory;
   home.stateVersion = "25.05";
   home.packages = with pkgs; [
     devenv
@@ -172,7 +180,7 @@ in
   };
   programs.ghostty = {
     enable = true;
-    package = null;  # macOS用
+    package = if isDarwin then null else pkgs.ghostty;  # macOSはhomebrew版を使う
     enableFishIntegration = true;
 
     settings = {
@@ -182,6 +190,7 @@ in
         "MyricaM M"
       ];
       font-size = 11.5;
+    } // lib.optionalAttrs isDarwin {
       macos-option-as-alt = true;
     };
   };
@@ -284,10 +293,10 @@ in
       };
       init = {
         defaultBranch = "main";
-        templatedir = "/Users/${username}/.git-templates/git-secrets/";
+        templatedir = "${homeDirectory}/.git-templates/git-secrets/";
       };
       commit = {
-        template = "/Users/${username}/.stCommitMsg";
+        template = "${homeDirectory}/.stCommitMsg";
       };
     };
   };
