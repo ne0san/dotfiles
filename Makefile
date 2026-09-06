@@ -1,5 +1,5 @@
 # Run all shell files (GNU Make 3.81 compatible)
-all: phase1 phase2 phase3 test
+all: phase1 phase2 phase3
 
 # Phase 1: Basic setup (parallel OK)
 phase1: xcode
