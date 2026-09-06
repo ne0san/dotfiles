@@ -2,7 +2,8 @@
 #   nix run nix-darwin -- switch --flake .#ne0san --impure # 初回
 #   sudo darwin-rebuild switch --flake ~/dotfiles#ne0san --impure # 二回目以降 (drsw)
 #
-# home-manager単体 (home.nix + nixvim.nixだけを反映)
+# home-manager単体 (home.nix + nixvim.nixだけを反映。darwin/linux両対応、
+# 実行ホストのsystemを自動判定するため同じコマンドでOK)
 #   nix run home-manager/master -- switch --flake .#ne0san --impure -b backup # 初回
 #   home-manager switch --flake ~/dotfiles#ne0san --impure -b backup # 二回目以降 (hmsw)
 #
@@ -36,12 +37,20 @@
       system = "aarch64-darwin";
       username = builtins.getEnv "USER";
       # home.nixのunfreeパッケージ(1password-cli, claude-code)を許可するpkgs
+      unfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [
+        "1password-cli"
+        "claude-code"
+      ];
       pkgs = import nixpkgs {
         inherit system;
-        config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [
-          "1password-cli"
-          "claude-code"
-        ];
+        config.allowUnfreePredicate = unfreePredicate;
+      };
+      # home-manager単体は、既にUSER取得で--impure運用な点を踏まえ、
+      # 評価を実行したホストのsystemをそのまま使う(darwin/linux, アーキ問わず自動対応)。
+      # そのためnix flake show/checkのような「今いないホスト」向けの静的な確認はできない。
+      homePkgs = import nixpkgs {
+        system = builtins.currentSystem;
+        config.allowUnfreePredicate = unfreePredicate;
       };
     in {
       # darwin: システム設定(darwin.nix) + home-manager(home.nix, nixvim.nix)をまとめて反映
@@ -68,8 +77,10 @@
       };
 
       # home-manager: home.nix(dotfiles) + nixvim.nixをdarwinを介さず単体で反映
+      # systemは実行ホストのcurrentSystemに従うため、darwin/linux・アーキ問わず同じ
+      # 出力名(ne0san)のまま使える(--impure必須。元々USER取得で必須だったので実質変化なし)
       homeConfigurations."ne0san" = home-manager.lib.homeManagerConfiguration {
-        inherit pkgs;
+        pkgs = homePkgs;
         # home-manager単体モード: home.nix側でdrswを無効化させる
         extraSpecialArgs = { inherit username; darwinManagesHomeManager = false; };
         modules = [
