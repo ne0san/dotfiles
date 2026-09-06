@@ -56,7 +56,7 @@
               imports = [
                 nixvim.homeModules.nixvim
                 ./nix/home.nix
-                ./nix/nixvim.nix
+                ./nix/nixvim
               ];
             };
             # darwin統合モード: home.nix側でhmswを無効化させる
@@ -76,7 +76,7 @@
         modules = [
           nixvim.homeModules.nixvim
           ./nix/home.nix
-          ./nix/nixvim.nix
+          ./nix/nixvim
         ];
       };
     };
