@@ -1,4 +1,4 @@
-{ pkgs, username, darwinManagesHomeManager ? true, ... }:
+{ pkgs, lib, username, darwinManagesHomeManager ? true, ... }:
 let
   # ローカルのgit識別情報を読み込む（make git-identity で生成）
   # ~/.config/git-identity-{name,email} からユーザー情報を取得
@@ -28,15 +28,14 @@ let
 
   # darwinManagesHomeManagerは、直近にどちらのflake出力で反映したか
   # (darwinConfigurations = true / homeConfigurations = false)を表す。
-  # 使わない方のエイリアスは無効化し、切り替え方法をメッセージで案内する
-  drswAlias =
-    if darwinManagesHomeManager
-      then "sudo USER=$USER darwin-rebuild switch --flake ~/dotfiles#ne0san --impure"
-      else "echo 'home-manager単体モードのため drsw は無効です(darwin-rebuild switchで統合モードに戻してください)' >&2; false";
-  hmswAlias =
-    if darwinManagesHomeManager
-      then "echo 'darwin統合モードのため hmsw は無効です(home-manager switchで単体モードに切り替えてください)' >&2; false"
-      else "home-manager switch --flake ~/dotfiles#ne0san --impure -b backup";
+  # 使わない方のエイリアス(drsw/hmsw)はshellAbbrs/shellAliasesに含めず、
+  # コマンド自体が存在しない状態にする
+  drswAliasAttrs = lib.optionalAttrs darwinManagesHomeManager {
+    drsw = "sudo USER=$USER darwin-rebuild switch --flake ~/dotfiles#ne0san --impure";
+  };
+  hmswAliasAttrs = lib.optionalAttrs (!darwinManagesHomeManager) {
+    hmsw = "home-manager switch --flake ~/dotfiles#ne0san --impure -b backup";
+  };
 in
 {
   home.enableNixpkgsReleaseCheck = false;
@@ -201,12 +200,10 @@ in
       view = "nvim -R";
       ll = "ls -alF";
       flupd = "nix flake update --flake ~/dotfiles";
-      drsw = drswAlias;
-      hmsw = hmswAlias;
       freload = "source ~/.config/fish/config.fish";
       fsi = "dotnet fsi";
       dev = "~/Documents/Develop/";
-    };
+    } // drswAliasAttrs // hmswAliasAttrs;
   };
 
   programs.zsh = {
@@ -238,11 +235,9 @@ in
       view = "nvim -R";
       ll = "ls -alF";
       flupd = "nix flake update --flake ~/dotfiles";
-      drsw = drswAlias;
-      hmsw = hmswAlias;
       zreload = "source ~/.zshrc";
       dev = "cd ~/Documents/Develop/";
-    };
+    } // drswAliasAttrs // hmswAliasAttrs;
 
     # setopt系
     autocd = true;

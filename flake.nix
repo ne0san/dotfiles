@@ -11,7 +11,7 @@
 # 直近に反映した方だけが安全に使えるモードになる。
 # darwinConfigurations/homeConfigurationsそれぞれがhome.nixにdarwinManagesHomeManager
 # フラグを渡しており、その値に応じてnix/home.nixのdrsw/hmswエイリアスのうち
-# 今のモードで使わない方が自動的に無効化される。
+# 今のモードで使わない方はそもそも定義されず、コマンド自体が存在しなくなる。
 
 {
   description = "ne0san's dotfiles";
