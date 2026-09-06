@@ -93,7 +93,7 @@ in
         # jjとgitが共存する場合はjjの情報を優先する
         # bookmarkより過去のchangeにいる（＝bookmarkを遡っている）場合は、
         # 「bookmark名-遡っているchange数」を優先的に表示する（遡っている数は強調表示）
-        # closest_bookmark(to) / closest_bookmark_ahead(from) は
+        # closest_bookmark(to) / closest_bookmark_or_remote(to) / closest_bookmark_ahead(from) は
         # programs.jujutsu.settings.revset-aliases で定義済み
         vcs_branch = {
           # shellを明示しないとSTARSHIP_SHELL（fish）経由で実行されてしまい、
@@ -119,13 +119,13 @@ in
                   printf '%s%s' "$conflict" "$ahead_bm"
                 fi
               else
-                bm=$(jj log --no-graph -r 'closest_bookmark(@)' -T 'bookmarks.map(|b| b.name()).join(",")' 2>/dev/null)
+                bm=$(jj log --no-graph -r 'closest_bookmark_or_remote(@)' -T 'bookmarks.map(|b| b.name()).join(",")' 2>/dev/null)
                 if [ -n "$bm" ]; then
                   # 同名でlocal/remote両方のbookmarkがある等、複数ヒットする場合は()で囲む
                   case "$bm" in
                     *,*) bm="($bm)" ;;
                   esac
-                  dist=$(jj log --no-graph -r 'closest_bookmark(@)..@' -T '"."' 2>/dev/null | wc -c | tr -d ' ')
+                  dist=$(jj log --no-graph -r 'closest_bookmark_or_remote(@)..@' -T '"."' 2>/dev/null | wc -c | tr -d ' ')
                   dist=''${dist:-0}
                   if [ "$dist" -gt 0 ]; then
                     # +N部分だけ薄い色にするため、ANSIエスケープを直接出力に埋め込む
@@ -306,11 +306,11 @@ in
         default-command = "log";
       };
       revset-aliases = { # changeもしくはその集合を示すクエリのエイリアスを作成
-        # bookmarks()だけだとローカルにtrackされていないリモート追跡ブックマーク
-        # （例: push直後でまだ`jj bookmark track`していない`foo@origin`）を見逃すため、
-        # remote_bookmarks()も対象に含める
-        "closest_bookmark(to)" = "heads(::to & (bookmarks() | remote_bookmarks()))";  # toから遡る全てのchangeのうち、bookmarkがついているものだけ、の先頭
-        "closest_bookmark_ahead(from)" = "roots(from:: & (bookmarks() | remote_bookmarks()))";  # fromから進む全てのchangeのうち、bookmarkがついているものだけ、の先頭（fromがbookmarkより過去にいる＝遡っている場合に該当）
+        "closest_bookmark(to)" = "heads(::to & bookmarks())";  # toから遡る全てのchangeのうち、bookmarkがついているものだけ、の先頭
+        # closest_bookmark(to)はtugなどローカルbookmarkの操作にも使うためlocalのみのまま据え置き、
+        # 表示用途（push直後でまだ`jj bookmark track`していないfoo@origin等も拾いたい場合）にはこちらを使う
+        "closest_bookmark_or_remote(to)" = "heads(::to & (bookmarks() | remote_bookmarks()))";  # toから遡る全てのchangeのうち、local/remote問わずbookmarkがついているものだけ、の先頭
+        "closest_bookmark_ahead(from)" = "roots(from:: & (bookmarks() | remote_bookmarks()))";  # fromから進む全てのchangeのうち、local/remote問わずbookmarkがついているものだけ、の先頭（fromがbookmarkより過去にいる＝遡っている場合に該当）
       };
       aliases = {
         tug = [ # 一番近い過去のbookmarkを一個前のchangeに移動する
