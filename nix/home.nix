@@ -1,4 +1,4 @@
-{ pkgs, username, ... }:
+{ pkgs, lib, username, darwinManagesHomeManager ? true, ... }:
 let
   # ローカルのgit識別情報を読み込む（make git-identity で生成）
   # ~/.config/git-identity-{name,email} からユーザー情報を取得
@@ -24,6 +24,17 @@ let
     };
     vendorHash = "sha256-gy2aPcOrhN1M27qYiqRvNjy987Oh7/MHMvbRLEpV3Iw=";
     subPackages = [ "cmd/tle" ];
+  };
+
+  # darwinManagesHomeManagerは、直近にどちらのflake出力で反映したか
+  # (darwinConfigurations = true / homeConfigurations = false)を表す。
+  # 使わない方のエイリアス(drsw/hmsw)はshellAbbrs/shellAliasesに含めず、
+  # コマンド自体が存在しない状態にする
+  drswAliasAttrs = lib.optionalAttrs darwinManagesHomeManager {
+    drsw = "sudo USER=$USER darwin-rebuild switch --flake ~/dotfiles#ne0san --impure";
+  };
+  hmswAliasAttrs = lib.optionalAttrs (!darwinManagesHomeManager) {
+    hmsw = "home-manager switch --flake ~/dotfiles#ne0san --impure -b backup";
   };
 in
 {
@@ -208,12 +219,11 @@ in
       vi = "nvim";
       view = "nvim -R";
       ll = "ls -alF";
-      flupd = "nix flake update --flake ~/dotfiles/nix";
-      drsw = "sudo USER=$USER darwin-rebuild switch --flake ~/dotfiles/nix#ne0san --impure";
+      flupd = "nix flake update --flake ~/dotfiles";
       freload = "source ~/.config/fish/config.fish";
       fsi = "dotnet fsi";
       dev = "~/Documents/Develop/";
-    };
+    } // drswAliasAttrs // hmswAliasAttrs;
   };
 
   programs.zsh = {
@@ -244,11 +254,10 @@ in
       vi = "nvim";
       view = "nvim -R";
       ll = "ls -alF";
-      flupd = "nix flake update --flake ~/dotfiles/nix";
-      drsw = "sudo USER=$USER darwin-rebuild switch --flake ~/dotfiles/nix#ne0san --impure";
+      flupd = "nix flake update --flake ~/dotfiles";
       zreload = "source ~/.zshrc";
       dev = "cd ~/Documents/Develop/";
-    };
+    } // drswAliasAttrs // hmswAliasAttrs;
 
     # setopt系
     autocd = true;
