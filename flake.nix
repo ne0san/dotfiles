@@ -7,12 +7,6 @@
 #   nix run home-manager/master -- switch --flake .#ne0san --impure -b backup # 初回
 #   home-manager switch --flake ~/dotfiles#ne0san --impure -b backup # 二回目以降 (hmsw)
 #
-# home-managerはmodule統合とstandaloneの併用が非対応で、同じプロファイルを
-# 取り合って壊れる(darwin-rebuildのたびにhome-managerコマンドが消える等)ため、
-# 直近に反映した方だけが安全に使えるモードになる。
-# darwinConfigurations/homeConfigurationsそれぞれがhome.nixにdarwinManagesHomeManager
-# フラグを渡しており、その値に応じてnix/home.nixのdrsw/hmswエイリアスのうち
-# 今のモードで使わない方はそもそも定義されず、コマンド自体が存在しなくなる。
 
 {
   description = "ne0san's dotfiles";
@@ -41,10 +35,6 @@
         "1password-cli"
         "claude-code"
       ];
-      pkgs = import nixpkgs {
-        inherit system;
-        config.allowUnfreePredicate = unfreePredicate;
-      };
       # home-manager単体は、既にUSER取得で--impure運用な点を踏まえ、
       # 評価を実行したホストのsystemをそのまま使う(darwin/linux, アーキ問わず自動対応)。
       # そのためnix flake show/checkのような「今いないホスト」向けの静的な確認はできない。
