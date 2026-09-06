@@ -4,8 +4,6 @@
 # home-manager単体 (システム設定に触れず、dotfiles部分だけ反映)
 #   nix run home-manager/master -- switch --flake .#ne0san # 初回
 #   home-manager switch --flake ~/dotfiles#ne0san # 二回目以降
-# nixvim単体 (nvim設定だけ素早く反映)
-#   home-manager switch --flake ~/dotfiles#nixvim
 
 {
   description = "ne0san's dotfiles";
@@ -70,21 +68,6 @@
           nixvim.homeModules.nixvim
           ./nix/home.nix
           ./nix/nixvim.nix
-        ];
-      };
-
-      # nixvim: nixvim.nixだけを単体で反映(nvim設定の素早いイテレーション用)
-      homeConfigurations."nixvim" = home-manager.lib.homeManagerConfiguration {
-        inherit pkgs;
-        extraSpecialArgs = { inherit username; };
-        modules = [
-          nixvim.homeModules.nixvim
-          ./nix/nixvim.nix
-          {
-            home.username = username;
-            home.homeDirectory = "/Users/${username}";
-            home.stateVersion = "25.05";
-          }
         ];
       };
     };
