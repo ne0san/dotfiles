@@ -13,7 +13,7 @@
     # ttでノーマルモードに戻る
     {
       mode = "i";
-      key = "tt";
+      key = "jj";
       action = "<Esc>";
       options.desc = "Exit insert mode";
     }

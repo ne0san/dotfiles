@@ -37,7 +37,7 @@
     }
     {
       mode = "t";
-      key = "tt";
+      key = "jj";
       action = "<C-\\><C-n>";
       options.desc = "Exit terminal mode";
     }
