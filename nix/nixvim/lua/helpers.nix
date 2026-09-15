@@ -32,5 +32,34 @@
     end, { force = true })
 
     vim.opt.shortmess:append("I")
+
+    -- <leader>Q (Force quit all) 実行前に未保存バッファがあれば保存するか確認する
+    _G.confirm_quit_all = function()
+      local has_unsaved = false
+      for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+        if vim.api.nvim_buf_is_loaded(buf) and vim.bo[buf].modified then
+          has_unsaved = true
+          break
+        end
+      end
+
+      if not has_unsaved then
+        vim.cmd("qa!")
+        return
+      end
+
+      local choice = vim.fn.confirm("There are unsaved changes. Save before quitting?", "&Yes\n&No\n&Cancel", 1)
+      if choice == 1 then
+        local ok, err = pcall(vim.cmd, "wa")
+        if not ok then
+          vim.notify("Save failed, aborting quit: " .. err, vim.log.levels.ERROR)
+          return
+        end
+        vim.cmd("qa!")
+      elseif choice == 2 then
+        vim.cmd("qa!")
+      end
+      -- choice == 3 (Cancel) or 0 (Esc/closed dialog): do nothing
+    end
   '';
 }

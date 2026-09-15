@@ -101,8 +101,8 @@
     {
       mode = "n";
       key = "<leader>Q";
-      action = "<cmd>qa!<CR>";
-      options.desc = "Force quit all";
+      action.__raw = "function() confirm_quit_all() end";
+      options.desc = "Force quit all (confirm if unsaved)";
     }
   ];
 }
