@@ -339,6 +339,14 @@ in
 
   programs.jjui = {
     enable = true;
+    settings = {
+      revisions = {
+        revset = "all()"; # デフォルトのrevsetを全revisionに変更
+      };
+      preview = {
+        show_at_start = true; # デフォルトでpreviewペインを表示する
+      };
+    };
   };
 
   programs.direnv = {
