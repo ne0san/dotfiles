@@ -20,6 +20,22 @@
           explorer = {
             hidden = true;
           };
+
+          # files: 未保存の変更があるバッファに対応するファイルにアイコンを表示する
+          files = {
+            format.__raw = ''
+              function(item, picker)
+                local ret = Snacks.picker.format.file(item, picker)
+                local path = Snacks.picker.util.path(item)
+                local bufnr = path and vim.fn.bufnr(path) or -1
+                if bufnr > 0 and vim.api.nvim_buf_is_loaded(bufnr) and vim.bo[bufnr].modified then
+                  ret[#ret + 1] = { " " }
+                  ret[#ret + 1] = { "●", "SnacksPickerBufFlags" }
+                end
+                return ret
+              end
+            '';
+          };
         };
       };
 
