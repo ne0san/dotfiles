@@ -55,11 +55,21 @@
 
       local buffer_list = "  - " .. table.concat(unsaved_names, "\n  - ")
       local message = "There are unsaved changes in:\n" .. buffer_list .. "\n\nSave before quitting?"
-      -- 直前に confirm() を Cancel/Esc で閉じた直後だと、次回呼び出し時に
-      -- メッセージ本文が描画されずダイアログの枠だけになることがあるため
-      -- 呼び出し前に明示的に再描画してコマンドライン領域をクリアする
+
+      -- confirm() はメッセージの行数ぶん 'cmdheight' の高さが必要で、足りないと
+      -- (特に2回目以降の呼び出しで)ダイアログの枠だけが描画されメッセージ本文が
+      -- 表示されないことがあるため、メッセージの行数に合わせて一時的に広げる
+      local message_lines = select(2, message:gsub("\n", "\n")) + 1
+      local prev_cmdheight = vim.o.cmdheight
+      vim.o.cmdheight = math.max(prev_cmdheight, message_lines + 2)
       vim.cmd("redraw")
-      local choice = vim.fn.confirm(message, "&Yes\n&No\n&Cancel", 1)
+
+      local ok_confirm, choice = pcall(vim.fn.confirm, message, "&Yes\n&No\n&Cancel", 1)
+      vim.o.cmdheight = prev_cmdheight
+      if not ok_confirm then
+        return
+      end
+
       if choice == 1 then
         local ok, err = pcall(vim.cmd, "wa")
         if not ok then
