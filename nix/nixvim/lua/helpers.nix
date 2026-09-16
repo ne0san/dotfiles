@@ -55,10 +55,6 @@
 
       local buffer_list = "  - " .. table.concat(unsaved_names, "\n  - ")
       local message = "There are unsaved changes in:\n" .. buffer_list .. "\n\nSave before quitting?"
-      -- 直前に confirm() を Cancel/Esc で閉じた直後だと、次回呼び出し時に
-      -- メッセージ本文が描画されずダイアログの枠だけになることがあるため
-      -- 呼び出し前に明示的に再描画してコマンドライン領域をクリアする
-      vim.cmd("redraw")
       local choice = vim.fn.confirm(message, "&Yes\n&No\n&Cancel", 1)
       if choice == 1 then
         local ok, err = pcall(vim.cmd, "wa")
