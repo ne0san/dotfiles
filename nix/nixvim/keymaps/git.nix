@@ -7,7 +7,19 @@ let
   # (lazygitのos.editPreset = "nvim-remote"と同じ考え方)
   jjuiNvimRemoteEdit = pkgs.writeShellScript "jjui-nvim-remote-edit" ''
     if [ -n "$NVIM" ]; then
-      exec nvim --server "$NVIM" --remote-tab "$1"
+      nvim --server "$NVIM" --remote-tab "$1"
+
+      # Neovimは(Vimと違い)--remote-wait系のオプションを未実装のため、
+      # 上のremote-tabはタブを開いた瞬間に処理が返ってしまう。
+      # jjui/lazygitはこのスクリプト(EDITOR)のプロセスが終了したタイミングで
+      # description等のファイルを読み込むため、ここで実際にブロックしないと
+      # 編集前(未保存)の内容がそのまま読み込まれてしまう。
+      # そこで--remote-exprで開いたバッファがまだ残っているかをポーリングし、
+      # 親nvim側でタブ/バッファを閉じる(:wq等で保存して抜ける)までここで待機する。
+      escaped=$(printf '%s' "$1" | sed "s/'/'''/g")
+      while [ "$(nvim --server "$NVIM" --remote-expr "bufloaded('$escaped')" 2>/dev/null)" = "1" ]; do
+        sleep 0.2
+      done
     else
       exec nvim "$1"
     fi
