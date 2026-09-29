@@ -34,6 +34,9 @@
     conform-nvim = {
       enable = true;
 
+      # formatters_by_ftで指定したフォーマッタ(stylua, alejandra等)をnixで自動インストール
+      autoInstall.enable = true;
+
       # ファイルタイプごとにフォーマッタを設定
       settings = {
         formatters_by_ft = {
