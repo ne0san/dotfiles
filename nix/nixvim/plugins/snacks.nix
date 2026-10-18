@@ -20,22 +20,6 @@
           explorer = {
             hidden = true;
           };
-
-          # files: 未保存の変更があるバッファに対応するファイルにアイコンを表示する
-          files = {
-            format.__raw = ''
-              function(item, picker)
-                local ret = Snacks.picker.format.file(item, picker)
-                local path = Snacks.picker.util.path(item)
-                local bufnr = path and vim.fn.bufnr(path) or -1
-                if bufnr > 0 and vim.api.nvim_buf_is_loaded(bufnr) and vim.bo[bufnr].modified then
-                  ret[#ret + 1] = { " " }
-                  ret[#ret + 1] = { "●", "SnacksPickerBufFlags" }
-                end
-                return ret
-              end
-            '';
-          };
         };
       };
 
@@ -171,4 +155,31 @@
       };
     };
   };
+
+  # snacks.picker: ファイル一覧/バッファ一覧など、ファイルの一覧を表示する
+  # 全てのウィンドウで、未保存の変更を持つバッファに対応する項目に
+  # ● アイコンを表示する (files, explorer, recent, grep, lsp_*, buffers, ...)
+  extraConfigLuaPost = ''
+    do
+      local function with_unsaved_marker(format_name)
+        local base = Snacks.picker.format[format_name]
+        Snacks.picker.format[format_name] = function(item, picker)
+          local ret = base(item, picker)
+          local bufnr = item.buf
+          if not bufnr then
+            local path = Snacks.picker.util.path(item)
+            bufnr = path and vim.fn.bufnr(path) or nil
+          end
+          if bufnr and bufnr > 0 and vim.api.nvim_buf_is_loaded(bufnr) and vim.bo[bufnr].modified then
+            ret[#ret + 1] = { " " }
+            ret[#ret + 1] = { "●", "SnacksPickerBufFlags" }
+          end
+          return ret
+        end
+      end
+
+      with_unsaved_marker("file")
+      with_unsaved_marker("buffer")
+    end
+  '';
 }
