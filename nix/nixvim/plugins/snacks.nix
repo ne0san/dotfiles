@@ -16,10 +16,24 @@
       picker = {
         enabled = true;
         sources = {
-          # Explorer で隠しファイルもデフォルト表示する
+          # Explorer で隠しファイルもデフォルト表示し、未保存バッファのアイコンを表示する
           explorer = {
             hidden = true;
+            format.__raw = "_G.snacks_picker_unsaved_file_format";
           };
+
+          # ファイル一覧系ピッカー: 未保存バッファのアイコンを表示する
+          files.format.__raw = "_G.snacks_picker_unsaved_file_format";
+          recent.format.__raw = "_G.snacks_picker_unsaved_file_format";
+          grep.format.__raw = "_G.snacks_picker_unsaved_file_format";
+          grep_word.format.__raw = "_G.snacks_picker_unsaved_file_format";
+          lsp_references.format.__raw = "_G.snacks_picker_unsaved_file_format";
+          lsp_definitions.format.__raw = "_G.snacks_picker_unsaved_file_format";
+          lsp_implementations.format.__raw = "_G.snacks_picker_unsaved_file_format";
+          lsp_type_definitions.format.__raw = "_G.snacks_picker_unsaved_file_format";
+
+          # バッファ一覧ピッカー: 未保存バッファのアイコンを表示する
+          buffers.format.__raw = "_G.snacks_picker_unsaved_buffer_format";
         };
       };
 
@@ -155,31 +169,4 @@
       };
     };
   };
-
-  # snacks.picker: ファイル一覧/バッファ一覧など、ファイルの一覧を表示する
-  # 全てのウィンドウで、未保存の変更を持つバッファに対応する項目に
-  # ● アイコンを表示する (files, explorer, recent, grep, lsp_*, buffers, ...)
-  extraConfigLuaPost = ''
-    do
-      local function with_unsaved_marker(format_name)
-        local base = Snacks.picker.format[format_name]
-        Snacks.picker.format[format_name] = function(item, picker)
-          local ret = base(item, picker)
-          local bufnr = item.buf
-          if not bufnr then
-            local path = Snacks.picker.util.path(item)
-            bufnr = path and vim.fn.bufnr(path) or nil
-          end
-          if bufnr and bufnr > 0 and vim.api.nvim_buf_is_loaded(bufnr) and vim.bo[bufnr].modified then
-            ret[#ret + 1] = { " " }
-            ret[#ret + 1] = { "●", "SnacksPickerBufFlags" }
-          end
-          return ret
-        end
-      end
-
-      with_unsaved_marker("file")
-      with_unsaved_marker("buffer")
-    end
-  '';
 }

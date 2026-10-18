@@ -32,5 +32,31 @@
     end, { force = true })
 
     vim.opt.shortmess:append("I")
+
+    -- snacks.picker: 対応するファイルが未保存の変更を持つバッファとして
+    -- 開かれている場合に ● アイコンを表示するフォーマッタ。
+    -- (各ピッカーの opts.format に直接渡す。起動時に自動で開かれる
+    --  explorer のような「使い回されるピッカー」は、setup() 完了後に
+    --  Snacks.picker.format テーブルを書き換える方式だと、その書き換えが
+    --  適用される前に元のフォーマッタを捕まえてしまうため反映されない。
+    --  opts に直接渡すことで、ピッカー生成のタイミングに関係なく確実に効かせる)
+    local function with_unsaved_marker(base_format_name)
+      return function(item, picker)
+        local ret = Snacks.picker.format[base_format_name](item, picker)
+        local bufnr = item.buf
+        if not bufnr then
+          local path = Snacks.picker.util.path(item)
+          bufnr = path and vim.fn.bufnr(path) or nil
+        end
+        if bufnr and bufnr > 0 and vim.api.nvim_buf_is_loaded(bufnr) and vim.bo[bufnr].modified then
+          ret[#ret + 1] = { " " }
+          ret[#ret + 1] = { "●", "SnacksPickerBufFlags" }
+        end
+        return ret
+      end
+    end
+
+    _G.snacks_picker_unsaved_file_format = with_unsaved_marker("file")
+    _G.snacks_picker_unsaved_buffer_format = with_unsaved_marker("buffer")
   '';
 }
