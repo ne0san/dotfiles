@@ -55,17 +55,6 @@
 
       local buffer_list = "  - " .. table.concat(unsaved_names, "\n  - ")
       local message = "There are unsaved changes in:\n" .. buffer_list .. "\n\nSave before quitting?"
-
-      -- noice.nvim がconfirm()のcmdline描画状態を内部に保持しており、直前の
-      -- confirm()がCancel/Escで閉じられているとその状態が残ったままになり、
-      -- 次に呼び出した際にメッセージ本文が描画されないことがある(要 noice.nvim)。
-      -- そのため呼び出し前に noice の表示中メッセージを明示的に破棄しておく。
-      -- (noiceが無効/未導入の環境では pcall により何もせず安全にスキップされる)
-      local ok_noice, noice = pcall(require, "noice")
-      if ok_noice then
-        pcall(noice.cmd, "dismiss")
-      end
-
       local choice = vim.fn.confirm(message, "&Yes\n&No\n&Cancel", 1)
       if choice == 1 then
         local ok, err = pcall(vim.cmd, "wa")
