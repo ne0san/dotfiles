@@ -62,6 +62,9 @@
     foldlevel = 99; # 最初は全部開いた状態
     foldlevelstart = 99; # ファイル開いた時も全部開く
 
+    # セッション保存対象 (auto-sessionの推奨値。localoptionsがないと復元後にfiletypeやハイライトが効かない)
+    sessionoptions = "blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions";
+
     # 分割時の新ウィンドウ配置（vsplitは右、splitは下に新ウィンドウを開く）
     splitright = true;
     splitbelow = true;
