@@ -83,31 +83,6 @@
           inc_rename = false;
           lsp_doc_border = false;
         };
-        # vim.fn.confirm() (kind = "confirm"/"confirm_sub") は noice 独自の
-        # confirm viewで描画されるが、Cancel/Escで閉じた直後に再度呼び出すと
-        # ダイアログの枠だけが描画されメッセージ本文が表示されない不具合がある
-        # (noice無効化時は再現しないことを確認済み)。該当カインドのメッセージは
-        # noiceの処理をスキップし、Neovim標準のレンダリングにフォールバックする。
-        routes = [
-          {
-            filter = {
-              event = "msg_show";
-              kind = "confirm";
-            };
-            opts = {
-              skip = true;
-            };
-          }
-          {
-            filter = {
-              event = "msg_show";
-              kind = "confirm_sub";
-            };
-            opts = {
-              skip = true;
-            };
-          }
-        ];
       };
     };
 
