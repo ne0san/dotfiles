@@ -224,6 +224,7 @@ in {
       if test -d /opt/homebrew
         fish_add_path --append /opt/homebrew/bin /opt/homebrew/sbin
       end
+      set -gx NODE_EXTRA_CA_CERTS $HOME/macos-ca.pem
     '';
     # インタラクティブシェル用の設定
     interactiveShellInit = ''
