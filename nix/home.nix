@@ -1,20 +1,30 @@
-{ pkgs, lib, username, darwinManagesHomeManager ? true, ... }:
-let
-  isDarwin = pkgs.stdenv.isDarwin;
-  homeDirectory = if isDarwin then "/Users/${username}" else "/home/${username}";
+{
+  pkgs,
+  lib,
+  username,
+  darwinManagesHomeManager ? true,
+  ...
+}: let
+  isDarwin = pkgs.stdenv.hostPlatform.isDarwin;
+  homeDirectory =
+    if isDarwin
+    then "/Users/${username}"
+    else "/home/${username}";
   # ローカルのgit識別情報を読み込む（make git-identity で生成）
   # ~/.config/git-identity-{name,email} からユーザー情報を取得
   configDir = "${homeDirectory}/.config";
-  gitUserName =
-    let f = "${configDir}/git-identity-name";
-    in if builtins.pathExists f
-      then builtins.replaceStrings ["\n"] [""] (builtins.readFile f)
-      else "unknown";
-  gitUserEmail =
-    let f = "${configDir}/git-identity-email";
-    in if builtins.pathExists f
-      then builtins.replaceStrings ["\n"] [""] (builtins.readFile f)
-      else "unknown@example.com";
+  gitUserName = let
+    f = "${configDir}/git-identity-name";
+  in
+    if builtins.pathExists f
+    then builtins.replaceStrings ["\n"] [""] (builtins.readFile f)
+    else "unknown";
+  gitUserEmail = let
+    f = "${configDir}/git-identity-email";
+  in
+    if builtins.pathExists f
+    then builtins.replaceStrings ["\n"] [""] (builtins.readFile f)
+    else "unknown@example.com";
   tle = pkgs.buildGoModule {
     pname = "tle";
     version = "1.2.0";
@@ -25,7 +35,7 @@ let
       sha256 = "sha256-3qO5xGcKj7m033B/lWoeewUf9XbiY+GrQFBBuymOXzo=";
     };
     vendorHash = "sha256-gy2aPcOrhN1M27qYiqRvNjy987Oh7/MHMvbRLEpV3Iw=";
-    subPackages = [ "cmd/tle" ];
+    subPackages = ["cmd/tle"];
   };
 
   # darwinManagesHomeManagerは、直近にどちらのflake出力で反映したか
@@ -38,8 +48,7 @@ let
   hmswAliasAttrs = lib.optionalAttrs (!darwinManagesHomeManager) {
     hmsw = "home-manager switch --flake ~/dotfiles#ne0san --impure -b backup";
   };
-in
-{
+in {
   home.enableNixpkgsReleaseCheck = false;
   home.username = username;
   home.homeDirectory = homeDirectory;
@@ -52,7 +61,7 @@ in
     gnupg
     tree
     lua
-    nil  # Nix LSP
+    nil # Nix LSP
     lua-language-server
     nerd-fonts.fira-code
     nerd-fonts.symbols-only
@@ -68,7 +77,6 @@ in
   programs.starship = {
     enable = true;
     settings = {
-
       format = "$all$env_var$time$status$character";
 
       time = {
@@ -111,7 +119,7 @@ in
         vcs_branch = {
           # shellを明示しないとSTARSHIP_SHELL（fish）経由で実行されてしまい、
           # 下記の sh/POSIX 構文（if...then...fi 等）がパースエラーになるため固定する
-          shell = [ "sh" ];
+          shell = ["sh"];
           when = "jj root --ignore-working-copy >/dev/null 2>&1 || git rev-parse --is-inside-work-tree >/dev/null 2>&1";
           command = ''
             if jj root --ignore-working-copy >/dev/null 2>&1; then
@@ -174,19 +182,24 @@ in
   };
   programs.ghostty = {
     enable = true;
-    package = if isDarwin then null else pkgs.ghostty;  # macOSはhomebrew版を使う
+    package =
+      if isDarwin
+      then null
+      else pkgs.ghostty; # macOSはhomebrew版を使う
     enableFishIntegration = true;
 
-    settings = {
-      command = "${pkgs.fish}/bin/fish";
-      font-family = [
-        "0xProto Nerd Font"
-        "MyricaM M"
-      ];
-      font-size = 11.5;
-    } // lib.optionalAttrs isDarwin {
-      macos-option-as-alt = true;
-    };
+    settings =
+      {
+        command = "${pkgs.fish}/bin/fish";
+        font-family = [
+          "0xProto Nerd Font"
+          "MyricaM M"
+        ];
+        font-size = 11.5;
+      }
+      // lib.optionalAttrs isDarwin {
+        macos-option-as-alt = true;
+      };
   };
   programs.fish = {
     enable = true;
@@ -218,15 +231,17 @@ in
     '';
 
     # 略語設定
-    shellAbbrs = {
-      vi = "nvim";
-      view = "nvim -R";
-      ll = "ls -alF";
-      flupd = "nix flake update --flake ~/dotfiles";
-      freload = "source ~/.config/fish/config.fish";
-      fsi = "dotnet fsi";
-      dev = "~/Documents/Develop/";
-    } // drswAliasAttrs // hmswAliasAttrs;
+    shellAbbrs =
+      {
+        vi = "nvim";
+        view = "nvim -R";
+        ll = "ls -alF";
+        flupd = "nix flake update --flake ~/dotfiles";
+        freload = "source ~/.config/fish/config.fish";
+        fsi = "dotnet fsi";
+        dev = "~/Documents/Develop/";
+      }
+      // drswAliasAttrs // hmswAliasAttrs;
   };
 
   programs.zsh = {
@@ -249,18 +264,20 @@ in
       path = "$HOME/.zsh_history";
       ignoreDups = true;
       share = true;
-      extended = true;  # HIST_STAMPSの代わり（タイムスタンプ記録）
+      extended = true; # HIST_STAMPSの代わり（タイムスタンプ記録）
     };
 
     # エイリアス
-    shellAliases = {
-      vi = "nvim";
-      view = "nvim -R";
-      ll = "ls -alF";
-      flupd = "nix flake update --flake ~/dotfiles";
-      zreload = "source ~/.zshrc";
-      dev = "cd ~/Documents/Develop/";
-    } // drswAliasAttrs // hmswAliasAttrs;
+    shellAliases =
+      {
+        vi = "nvim";
+        view = "nvim -R";
+        ll = "ls -alF";
+        flupd = "nix flake update --flake ~/dotfiles";
+        zreload = "source ~/.zshrc";
+        dev = "cd ~/Documents/Develop/";
+      }
+      // drswAliasAttrs // hmswAliasAttrs;
 
     # setopt系
     autocd = true;
@@ -317,15 +334,17 @@ in
       ui = {
         default-command = "log";
       };
-      revset-aliases = { # changeもしくはその集合を示すクエリのエイリアスを作成
-        "closest_bookmark(to)" = "heads(::to & bookmarks())";  # toから遡る全てのchangeのうち、bookmarkがついているものだけ、の先頭
+      revset-aliases = {
+        # changeもしくはその集合を示すクエリのエイリアスを作成
+        "closest_bookmark(to)" = "heads(::to & bookmarks())"; # toから遡る全てのchangeのうち、bookmarkがついているものだけ、の先頭
         # closest_bookmark(to)はtugなどローカルbookmarkの操作にも使うためlocalのみのまま据え置き、
         # 表示用途（push直後でまだ`jj bookmark track`していないfoo@origin等も拾いたい場合）にはこちらを使う
-        "closest_bookmark_or_remote(to)" = "heads(::to & (bookmarks() | remote_bookmarks()))";  # toから遡る全てのchangeのうち、local/remote問わずbookmarkがついているものだけ、の先頭
-        "closest_bookmark_ahead(from)" = "roots(from:: & (bookmarks() | remote_bookmarks()))";  # fromから進む全てのchangeのうち、local/remote問わずbookmarkがついているものだけ、の先頭（fromがbookmarkより過去にいる＝遡っている場合に該当）
+        "closest_bookmark_or_remote(to)" = "heads(::to & (bookmarks() | remote_bookmarks()))"; # toから遡る全てのchangeのうち、local/remote問わずbookmarkがついているものだけ、の先頭
+        "closest_bookmark_ahead(from)" = "roots(from:: & (bookmarks() | remote_bookmarks()))"; # fromから進む全てのchangeのうち、local/remote問わずbookmarkがついているものだけ、の先頭（fromがbookmarkより過去にいる＝遡っている場合に該当）
       };
       aliases = {
-        tug = [ # 一番近い過去のbookmarkを一個前のchangeに移動する
+        tug = [
+          # 一番近い過去のbookmarkを一個前のchangeに移動する
           "bookmark"
           "move"
           "--from"
