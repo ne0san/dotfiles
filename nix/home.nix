@@ -3,6 +3,7 @@
   lib,
   username,
   darwinManagesHomeManager ? true,
+  inputs,
   ...
 }: let
   isDarwin = pkgs.stdenv.hostPlatform.isDarwin;
@@ -72,6 +73,7 @@ in {
     tle
     fd
     dotnet-sdk_10
+    inputs.ipi.packages.${pkgs.system}.default
   ];
   programs.home-manager.enable = true;
   programs.starship = {
