@@ -9,6 +9,7 @@ dotfiles fot my mac
 2. 「ログイン時に変換エンジンプログラムを起動する」を有効化
 3. Mac再起
 4. 入力ソースをGoogle日本語入力に変更
+5. `aws configure`
 
 ### デフォルトブラウザを手動でArcに設定
 
