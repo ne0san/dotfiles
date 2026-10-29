@@ -1,13 +1,17 @@
-{ pkgs, lib, username, ... }:
-
 {
-  nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
-    "1password-cli"
-    "claude-code"
-  ];
+  pkgs,
+  lib,
+  username,
+  ...
+}: {
+  nixpkgs.config.allowUnfreePredicate = pkg:
+    builtins.elem (lib.getName pkg) [
+      "1password-cli"
+      "claude-code"
+    ];
   # Nix設定
   nix.settings.experimental-features = "nix-command flakes";
-  nix.settings.trusted-users = [ "root" "@admin" ];
+  nix.settings.trusted-users = ["root" "@admin"];
 
   system.primaryUser = username;
 
@@ -28,9 +32,6 @@
     onActivation.cleanup = "none";
 
     taps = [
-      "aws/tap"
-      "modularml/packages"
-      "oven-sh/bun"
     ];
     brews = [
     ];
@@ -100,7 +101,7 @@
   # キーボード設定
   system.keyboard = {
     enableKeyMapping = true;
-    remapCapsLockToControl = true;  # CapsLockをControlに変更
+    remapCapsLockToControl = true; # CapsLockをControlに変更
   };
 
   # 起動音をオフ

@@ -73,6 +73,7 @@ in {
     tle
     fd
     dotnet-sdk_10
+    awscli2
     inputs.ipi.packages.${pkgs.system}.default
   ];
   programs.home-manager.enable = true;
