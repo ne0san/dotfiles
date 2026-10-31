@@ -44,7 +44,6 @@
       "font-myrica"
       "ghostty"
       "raycast"
-      "arc"
       "google-japanese-ime"
       "gcenx/wine/wine-crossover"
     ];
