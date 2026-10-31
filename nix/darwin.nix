@@ -44,6 +44,7 @@
       "font-myrica"
       "ghostty"
       "raycast"
+      "thebrowsercompany-dia"
       "google-japanese-ime"
       "gcenx/wine/wine-crossover"
     ];
