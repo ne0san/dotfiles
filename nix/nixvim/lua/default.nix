@@ -5,5 +5,6 @@
     ./helpers.nix
     ./fsharp.nix
     ./claude-code.nix
+    ./hover-translate.nix
   ];
 }

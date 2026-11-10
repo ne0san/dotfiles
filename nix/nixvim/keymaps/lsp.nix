@@ -29,8 +29,15 @@
     {
       mode = "n";
       key = "K";
-      action = "<cmd>lua vim.lsp.buf.hover()<CR>";
+      # :HoverTranslateToggleAuto で ON にすると自動翻訳 (デフォルトは通常 hover)
+      action.__raw = "function() HoverTranslate.k() end";
       options.desc = "Hover documentation";
+    }
+    {
+      mode = "n";
+      key = "gK";
+      action.__raw = "function() HoverTranslate.hover() end";
+      options.desc = "Hover documentation (translate to Japanese)";
     }
     {
       mode = "n";
