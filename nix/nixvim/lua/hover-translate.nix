@@ -20,6 +20,10 @@
       if vim.g.hover_translate_backend == nil then
         vim.g.hover_translate_backend = "claude"
       end
+      -- claude バックエンドで使うモデル (claude -p --model に渡す値)
+      if vim.g.hover_translate_claude_model == nil then
+        vim.g.hover_translate_claude_model = "haiku"
+      end
       if vim.g.hover_translate_auto == nil then
         vim.g.hover_translate_auto = true
       end
@@ -59,6 +63,18 @@
         return (s:gsub("%s+$", ""))
       end
 
+      -- 失敗時のメッセージ。CLI によってはエラーを stdout に出す (claude など) ので両方含める
+      local function format_error(name, r)
+        local parts = { name .. " failed (exit " .. tostring(r.code) .. ")" }
+        for _, out in ipairs({ r.stdout, r.stderr }) do
+          out = strip_trailing_newlines(out or "")
+          if out ~= "" then
+            table.insert(parts, out)
+          end
+        end
+        return table.concat(parts, "\n")
+      end
+
       -- 1つの文章を翻訳する。cb(ok, text)
       local translators = {}
 
@@ -66,7 +82,7 @@
         vim.system({ "trans", "-b", "-no-autocorrect", "-no-ansi", ":ja" }, { stdin = text, text = true }, function(r)
           local out = strip_trailing_newlines(r.stdout or "")
           if r.code ~= 0 or out == "" then
-            cb(false, r.stderr ~= "" and r.stderr or "trans failed")
+            cb(false, format_error("trans", r))
           else
             cb(true, out)
           end
@@ -91,7 +107,7 @@
           if r.code == 0 and ok and decoded.translations and decoded.translations[1] then
             cb(true, decoded.translations[1].text)
           else
-            cb(false, (r.stderr ~= "" and r.stderr) or r.stdout or "deepl failed")
+            cb(false, format_error("deepl", r))
           end
         end)
       end
@@ -105,7 +121,7 @@
 
       translators.claude = function(text, cb)
         vim.fn.mkdir(vim.fn.stdpath("cache"), "p")
-        vim.system({ "claude", "-p", "--model", "haiku", CLAUDE_PROMPT }, {
+        vim.system({ "claude", "-p", "--model", vim.g.hover_translate_claude_model or "haiku", CLAUDE_PROMPT }, {
           stdin = text,
           text = true,
           -- プロジェクトの CLAUDE.md 等を読ませないよう、無関係なディレクトリで実行
@@ -113,7 +129,7 @@
         }, function(r)
           local out = strip_trailing_newlines(r.stdout or "")
           if r.code ~= 0 or out == "" then
-            cb(false, r.stderr ~= "" and r.stderr or "claude failed")
+            cb(false, format_error("claude", r))
           else
             cb(true, out)
           end
