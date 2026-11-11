@@ -8,20 +8,20 @@
     -- LSP hover の内容を日本語に翻訳してフロート表示する (issue #138)
     --
     -- バックエンド (vim.g.hover_translate_backend で切替、:HoverTranslateBackend でも可):
-    --   "trans"  : translate-shell (Google 翻訳, APIキー不要, 速い)  ← デフォルト
-    --   "claude" : claude -p (Claude Code CLI, 高品質/コードブロック保持が得意, 数秒かかる)
+    --   "trans"  : translate-shell (Google 翻訳, APIキー不要, 速い)
+    --   "claude" : claude -p (Claude Code CLI, 高品質/コードブロック保持が得意, 数秒かかる)  ← デフォルト
     --   "deepl"  : DeepL API (環境変数 DEEPL_AUTH_KEY が必要, 無料枠あり)
     --
-    -- K の挙動を自動翻訳にするかは vim.g.hover_translate_auto (:HoverTranslateToggleAuto)
+    -- K で自動翻訳するかは vim.g.hover_translate_auto (:HoverTranslateToggleAuto, デフォルト ON)
     do
       local M = {}
       _G.HoverTranslate = M
 
       if vim.g.hover_translate_backend == nil then
-        vim.g.hover_translate_backend = "trans"
+        vim.g.hover_translate_backend = "claude"
       end
       if vim.g.hover_translate_auto == nil then
-        vim.g.hover_translate_auto = false
+        vim.g.hover_translate_auto = true
       end
 
       local cache = {}

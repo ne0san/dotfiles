@@ -29,7 +29,7 @@
     {
       mode = "n";
       key = "K";
-      # :HoverTranslateToggleAuto で ON にすると自動翻訳 (デフォルトは通常 hover)
+      # デフォルトで翻訳 hover。:HoverTranslateToggleAuto で通常 hover に切替
       action.__raw = "function() HoverTranslate.k() end";
       options.desc = "Hover documentation";
     }
