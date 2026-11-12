@@ -74,7 +74,7 @@ in {
     fd
     dotnet-sdk_10
     awscli2
-    inputs.ipi.packages.${pkgs.system}.default
+    inputs.ipi.packages.${pkgs.stdenv.hostPlatform.system}.default
   ];
   programs.home-manager.enable = true;
   programs.starship = {
