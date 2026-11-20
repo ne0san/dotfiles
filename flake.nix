@@ -86,6 +86,7 @@
       extraSpecialArgs = {
         inherit username;
         darwinManagesHomeManager = false;
+        inherit inputs;
       };
       modules = [
         nixvim.homeModules.nixvim
