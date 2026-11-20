@@ -54,29 +54,33 @@ in {
   home.username = username;
   home.homeDirectory = homeDirectory;
   home.stateVersion = "25.05";
-  home.packages = with pkgs; [
-    devenv
-    ripgrep
-    cmake
-    git-secrets
-    gnupg
-    tree
-    lua
-    nil # Nix LSP
-    lua-language-server
-    nerd-fonts.fira-code
-    nerd-fonts.symbols-only
-    gopls
-    _1password-cli
-    gh
-    claude-code
-    tle
-    fd
-    dotnet-sdk_10
-    awscli2
-    inputs.ipi.packages.${pkgs.stdenv.hostPlatform.system}.default
-    mas
-  ];
+  home.packages = with pkgs;
+    [
+      devenv
+      ripgrep
+      cmake
+      git-secrets
+      gnupg
+      tree
+      lua
+      nil # Nix LSP
+      lua-language-server
+      nerd-fonts.fira-code
+      nerd-fonts.symbols-only
+      gopls
+      _1password-cli
+      gh
+      claude-code
+      tle
+      fd
+      dotnet-sdk_10
+      awscli2
+      inputs.ipi.packages.${pkgs.stdenv.hostPlatform.system}.default
+    ]
+    # masはmacOS専用（Mac App StoreのCLI）なので、mac以外では入れない
+    ++ lib.optionals isDarwin [
+      mas
+    ];
   programs.home-manager.enable = true;
   programs.starship = {
     enable = true;
