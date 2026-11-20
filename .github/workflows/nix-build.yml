@@ -1,0 +1,46 @@
+name: Nix Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # nix-darwin(システム設定 + home-manager統合)のビルド確認
+  darwin:
+    runs-on: macos-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: cachix/install-nix-action@v31
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build darwinConfigurations.ne0san
+        # flake.nixがUSERを参照するため--impure必須
+        run: nix build .#darwinConfigurations.ne0san.system --impure --no-link --print-build-logs
+
+  # home-manager単体のビルド確認(darwin/linux両対応のため両方で確認)
+  home-manager:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: cachix/install-nix-action@v31
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build homeConfigurations.ne0san
+        # systemはcurrentSystem、usernameはUSERから取るため--impure必須
+        run: nix build .#homeConfigurations.ne0san.activationPackage --impure --no-link --print-build-logs
