@@ -1,0 +1,46 @@
+name: Nix Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # nix-darwin(システム設定 + home-manager統合)の評価確認
+  darwin:
+    runs-on: macos-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: cachix/install-nix-action@v31
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Evaluate darwinConfigurations.ne0san
+        # ビルドはせず評価(derivation生成)まで確認する。USER参照のため--impure必須
+        run: nix eval --impure --raw .#darwinConfigurations.ne0san.system.drvPath
+
+  # home-manager単体の評価確認(darwin/linux両対応のため両方で確認)
+  home-manager:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: cachix/install-nix-action@v31
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Evaluate homeConfigurations.ne0san
+        # ビルドはせず評価(derivation生成)まで確認する。currentSystem/USER参照のため--impure必須
+        run: nix eval --impure --raw .#homeConfigurations.ne0san.activationPackage.drvPath
