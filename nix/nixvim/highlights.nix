@@ -2,7 +2,7 @@
 
 {
   # ========================================
-  # Colorscheme (extraConfigLuaでonedarkpro自体をsetup - モジュールにバグがあるため)
+  # Colorscheme (navarasu/onedark.nvim)
   # ========================================
   colorschemes.onedark = {
     enable = true;
@@ -37,15 +37,6 @@
   };
 
   extraConfigLua = ''
-    -- OneDarkPro setup
-    require("onedarkpro").setup({
-      options = {
-        transparency = false,
-        terminal_colors = true,
-        cursorline = true,
-      }
-    })
-
     -- 型注釈などのインレイヒントはデフォルトでCommentと同じ文字色になっており、
     -- 通常のコメントと見分けづらいため、背景色だけ少し暗くして区別する。
     -- 特定の色を決め打ちすると別のカラーテーマで浮いてしまうので、

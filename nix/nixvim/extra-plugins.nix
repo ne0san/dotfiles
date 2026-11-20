@@ -2,7 +2,6 @@
 
 {
   extraPlugins = with pkgs.vimPlugins; [
-    onedarkpro-nvim  # カラースキーム (colorschemes.onedarkproはモジュール未提供のため手動導入)
     # F#のオフサイドルールに対応したインデント(indent/fsharp.vim)目的で導入。
     # LSPバックエンドはg:fsharp#backendで無効化済み(fsautocompleteはnixvim側で設定)
     Ionide-vim
