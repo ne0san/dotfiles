@@ -38,7 +38,10 @@
     vendorHash = "sha256-gy2aPcOrhN1M27qYiqRvNjy987Oh7/MHMvbRLEpV3Iw=";
     subPackages = ["cmd/tle"];
   };
-
+  notify = msg:
+    if pkgs.stdenv.isDarwin
+    then "${pkgs.terminal-notifier}/bin/terminal-notifier -title 'Claude Code' -message '${msg}'"
+    else "${lib.getExe' pkgs.libnotify "notify-send"} 'Claude Code' '${msg}'";
   # darwinManagesHomeManagerは、直近にどちらのflake出力で反映したか
   # (darwinConfigurations = true / homeConfigurations = false)を表す。
   # 使わない方のエイリアス(drsw/hmsw)はshellAbbrs/shellAliasesに含めず、
@@ -70,7 +73,6 @@ in {
       gopls
       _1password-cli
       gh
-      claude-code
       tle
       fd
       dotnet-sdk_10
@@ -380,5 +382,31 @@ in {
   programs.direnv = {
     enable = true;
     nix-direnv.enable = true;
+  };
+
+  programs.claude-code = {
+    enable = true;
+    settings.hooks = {
+      Notification = [
+        {
+          hooks = [
+            {
+              type = "command";
+              command = notify "確認してね！";
+            }
+          ];
+        }
+      ];
+      Stop = [
+        {
+          hooks = [
+            {
+              type = "command";
+              command = notify "完了したよ！";
+            }
+          ];
+        }
+      ];
+    };
   };
 }
