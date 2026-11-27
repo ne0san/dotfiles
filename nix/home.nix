@@ -38,6 +38,13 @@
     vendorHash = "sha256-gy2aPcOrhN1M27qYiqRvNjy987Oh7/MHMvbRLEpV3Iw=";
     subPackages = ["cmd/tle"];
   };
+  # Claude Code用スキル: AIが生成した日本語を読みやすく推敲する（/yomiyasu で呼び出す）
+  yomiyasu = pkgs.fetchFromGitHub {
+    owner = "nanaism";
+    repo = "yomiyasu";
+    rev = "3979c750b5e1fe9892bd47bb354f0fb51d534ff2"; # v3.4.1
+    hash = "sha256-fFMFGMrXDIhUTHnzn/wFU3rRw2mFw2diGf2lT9iXxiw=";
+  };
   notify = msg:
     if pkgs.stdenv.isDarwin
     then "${pkgs.terminal-notifier}/bin/terminal-notifier -title 'Claude Code' -message '${msg}'"
@@ -386,6 +393,25 @@ in {
 
   programs.claude-code = {
     enable = true;
+    skills = {
+      yomiyasu = "${yomiyasu}/skills/yomiyasu";
+    };
+    # 調査時にPerplexityで検索できるようにするMCPサーバー
+    # APIキーはNixストアに書かないよう、実行時の環境変数 PERPLEXITY_API_KEY から展開させる
+    mcpServers = {
+      perplexity = {
+        type = "stdio";
+        command = "${pkgs.nodejs}/bin/npx";
+        args = ["-y" "@perplexity-ai/mcp-server"];
+        env = {
+          PERPLEXITY_API_KEY = "\${PERPLEXITY_API_KEY}";
+        };
+      };
+    };
+    context = ''
+      # 調査について
+      - Web上の情報を調べるときは、Perplexity MCP（`mcp__plugin_hm_perplexity__*`）のツールを使う
+    '';
     settings.hooks = {
       Notification = [
         {

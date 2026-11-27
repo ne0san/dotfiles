@@ -18,3 +18,7 @@ dotfiles fot my mac
 ### その他必要なアプリのインストール
 
 ### `gh`と`claude`のauth
+
+### PerplexityのAPIキー設定
+Claude CodeのPerplexity MCPは、環境変数 `PERPLEXITY_API_KEY` からAPIキーを読み込む。
+シェルの起動時などに `PERPLEXITY_API_KEY` をexportしておく（Nixストアに残さないため、dotfilesには書かない）。
